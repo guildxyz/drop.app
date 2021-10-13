@@ -132,7 +132,7 @@ const Layout = ({
         >
           {`This website is `}
           <Link
-            href="https://github.com/AgoraSpaceDAO/frontend-boilerplate"
+            href="https://github.com/AgoraSpaceDAO/dropapp"
             isExternal
             colorScheme="green"
           >
