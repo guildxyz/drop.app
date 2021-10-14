@@ -1,4 +1,5 @@
-import { VStack } from "@chakra-ui/react"
+import { Alert, AlertIcon, VStack } from "@chakra-ui/react"
+import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import Asset from "components/start-airdrop/Asset"
@@ -9,11 +10,22 @@ import SubmitButton from "components/start-airdrop/SubmitButton"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
+  const { account } = useWeb3React()
   const methods = useForm({ mode: "all" })
   const serverId = useWatch({
     name: "serverId",
     control: methods.control,
   })
+
+  if (!account)
+    return (
+      <Layout title="Drop to your community">
+        <Alert status="error">
+          <AlertIcon />
+          Please connect your wallet to continue
+        </Alert>
+      </Layout>
+    )
 
   return (
     <FormProvider {...methods}>
