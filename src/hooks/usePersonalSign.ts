@@ -23,6 +23,7 @@ const usePersonalSign = (shouldShowErrorToast = false) => {
 
   const removeError = () => mutate((_) => _, false)
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const callbackWithSign = (callback: Function) => async () => {
     removeError()
     if (!data) {

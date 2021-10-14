@@ -1,0 +1,171 @@
+[
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_botAddress", "type": "address" },
+      { "internalType": "string", "name": "_tokenName", "type": "string" },
+      { "internalType": "string", "name": "_tokenSymbol", "type": "string" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  { "inputs": [], "name": "SpaceIsFrozen", "type": "error" },
+  { "inputs": [], "name": "SpaceIsNotFrozen", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "bool", "name": "frozen", "type": "bool" }
+    ],
+    "name": "SpaceFrozenState",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_newBotAddress", "type": "address" }
+    ],
+    "name": "changeBot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_roleId", "type": "string" }
+    ],
+    "name": "claim",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" }
+    ],
+    "name": "claims",
+    "outputs": [
+      { "internalType": "bool", "name": "claimed", "type": "bool" },
+      { "internalType": "bool", "name": "approved", "type": "bool" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bool", "name": "_frozen", "type": "bool" }],
+    "name": "freezeSpace",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "frozen",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_roleId", "type": "string" },
+      { "internalType": "address", "name": "_user", "type": "address" }
+    ],
+    "name": "grant",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" }
+    ],
+    "name": "imageOfRole",
+    "outputs": [
+      { "internalType": "bool", "name": "active", "type": "bool" },
+      { "internalType": "string", "name": "tokenImageHash", "type": "string" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_serverId", "type": "string" },
+      {
+        "components": [
+          { "internalType": "string", "name": "roleId", "type": "string" },
+          { "internalType": "string", "name": "tokenImageHash", "type": "string" }
+        ],
+        "internalType": "struct NFTAirdrop.Role[]",
+        "name": "_roles",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "newAirdrop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "roleToken",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string[]", "name": "_roleIds", "type": "string[]" }
+    ],
+    "name": "stopAirdrop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

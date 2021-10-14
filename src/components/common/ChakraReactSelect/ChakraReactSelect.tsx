@@ -274,7 +274,7 @@ const ChakraReactSelect = ({
   children,
   styles = {},
   components = {},
-  theme = () => ({}),
+  theme = Function,
   size = "md",
   colorScheme = "gray",
   isDisabled,
@@ -329,7 +329,6 @@ const ChakraReactSelect = ({
       ...styles,
     },
     theme: (baseTheme) => {
-      // @ts-ignore
       const propTheme: any = theme(baseTheme)
 
       return {

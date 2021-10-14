@@ -60,13 +60,13 @@ const ServerSelect = () => {
           <Button
             h="10"
             w="full"
-            as="a"
-            href={
-              shouldAddBot
-                ? `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`
-                : undefined
-            }
-            target={shouldAddBot && "_blank"}
+            {...(shouldAddBot
+              ? {
+                  as: "a",
+                  href: `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`,
+                  target: "_blank",
+                }
+              : {})}
             isLoading={loading}
             disabled={!shouldAddBot}
           >
@@ -85,7 +85,7 @@ const ServerSelect = () => {
 
       <FormControl isDisabled={!isBotAdded}>
         <FormLabel>3. Select channel</FormLabel>
-        <Select>
+        <Select {...register("channel")}>
           {Object.entries(channels ?? {}).map(([id, name]) => (
             <option key={id} value={id}>
               {name}
