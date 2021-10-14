@@ -1,17 +1,16 @@
 import {
-  Accordion,
   CheckboxGroup,
   FormControl,
   FormErrorMessage,
   Grid,
   useCheckboxGroup,
 } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import { useController, useFormContext, useWatch } from "react-hook-form"
 import RoleCheckbox from "./components/RoleCheckbox"
 import useRoles from "./hooks/useRoles"
 
-const PickRoles = () => {
+const PickRoles = (): ReactElement => {
   const [images, setImages] = useState<Record<string, File>>({})
   const [inputHashes, setInputHashes] = useState<Record<string, string>>({})
 
@@ -46,22 +45,18 @@ const PickRoles = () => {
     <FormControl isInvalid={errors.roles?.message?.length > 0}>
       <Grid gridTemplateColumns="repeat(3, 1fr)" gridTemplateRows="auto" gap={5}>
         <CheckboxGroup>
-          {Object.entries(roles ?? {}).map(([id, name]) => {
-            const checkboxProps = getCheckboxProps({ value: id })
-            return (
-              <Accordion allowToggle key={id}>
-                <RoleCheckbox
-                  images={images}
-                  inputHashes={inputHashes}
-                  setImages={setImages}
-                  setInputHashes={setInputHashes}
-                  name={name}
-                  id={id}
-                  {...checkboxProps}
-                />
-              </Accordion>
-            )
-          })}
+          {Object.entries(roles ?? {}).map(([id, name]) => (
+            <RoleCheckbox
+              key={id}
+              images={images}
+              inputHashes={inputHashes}
+              setImages={setImages}
+              setInputHashes={setInputHashes}
+              name={name}
+              id={id}
+              {...getCheckboxProps({ value: id })}
+            />
+          ))}
         </CheckboxGroup>
       </Grid>
       {errors.roles?.message && (

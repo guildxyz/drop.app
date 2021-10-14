@@ -30,7 +30,7 @@ const StartAirdropPage = (): JSX.Element => {
   return (
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
-        <VStack as="form" onSubmit={methods.handleSubmit(console.log)} spacing={10}>
+        <VStack as="form" spacing={10}>
           <Section title="Choose a name for your DROP">
             <NameInput />
           </Section>

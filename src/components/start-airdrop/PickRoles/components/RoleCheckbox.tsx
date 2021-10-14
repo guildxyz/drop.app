@@ -1,6 +1,23 @@
-import { Box, Fade, Input, useCheckbox, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  CheckboxProps,
+  Fade,
+  Input,
+  useCheckbox,
+  VStack,
+} from "@chakra-ui/react"
 import PhotoUploader from "components/common/PhotoUploader"
 import useAirdrop from "hooks/useAirdrop"
+import type { Dispatch, ReactElement, SetStateAction } from "react"
+
+type Props = {
+  id: string
+  name: string
+  images: Record<string, File>
+  setImages: Dispatch<SetStateAction<Record<string, File>>>
+  inputHashes: Record<string, string>
+  setInputHashes: Dispatch<SetStateAction<Record<string, string>>>
+} & CheckboxProps
 
 const RoleCheckbox = ({
   id,
@@ -10,7 +27,7 @@ const RoleCheckbox = ({
   inputHashes,
   setInputHashes,
   ...checkBoxProps
-}) => {
+}: Props): ReactElement => {
   const {
     getInputProps,
     getCheckboxProps,

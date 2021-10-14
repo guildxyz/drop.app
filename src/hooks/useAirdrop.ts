@@ -6,7 +6,7 @@ import TransactionError from "utils/errors/TransactionError"
 import useContract from "./useContract"
 
 export enum AirdropAddresses {
-  GOERLI = "0x581De6633482663Da21D2497744186b4AB4067c5",
+  GOERLI = "0xdeDbEF6cFAFd6e3BaA28eB2F943e187983b240ea",
 }
 
 const uploadImages = async (images: Record<string, File>, serverId: string) => {
@@ -88,7 +88,7 @@ const useAirdrop = () => {
     [contract, chainId]
   )
 
-  const claim = useCallback(
+  /* const claim = useCallback(
     (roleId: string, serverId: string) => async () => {
       const { signature } = await fetch("/api/get-signature/claim", {
         method: "POST",
@@ -110,9 +110,9 @@ const useAirdrop = () => {
       }
     },
     [contract, chainId]
-  )
+  ) */
 
-  const claims = useCallback(
+  /* const claims = useCallback(
     (
       serverId: string,
       roleId: string,
@@ -122,17 +122,17 @@ const useAirdrop = () => {
         throw new TransactionError("Failed to read claimed NFTs")
       }),
     [contract]
-  )
+  ) */
 
-  const imageOfRole = useCallback(
+  /* const imageOfRole = useCallback(
     (serverId: string, roleId: string): Promise<[boolean, string]> =>
       contract.imageOfRole(serverId, roleId).catch(() => {
         throw new TransactionError("Failed to read NFT images")
       }),
     [contract]
-  )
+  ) */
 
-  const stopAirdrop = useCallback(
+  /* const stopAirdrop = useCallback(
     (serverId: string, roleIds: string[]) => async () => {
       const { signature } = await fetch("/api/get-signature/stop-airdrop", {
         method: "POST",
@@ -154,9 +154,12 @@ const useAirdrop = () => {
       }
     },
     [contract, chainId]
-  )
+  ) */
 
-  return { startAirdrop, claim, claims, imageOfRole, stopAirdrop, uploadedImages }
+  return {
+    startAirdrop,
+    uploadedImages /* , claim, claims, imageOfRole, stopAirdrop */,
+  }
 }
 
 export default useAirdrop

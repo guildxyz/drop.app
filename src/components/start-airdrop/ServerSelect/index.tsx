@@ -8,11 +8,11 @@ import {
   Select,
 } from "@chakra-ui/react"
 import { Check } from "phosphor-react"
-import { useEffect, useMemo } from "react"
+import { ReactElement, useEffect, useMemo } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import useChannels from "./hooks/useChannels"
 
-const ServerSelect = () => {
+const ServerSelect = (): ReactElement => {
   const { register, setValue } = useFormContext()
   const inviteLink = useWatch<{ invite_link: string }>({
     name: "invite_link",
@@ -24,7 +24,7 @@ const ServerSelect = () => {
     errors.invite_link?.message?.length > 0 ? "" : inviteLink
   )
 
-  useEffect(() => setValue("serverId", serverId), [serverId])
+  useEffect(() => setValue("serverId", serverId), [setValue, serverId])
 
   const isBotAdded = useMemo(
     () => Object.keys(channels ?? {})?.length > 0 && serverId > 0,
@@ -38,7 +38,7 @@ const ServerSelect = () => {
 
   return (
     <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-      <FormControl isInvalid={errors?.invite_link}>
+      <FormControl isInvalid={errors.invite_link}>
         <FormLabel>1. Paste invite link</FormLabel>
         <Input
           {...register("invite_link", {
@@ -77,24 +77,27 @@ const ServerSelect = () => {
             Bot added
           </Button>
         )}
-
-        <FormErrorMessage>
-          {errors?.invite_link?.message ?? "Invalid invite"}
-        </FormErrorMessage>
       </FormControl>
 
-      <FormControl isDisabled={!isBotAdded}>
+      <FormControl isDisabled={!isBotAdded} isInvalid={errors.channel}>
         <FormLabel>3. Select channel</FormLabel>
-        <Select {...register("channel")}>
+        <Select
+          defaultValue=""
+          {...register("channel", {
+            required: "Please select a channel",
+          })}
+        >
+          <option value="">Select a channel</option>
           {Object.entries(channels ?? {}).map(([id, name]) => (
             <option key={id} value={id}>
               {name}
             </option>
           ))}
         </Select>
-        <FormErrorMessage>
-          {errors?.invite_link?.message ?? "Invalid invite"}
-        </FormErrorMessage>
+
+        {errors.channel?.message && (
+          <FormErrorMessage>{errors.channel.message}</FormErrorMessage>
+        )}
       </FormControl>
     </Grid>
   )
