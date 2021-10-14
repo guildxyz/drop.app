@@ -9,6 +9,11 @@ export enum AirdropAddresses {
   GOERLI = "0xdeDbEF6cFAFd6e3BaA28eB2F943e187983b240ea",
 }
 
+type NFTData = {
+  name: string
+  symbol: string
+}
+
 const uploadImages = async (images: Record<string, File>, serverId: string) => {
   const formData = new FormData()
   Object.entries(images).forEach(([id, image]) =>
@@ -30,14 +35,36 @@ const useAirdrop = () => {
   const { chainId, account } = useWeb3React()
   const contract = useContract(AirdropAddresses[Chains[chainId]], AIRDROP_ABI, true)
 
+  const numOfDeployedContracts = useCallback(
+    (address: string): Promise<number> => contract.numOfDeployedContracts(address),
+    [contract]
+  )
+
+  const deployTokenContract = useCallback(
+    async (tokenName: string, tokenSymbol: string) => {
+      contract
+        .deployTokenContract(tokenName, tokenSymbol)
+        .then(() => numOfDeployedContracts(account))
+    },
+    [contract, account]
+  )
+
   const startAirdrop = useCallback(
     (
+        dropName: string,
+        channelId: string,
         roles: string[],
         serverId: string,
         images: Record<string, File>,
-        inputHashes: Record<string, string>
+        inputHashes: Record<string, string>,
+        assetType: string,
+        assetData: NFTData
       ) =>
       async () => {
+        if (assetType !== "NFT") throw new Error("Asset type not implemented")
+
+        const contractId = deployTokenContract(assetData.name, assetData.symbol)
+
         const { signature } = await fetch("/api/get-signature/start-airdrop", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -72,12 +99,15 @@ const useAirdrop = () => {
         try {
           const tx = await contract.newAirdrop(
             signature,
+            dropName,
             serverId,
             roles.map((roleId) => ({
               roleId,
               tokenImageHash:
                 hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-            }))
+            })),
+            contractId,
+            channelId
           )
           await tx.wait()
           return tx

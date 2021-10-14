@@ -1,37 +1,54 @@
 import { useMachine } from "@xstate/react"
 import useAirdrop from "hooks/useAirdrop"
 import useToast from "hooks/useToast"
-import BackendError from "utils/errors/BackendError"
-import SignError from "utils/errors/SignError"
-import TransactionError from "utils/errors/TransactionError"
-import { DoneInvokeEvent } from "xstate"
-import machine from "./machine"
+import machine, {
+  Context,
+  ErrorEvent,
+  Event,
+  StartAirdropData,
+  StartEvent,
+  State,
+} from "./machine"
 
-type StartAirdropData = {
-  name: string
-  roles: string[]
-  serverId: string
-}
-
-const useStartAirdropMAchine = () => {
+const useStartAirdropMachine = (): {
+  onSubmit: (data: StartAirdropData) => void
+  isLoading: boolean
+  isSuccess: boolean
+  state: State
+} => {
   const { startAirdrop } = useAirdrop()
   const toast = useToast()
 
-  const [state, send] = useMachine(machine, {
+  const [state, send] = useMachine<Context, Event>(machine, {
     services: {
       startAirdrop: async (
         _context,
-        { data: { roles, serverId, name, channel, inputHashes, images } }
-      ) => {
-        console.log("TODO: use name and channel here with new contract")
-        return startAirdrop(roles, serverId, images, inputHashes)()
-      },
+        {
+          data: {
+            roles,
+            serverId,
+            name,
+            channel,
+            inputHashes,
+            images,
+            assetType,
+            assetData,
+          },
+        }: StartEvent
+      ) =>
+        startAirdrop(
+          name,
+          channel,
+          roles,
+          serverId,
+          images,
+          inputHashes,
+          assetType,
+          assetData
+        ),
     },
     actions: {
-      errorToast: (
-        _context: unknown,
-        event: DoneInvokeEvent<SignError | TransactionError | BackendError | Error>
-      ) => {
+      errorToast: (_context: unknown, event: ErrorEvent) => {
         try {
           const messages = JSON.parse(event.data.message)
           if (Array.isArray(messages))
@@ -61,7 +78,7 @@ const useStartAirdropMAchine = () => {
     },
   })
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: StartAirdropData) => {
     console.log(data)
     send("START_AIRDROP", { data })
   }
@@ -74,4 +91,4 @@ const useStartAirdropMAchine = () => {
   }
 }
 
-export default useStartAirdropMAchine
+export default useStartAirdropMachine
