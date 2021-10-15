@@ -3,10 +3,10 @@ import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { Chains } from "connectors"
+import { fetchDiscordID } from "hooks/discord/useDiscordId"
+import { fetchRoles } from "hooks/discord/useRoles"
+import { fetchUserRoles } from "hooks/discord/useUserRoles"
 import { AirdropAddresses } from "hooks/useAirdrop"
-import { fetchDiscordID } from "hooks/useDiscordId"
-import { fetchRoles } from "hooks/useRoles"
-import { fetchUserRoles } from "hooks/useUserRoles"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 type Body = {

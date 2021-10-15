@@ -1,6 +1,6 @@
 import { Box, Heading, Text } from "@chakra-ui/react"
 import { useRouter } from "next/dist/client/router"
-import { useEffect } from "react"
+import { ReactElement, useEffect } from "react"
 
 const newNamedError = (name: string, message: string) => {
   const error = new Error(message)
@@ -42,7 +42,7 @@ const fetchUserID = async (
   return hashed
 }
 
-const DCAuth = () => {
+const DCAuth = (): ReactElement => {
   const router = useRouter()
 
   useEffect(() => {

@@ -40,12 +40,17 @@ const useAirdrop = () => {
     [contract]
   )
 
+  const contractsByDeployer = useCallback(
+    (address: string, index: number): Promise<string> =>
+      contract.contractsByDeployer(address, index),
+    [contract]
+  )
+
   const deployTokenContract = useCallback(
-    async (tokenName: string, tokenSymbol: string) => {
+    async (tokenName: string, tokenSymbol: string): Promise<number> =>
       contract
         .deployTokenContract(tokenName, tokenSymbol)
-        .then(() => numOfDeployedContracts(account))
-    },
+        .then(() => numOfDeployedContracts(account)),
     [contract, account]
   )
 
@@ -63,7 +68,10 @@ const useAirdrop = () => {
       async () => {
         if (assetType !== "NFT") throw new Error("Asset type not implemented")
 
-        const contractId = deployTokenContract(assetData.name, assetData.symbol)
+        const contractId = await deployTokenContract(
+          assetData.name,
+          assetData.symbol
+        )
 
         const { signature } = await fetch("/api/get-signature/start-airdrop", {
           method: "POST",
@@ -110,7 +118,7 @@ const useAirdrop = () => {
             channelId
           )
           await tx.wait()
-          return tx
+          return contractId
         } catch {
           throw new TransactionError("Failed to start airdrop.")
         }
@@ -188,6 +196,7 @@ const useAirdrop = () => {
 
   return {
     startAirdrop,
+    contractsByDeployer,
     uploadedImages /* , claim, claims, imageOfRole, stopAirdrop */,
   }
 }

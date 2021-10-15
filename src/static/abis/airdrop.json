@@ -1,15 +1,94 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "_botAddress", "type": "address" },
-      { "internalType": "string", "name": "_tokenName", "type": "string" },
-      { "internalType": "string", "name": "_tokenSymbol", "type": "string" }
+      { "internalType": "address", "name": "_botAddress", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
   { "inputs": [], "name": "SpaceIsFrozen", "type": "error" },
   { "inputs": [], "name": "SpaceIsNotFrozen", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "string",
+        "name": "serverId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "roleId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tokenContract",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "Claimed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "string",
+        "name": "serverId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "roleId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tokenContract",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "Granted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "serverId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "channelId",
+        "type": "string"
+      }
+    ],
+    "name": "NewAirdrop",
+    "type": "event"
+  },
   {
     "anonymous": false,
     "inputs": [
@@ -50,7 +129,8 @@
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
-      { "internalType": "string", "name": "_roleId", "type": "string" }
+      { "internalType": "string", "name": "_roleId", "type": "string" },
+      { "internalType": "address", "name": "tokenAddress", "type": "address" }
     ],
     "name": "claim",
     "outputs": [],
@@ -61,13 +141,56 @@
     "inputs": [
       { "internalType": "address", "name": "", "type": "address" },
       { "internalType": "string", "name": "", "type": "string" },
-      { "internalType": "string", "name": "", "type": "string" }
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "address", "name": "", "type": "address" }
     ],
     "name": "claims",
     "outputs": [
       { "internalType": "bool", "name": "claimed", "type": "bool" },
       { "internalType": "bool", "name": "approved", "type": "bool" }
     ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "contractsByDeployer",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_tokenName", "type": "string" },
+      { "internalType": "string", "name": "_tokenSymbol", "type": "string" }
+    ],
+    "name": "deployTokenContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "dropOfRole",
+    "outputs": [
+      { "internalType": "bool", "name": "active", "type": "bool" },
+      { "internalType": "string", "name": "tokenImageHash", "type": "string" },
+      { "internalType": "string", "name": "nftName", "type": "string" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "externalUrl",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -90,24 +213,12 @@
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
-      { "internalType": "address", "name": "_user", "type": "address" }
+      { "internalType": "address", "name": "_user", "type": "address" },
+      { "internalType": "uint256", "name": "_contractId", "type": "uint256" }
     ],
     "name": "grant",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "string", "name": "", "type": "string" },
-      { "internalType": "string", "name": "", "type": "string" }
-    ],
-    "name": "imageOfRole",
-    "outputs": [
-      { "internalType": "bool", "name": "active", "type": "bool" },
-      { "internalType": "string", "name": "tokenImageHash", "type": "string" }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -117,16 +228,29 @@
       {
         "components": [
           { "internalType": "string", "name": "roleId", "type": "string" },
-          { "internalType": "string", "name": "tokenImageHash", "type": "string" }
+          { "internalType": "string", "name": "roleName", "type": "string" },
+          { "internalType": "string", "name": "tokenImageHash", "type": "string" },
+          { "internalType": "string", "name": "nftName", "type": "string" },
+          { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
+          { "internalType": "string[]", "name": "values", "type": "string[]" }
         ],
         "internalType": "struct NFTAirdrop.Role[]",
         "name": "_roles",
         "type": "tuple[]"
-      }
+      },
+      { "internalType": "uint256", "name": "_contractId", "type": "uint256" },
+      { "internalType": "string", "name": "_channelId", "type": "string" }
     ],
     "name": "newAirdrop",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "numOfDeployedContracts",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -144,17 +268,18 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "roleToken",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
+    "inputs": [{ "internalType": "string", "name": "_newUrl", "type": "string" }],
+    "name": "setExternalUrl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
-      { "internalType": "string[]", "name": "_roleIds", "type": "string[]" }
+      { "internalType": "string[]", "name": "_roleIds", "type": "string[]" },
+      { "internalType": "uint256", "name": "_contractId", "type": "uint256" }
     ],
     "name": "stopAirdrop",
     "outputs": [],

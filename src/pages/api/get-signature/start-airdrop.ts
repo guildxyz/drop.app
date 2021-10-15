@@ -3,9 +3,9 @@ import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { Chains } from "connectors"
+import { fetchDiscordID } from "hooks/discord/useDiscordId"
+import { fetchOwnerId } from "hooks/discord/useOwnerId"
 import { AirdropAddresses } from "hooks/useAirdrop"
-import { fetchDiscordID } from "hooks/useDiscordId"
-import { fetchOwnerId } from "hooks/useOwnerId"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 type Body = {
