@@ -1,12 +1,12 @@
 import useSWR from "swr"
-import useAirdrop, { Role } from "./useAirdrop"
+import useAirdrop, { Drop } from "./useAirdrop"
 
 const getDrops = async (
   _: string,
   numOfDrops: () => Promise<number>,
   dropNamesById: (id: number) => Promise<string>,
-  getDataOfDrop: (name: string) => Promise<Role>
-): Promise<Role[]> => {
+  getDataOfDrop: (name: string) => Promise<Drop>
+): Promise<Drop[]> => {
   const dropsCount = await numOfDrops().then((_) => +_)
   const dropNames = await Promise.all(
     [...Array(dropsCount)].map((_, i) => dropNamesById(i))
@@ -25,7 +25,7 @@ const getDrops = async (
   return drops
 }
 
-const useDrops = (): Role[] => {
+const useDrops = (): Drop[] => {
   const { numOfDrops, dropNamesById, getDataOfDrop } = useAirdrop()
 
   const { data } = useSWR(
