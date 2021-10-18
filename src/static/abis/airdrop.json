@@ -1,7 +1,8 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "_botAddress", "type": "address" }
+      { "internalType": "address", "name": "_botAddress", "type": "address" },
+      { "internalType": "string", "name": "_externalUrl", "type": "string" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -18,13 +19,13 @@
         "type": "string"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "string",
         "name": "roleId",
         "type": "string"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "tokenContract",
         "type": "address"
@@ -50,6 +51,31 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      }
+    ],
+    "name": "DropOnServer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "serverId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
         "name": "roleId",
         "type": "string"
@@ -58,12 +84,6 @@
         "indexed": false,
         "internalType": "address",
         "name": "tokenContract",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user",
         "type": "address"
       }
     ],
@@ -76,7 +96,7 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "serverId",
+        "name": "dropname",
         "type": "string"
       },
       {
@@ -139,6 +159,20 @@
   },
   {
     "inputs": [
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "claimables",
+    "outputs": [
+      { "internalType": "bool", "name": "active", "type": "bool" },
+      { "internalType": "bool", "name": "dropped", "type": "bool" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "", "type": "address" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
@@ -173,17 +207,9 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "string", "name": "", "type": "string" },
-      { "internalType": "string", "name": "", "type": "string" },
-      { "internalType": "address", "name": "", "type": "address" }
-    ],
-    "name": "dropOfRole",
-    "outputs": [
-      { "internalType": "bool", "name": "active", "type": "bool" },
-      { "internalType": "string", "name": "tokenImageHash", "type": "string" },
-      { "internalType": "string", "name": "nftName", "type": "string" }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "dropnamesById",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -209,6 +235,17 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "string", "name": "_dropName", "type": "string" }],
+    "name": "getDataOfDrop",
+    "outputs": [
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string[]", "name": "", "type": "string[]" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
@@ -224,13 +261,13 @@
   {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_dropName", "type": "string" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
       {
         "components": [
           { "internalType": "string", "name": "roleId", "type": "string" },
-          { "internalType": "string", "name": "roleName", "type": "string" },
           { "internalType": "string", "name": "tokenImageHash", "type": "string" },
-          { "internalType": "string", "name": "nftName", "type": "string" },
+          { "internalType": "string", "name": "tokenName", "type": "string" },
           { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
           { "internalType": "string[]", "name": "values", "type": "string[]" }
         ],
@@ -249,6 +286,13 @@
   {
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "name": "numOfDeployedContracts",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "numOfDrops",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -278,7 +322,7 @@
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
-      { "internalType": "string[]", "name": "_roleIds", "type": "string[]" },
+      { "internalType": "string", "name": "_roleId", "type": "string" },
       { "internalType": "uint256", "name": "_contractId", "type": "uint256" }
     ],
     "name": "stopAirdrop",

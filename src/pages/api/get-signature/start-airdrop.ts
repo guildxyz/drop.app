@@ -12,12 +12,14 @@ type Body = {
   chainId: number
   serverId: string
   address: string
+  name: string
 }
 
 const REQUIRED_BODY = [
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
   { key: "address", type: "string" },
+  { key: "name", type: "string" },
 ]
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -48,7 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return
     }
 
-    const { chainId, serverId, address }: Body = req.body
+    const { chainId, serverId, address, name }: Body = req.body
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
         errors: [
@@ -75,9 +77,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return
       }
 
+      console.log([AirdropAddresses[Chains[chainId]], serverId, name, address])
+
       const payload = defaultAbiCoder.encode(
-        ["address", "string"],
-        [AirdropAddresses[Chains[chainId]], serverId]
+        ["address", "string", "string", "address"],
+        [AirdropAddresses[Chains[chainId]], serverId, name, address]
       )
       const message = keccak256(payload)
       const wallet = new Wallet(process.env.SIGNER_PRIVATE_KEY)

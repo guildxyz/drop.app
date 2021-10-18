@@ -6,12 +6,20 @@ import TransactionError from "utils/errors/TransactionError"
 import useContract from "./useContract"
 
 export enum AirdropAddresses {
-  GOERLI = "0xdeDbEF6cFAFd6e3BaA28eB2F943e187983b240ea",
+  GOERLI = "0xb33F85251De73bAd4343080d6D6266fA88f5117f",
 }
 
 type NFTData = {
   name: string
   symbol: string
+}
+
+export type Drop = {
+  serverId: string
+  roleIds: string[]
+  tokenAddress: string
+  name: string
+  id?: number
 }
 
 const uploadImages = async (images: Record<string, File>, serverId: string) => {
@@ -40,6 +48,21 @@ const useAirdrop = () => {
     [contract]
   )
 
+  const dropNamesById = useCallback(
+    (id: number): Promise<string> => contract.dropnamesById(id),
+    [contract]
+  )
+
+  const getDataOfDrop = useCallback(
+    (name: string): Promise<Drop> => contract.getDataOfDrop(name),
+    [contract]
+  )
+
+  const numOfDrops = useCallback(
+    (): Promise<number> => contract.numOfDrops(),
+    [contract]
+  )
+
   const contractsByDeployer = useCallback(
     (address: string, index: number): Promise<string> =>
       contract.contractsByDeployer(address, index),
@@ -47,10 +70,12 @@ const useAirdrop = () => {
   )
 
   const deployTokenContract = useCallback(
-    async (tokenName: string, tokenSymbol: string): Promise<number> =>
-      contract
-        .deployTokenContract(tokenName, tokenSymbol)
-        .then(() => numOfDeployedContracts(account)),
+    async (tokenName: string, tokenSymbol: string): Promise<number> => {
+      const tx = await contract.deployTokenContract(tokenName, tokenSymbol)
+      await tx.wait()
+      const numOfContracts = await numOfDeployedContracts(account)
+      return numOfContracts
+    },
     [contract, account]
   )
 
@@ -71,7 +96,7 @@ const useAirdrop = () => {
         const contractId = await deployTokenContract(
           assetData.name,
           assetData.symbol
-        )
+        ).then((_) => +_ - 1)
 
         const { signature } = await fetch("/api/get-signature/start-airdrop", {
           method: "POST",
@@ -80,6 +105,7 @@ const useAirdrop = () => {
             serverId,
             address: account,
             chainId,
+            name: dropName,
           }),
         }).then((response) =>
           response.json().then((body) => {
@@ -105,6 +131,21 @@ const useAirdrop = () => {
         })
 
         try {
+          console.log({
+            signature,
+            dropName,
+            serverId,
+            roles: roles.map((roleId) => ({
+              roleId,
+              tokenImageHash:
+                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+              tokenName: assetData.name,
+              traitTypes: [],
+              values: [],
+            })),
+            contractId,
+            channelId,
+          })
           const tx = await contract.newAirdrop(
             signature,
             dropName,
@@ -113,6 +154,9 @@ const useAirdrop = () => {
               roleId,
               tokenImageHash:
                 hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+              tokenName: assetData.name,
+              traitTypes: [],
+              values: [],
             })),
             contractId,
             channelId
@@ -126,12 +170,18 @@ const useAirdrop = () => {
     [contract, chainId]
   )
 
-  /* const claim = useCallback(
-    (roleId: string, serverId: string) => async () => {
+  const claim = useCallback(
+    (roleId: string, serverId: string, tokenAddress: string) => async () => {
       const { signature } = await fetch("/api/get-signature/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chainId, roleId, serverId, address: account }),
+        body: JSON.stringify({
+          chainId,
+          roleId,
+          serverId,
+          address: account,
+          tokenAddress,
+        }),
       }).then((response) =>
         response.json().then((body) => {
           if (response.ok) return body
@@ -140,27 +190,32 @@ const useAirdrop = () => {
       )
 
       try {
-        const tx = await contract.claim(signature, serverId, roleId)
+        const tx = await contract.claim(signature, serverId, roleId, tokenAddress)
         await tx.wait()
         return tx
-      } catch {
+      } catch (error) {
+        console.error(error)
         throw new TransactionError("Failed to claim NFT.")
       }
     },
     [contract, chainId]
-  ) */
+  )
 
-  /* const claims = useCallback(
+  const claims = useCallback(
     (
+      address: string,
       serverId: string,
       roleId: string,
-      address: string
-    ): Promise<[boolean, boolean]> =>
-      contract.claims(address, serverId, roleId).catch(() => {
-        throw new TransactionError("Failed to read claimed NFTs")
-      }),
+      tokenAddress: string
+    ): Promise<{ claimed: boolean; approved: boolean }> =>
+      contract
+        .claims(address, serverId, roleId, tokenAddress)
+        .then(([claimed, approved]) => ({ claimed, approved }))
+        .catch(() => {
+          throw new TransactionError("Failed to read claimed NFTs")
+        }),
     [contract]
-  ) */
+  )
 
   /* const imageOfRole = useCallback(
     (serverId: string, roleId: string): Promise<[boolean, string]> =>
@@ -197,7 +252,13 @@ const useAirdrop = () => {
   return {
     startAirdrop,
     contractsByDeployer,
-    uploadedImages /* , claim, claims, imageOfRole, stopAirdrop */,
+    numOfDeployedContracts,
+    numOfDrops,
+    dropNamesById,
+    getDataOfDrop,
+    claim,
+    claims,
+    uploadedImages /* , imageOfRole, stopAirdrop */,
   }
 }
 

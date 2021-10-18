@@ -14,6 +14,7 @@ type Body = {
   serverId: string
   address: string
   roleId: string
+  tokenAddress: string
 }
 
 const REQUIRED_BODY = [
@@ -21,9 +22,10 @@ const REQUIRED_BODY = [
   { key: "serverId", type: "string" },
   { key: "address", type: "string" },
   { key: "roleId", type: "string" },
+  { key: "tokenAddress", type: "string" },
 ]
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   if (req.method === "POST") {
     const missingKeys = REQUIRED_BODY.filter(({ key }) => !(key in req.body))
     if (missingKeys.length > 0) {
@@ -51,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return
     }
 
-    const { chainId, serverId, address, roleId }: Body = req.body
+    const { chainId, serverId, address, roleId, tokenAddress }: Body = req.body
     // Is there a deployed airdrop contract on the chain
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
@@ -84,8 +86,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       ])
 
       const payload = defaultAbiCoder.encode(
-        ["address", "string", "string"],
-        [AirdropAddresses[Chains[chainId]], serverId, roleId]
+        ["address", "string", "string", "address", "address"],
+        [AirdropAddresses[Chains[chainId]], serverId, roleId, tokenAddress, address]
       )
       const message = keccak256(payload)
       const wallet = new Wallet(process.env.SIGNER_PRIVATE_KEY)

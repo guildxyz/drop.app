@@ -15,4 +15,8 @@ module.exports = {
 
     return config
   },
+
+  images: {
+    domains: ["cdn.discordapp.com", "ipfs.fleek.co"],
+  },
 }
