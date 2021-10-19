@@ -5,6 +5,8 @@ import { RoleData } from "./useRoleData"
 
 type RoleTokenMethods = {
   getDataOfRole: (serverId: string, roleId: string) => Promise<RoleData>
+  getName: () => Promise<string>
+  getSymbol: () => Promise<string>
 }
 
 const useRoleToken = (tokenAddress: string): RoleTokenMethods => {
@@ -15,11 +17,18 @@ const useRoleToken = (tokenAddress: string): RoleTokenMethods => {
     (serverId: string, roleId: string) =>
       contract
         .getDataOfRole(serverId, roleId)
-        .then(([imageHash, dropName, traits]) => ({ imageHash, dropName, traits })),
+        .then(([imageHash, tokenName, traits]) => ({
+          imageHash,
+          tokenName,
+          traits,
+        })),
     [contract]
   )
 
-  return { getDataOfRole }
+  const getName = useCallback(() => contract.name(), [contract])
+  const getSymbol = useCallback(() => contract.symbol(), [contract])
+
+  return { getDataOfRole, getName, getSymbol }
 }
 
 export default useRoleToken

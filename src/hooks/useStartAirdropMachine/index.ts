@@ -1,8 +1,6 @@
-import { useWeb3React } from "@web3-react/core"
 import { useMachine } from "@xstate/react"
 import useAirdrop from "hooks/useAirdrop"
 import useToast from "hooks/useToast"
-import BackendError from "utils/errors/BackendError"
 import machine, {
   Context,
   ErrorEvent,
@@ -18,13 +16,12 @@ const useStartAirdropMachine = (): {
   isSuccess: boolean
   state: State
 } => {
-  const { account } = useWeb3React()
-  const { startAirdrop, contractsByDeployer } = useAirdrop()
+  const { startAirdrop } = useAirdrop()
   const toast = useToast()
 
   const [state, send] = useMachine<Context, Event>(machine, {
     services: {
-      startAirdrop: async (
+      startAirdrop: (
         _context,
         {
           data: {
@@ -36,10 +33,11 @@ const useStartAirdropMachine = (): {
             images,
             assetType,
             assetData,
+            contractId,
           },
         }: StartEvent
-      ) => {
-        const contractId = await startAirdrop(
+      ) =>
+        startAirdrop(
           name,
           channel,
           roles,
@@ -47,21 +45,9 @@ const useStartAirdropMachine = (): {
           images,
           inputHashes,
           assetType,
-          assetData
-        )()
-
-        const contractAddress = await contractsByDeployer(account, contractId)
-
-        const createResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_API}/airdrop`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, serverId, roles, contractAddress }),
-          }
-        )
-        if (!createResponse.ok) throw new BackendError("Failed to save airdrop data")
-      },
+          assetData,
+          contractId
+        )(),
     },
     actions: {
       errorToast: (_context: unknown, event: ErrorEvent) => {

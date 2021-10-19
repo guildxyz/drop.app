@@ -1,4 +1,5 @@
 import { Box, Button, HStack, Skeleton, Text, VStack } from "@chakra-ui/react"
+import useRoleName from "hooks/discord/useRoleName"
 import { Drop } from "hooks/useAirdrop"
 import useClaimMachine from "hooks/useClaimMachine"
 import useIsClaimed from "hooks/useIsClaimed"
@@ -17,6 +18,7 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
   const roleData = useRoleData(tokenAddress, serverId, roleId)
   const { isLoading, isSuccess, onSubmit } = useClaimMachine()
   const isClaimed = useIsClaimed(serverId, roleId, tokenAddress)
+  const roleName = useRoleName(serverId, roleId)
 
   return (
     <Skeleton isLoaded={!!roleData}>
@@ -28,7 +30,7 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
         borderRadius={10}
         backgroundColor="gray.700"
       >
-        <Text>{roleData?.dropName}</Text>
+        <Text>{roleName}</Text>
         <Box
           position="relative"
           height={60}
@@ -43,6 +45,7 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
             objectFit="cover"
           />
         </Box>
+        <Text>{roleData?.tokenName}</Text>
         <Button
           isLoading={isLoading}
           isDisabled={isClaimed || isSuccess}

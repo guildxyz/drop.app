@@ -7,6 +7,7 @@ import NameInput from "components/start-airdrop/NameInput"
 import PickRoles from "components/start-airdrop/PickRoles"
 import ServerSelect from "components/start-airdrop/ServerSelect"
 import SubmitButton from "components/start-airdrop/SubmitButton"
+import TokenSelect from "components/start-airdrop/TokenSelect"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
@@ -14,6 +15,10 @@ const StartAirdropPage = (): JSX.Element => {
   const methods = useForm({ mode: "all" })
   const serverId = useWatch({
     name: "serverId",
+    control: methods.control,
+  })
+  const contractId = useWatch({
+    name: "contractId",
     control: methods.control,
   })
 
@@ -37,9 +42,14 @@ const StartAirdropPage = (): JSX.Element => {
           <Section title="Choose a server">
             <ServerSelect />
           </Section>
-          <Section title="Choose a type of asset">
-            <Asset />
+          <Section title="Choose an existiong token">
+            <TokenSelect />
           </Section>
+          {(!contractId || contractId?.length <= 0) && (
+            <Section title="Or choose a type of asset to deploy">
+              <Asset />
+            </Section>
+          )}
           {!!serverId && (
             <Section title="Pick roles">
               <PickRoles />

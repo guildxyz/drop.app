@@ -3,7 +3,7 @@ import useRoleToken from "./useRoleToken"
 
 export type RoleData = {
   imageHash: string
-  dropName: string
+  tokenName: string
   traits: Array<[string, string]> // ?
 }
 

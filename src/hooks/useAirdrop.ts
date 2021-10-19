@@ -1,7 +1,10 @@
+import { Contract } from "@ethersproject/contracts"
+import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { Chains } from "connectors"
 import { useCallback, useState } from "react"
 import AIRDROP_ABI from "static/abis/airdrop.json"
+import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 import TransactionError from "utils/errors/TransactionError"
 import useContract from "./useContract"
 
@@ -40,7 +43,7 @@ const uploadImages = async (images: Record<string, File>, serverId: string) => {
 
 const useAirdrop = () => {
   const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({})
-  const { chainId, account } = useWeb3React()
+  const { chainId, account, library } = useWeb3React<Web3Provider>()
   const contract = useContract(AirdropAddresses[Chains[chainId]], AIRDROP_ABI, true)
 
   const numOfDeployedContracts = useCallback(
@@ -79,6 +82,19 @@ const useAirdrop = () => {
     [contract, account]
   )
 
+  const deployedTokens = useCallback(
+    async (address: string) => {
+      const numberOfTokens = await contract.numOfDeployedContracts(address)
+      const tokenAddresses = await Promise.all(
+        [...Array(numberOfTokens)].map((_, index) =>
+          contract.contractsByDeployer(address, index)
+        )
+      )
+      return tokenAddresses
+    },
+    [contract]
+  )
+
   const startAirdrop = useCallback(
     (
         dropName: string,
@@ -88,15 +104,25 @@ const useAirdrop = () => {
         images: Record<string, File>,
         inputHashes: Record<string, string>,
         assetType: string,
-        assetData: NFTData
+        _assetData: NFTData,
+        contractId: string
       ) =>
       async () => {
         if (assetType !== "NFT") throw new Error("Asset type not implemented")
+        if (contractId?.length <= 0) throw new Error("Invalid token contract")
 
-        const contractId = await deployTokenContract(
-          assetData.name,
-          assetData.symbol
-        ).then((_) => +_ - 1)
+        const assetData = _assetData
+
+        if (contractId?.length > 0) {
+          const tokenAddress = await contractsByDeployer(account, +contractId)
+          const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
+          const [name, symbol] = await Promise.all([
+            tokenContract.name(),
+            tokenContract.symbol(),
+          ])
+          assetData.name = name
+          assetData.symbol = symbol
+        }
 
         const { signature } = await fetch("/api/get-signature/start-airdrop", {
           method: "POST",
@@ -158,7 +184,7 @@ const useAirdrop = () => {
               traitTypes: [],
               values: [],
             })),
-            contractId,
+            +contractId,
             channelId
           )
           await tx.wait()
@@ -258,7 +284,9 @@ const useAirdrop = () => {
     getDataOfDrop,
     claim,
     claims,
-    uploadedImages /* , imageOfRole, stopAirdrop */,
+    deployedTokens,
+    deployTokenContract,
+    uploadedImages,
   }
 }
 
