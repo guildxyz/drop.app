@@ -13,7 +13,7 @@ const getDrop = async (
     name,
   }))
 
-const useDrop = (name: string, fallbackData: Drop): Drop => {
+const useDrop = (name: string, fallbackData?: Drop): Drop => {
   const { getDataOfDrop } = useAirdrop()
 
   const { data } = useSWR(["drops", name, getDataOfDrop], getDrop, {

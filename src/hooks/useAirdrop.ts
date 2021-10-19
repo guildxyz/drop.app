@@ -57,7 +57,12 @@ const useAirdrop = () => {
   )
 
   const getDataOfDrop = useCallback(
-    (name: string): Promise<Drop> => contract.getDataOfDrop(name),
+    (name: string): Promise<Drop> =>
+      contract.getDataOfDrop(name).then(([serverId, roleIds, tokenAddress]) => ({
+        serverId,
+        roleIds,
+        tokenAddress,
+      })),
     [contract]
   )
 
@@ -189,7 +194,8 @@ const useAirdrop = () => {
           )
           await tx.wait()
           return contractId
-        } catch {
+        } catch (e) {
+          console.error(e)
           throw new TransactionError("Failed to start airdrop.")
         }
       },
@@ -243,6 +249,21 @@ const useAirdrop = () => {
     [contract]
   )
 
+  const claimables = useCallback(
+    (
+      serverId: string,
+      roleId: string,
+      tokenAddress: string
+    ): Promise<{ active: boolean; dropped: boolean }> =>
+      contract
+        .claimables(serverId, roleId, tokenAddress)
+        .then(([active, dropped]) => ({ active, dropped }))
+        .catch(() => {
+          throw new TransactionError("Failed to read claimable NFTs")
+        }),
+    [contract]
+  )
+
   /* const imageOfRole = useCallback(
     (serverId: string, roleId: string): Promise<[boolean, string]> =>
       contract.imageOfRole(serverId, roleId).catch(() => {
@@ -286,6 +307,7 @@ const useAirdrop = () => {
     claims,
     deployedTokens,
     deployTokenContract,
+    claimables,
     uploadedImages,
   }
 }

@@ -8,7 +8,8 @@ import PickRoles from "components/start-airdrop/PickRoles"
 import ServerSelect from "components/start-airdrop/ServerSelect"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
-import { FormProvider, useForm, useWatch } from "react-hook-form"
+import { useEffect } from "react"
+import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
@@ -21,6 +22,9 @@ const StartAirdropPage = (): JSX.Element => {
     name: "contractId",
     control: methods.control,
   })
+  const { errors } = useFormState({ control: methods.control })
+
+  useEffect(() => console.log(errors, serverId), [errors, serverId])
 
   if (!account)
     return (
@@ -50,7 +54,7 @@ const StartAirdropPage = (): JSX.Element => {
               <Asset />
             </Section>
           )}
-          {!!serverId && (
+          {!!serverId && errors?.name === undefined && (
             <Section title="Pick roles">
               <PickRoles />
             </Section>

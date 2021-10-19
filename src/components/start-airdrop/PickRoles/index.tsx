@@ -5,6 +5,7 @@ import {
   Grid,
   useCheckboxGroup,
 } from "@chakra-ui/react"
+import useDeployedTokens from "hooks/useDeployedTokens"
 import { ReactElement, useEffect, useState } from "react"
 import { useController, useFormContext, useWatch } from "react-hook-form"
 import RoleCheckbox from "./components/RoleCheckbox"
@@ -24,6 +25,8 @@ const PickRoles = (): ReactElement => {
   useEffect(() => setValue("inputHashes", inputHashes), [setValue, inputHashes])
 
   const serverId = useWatch({ name: "serverId" })
+  const contractId = useWatch({ name: "contractId" })
+  const deployedTokens = useDeployedTokens()
   const roles = useRoles(serverId)
 
   const { field } = useController({
@@ -54,6 +57,8 @@ const PickRoles = (): ReactElement => {
               setInputHashes={setInputHashes}
               name={name}
               id={id}
+              serverId={serverId}
+              tokenAddress={deployedTokens?.[contractId]}
               {...getCheckboxProps({ value: id })}
             />
           ))}

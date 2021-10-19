@@ -8,7 +8,8 @@ import {
 } from "@chakra-ui/react"
 import PhotoUploader from "components/common/PhotoUploader"
 import useAirdrop from "hooks/useAirdrop"
-import type { Dispatch, ReactElement, SetStateAction } from "react"
+import useIsActive from "hooks/useIsActive"
+import { Dispatch, ReactElement, SetStateAction, useEffect } from "react"
 
 type Props = {
   id: string
@@ -17,6 +18,8 @@ type Props = {
   setImages: Dispatch<SetStateAction<Record<string, File>>>
   inputHashes: Record<string, string>
   setInputHashes: Dispatch<SetStateAction<Record<string, string>>>
+  serverId: string
+  tokenAddress: string
 } & CheckboxProps
 
 const RoleCheckbox = ({
@@ -26,6 +29,8 @@ const RoleCheckbox = ({
   setImages,
   inputHashes,
   setInputHashes,
+  serverId,
+  tokenAddress,
   ...checkBoxProps
 }: Props): ReactElement => {
   const {
@@ -36,6 +41,18 @@ const RoleCheckbox = ({
   const { uploadedImages } = useAirdrop()
   const input = getInputProps()
   const checkbox = getCheckboxProps()
+  const isActive = useIsActive(serverId, id, tokenAddress)
+  useEffect(
+    () =>
+      console.log({
+        serverId,
+        id,
+        tokenAddress,
+      }),
+    []
+  )
+
+  if (isActive) return null
 
   return (
     <VStack>
