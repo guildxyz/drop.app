@@ -58,7 +58,7 @@ const useFetchMachine = <SubmitData>(
 
   const onSubmit = (data: SubmitData) => {
     console.log(data)
-    send("START_AIRDROP", { data })
+    send("START", { data })
   }
 
   return {

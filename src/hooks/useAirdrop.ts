@@ -80,11 +80,19 @@ const useAirdrop = () => {
   )
 
   const deployTokenContract = useCallback(
-    async (tokenName: string, tokenSymbol: string): Promise<number> => {
+    async (
+      tokenName: string,
+      tokenSymbol: string
+    ): Promise<{ contractId: number; tokenAddress: string }> => {
       const tx = await contract.deployTokenContract(tokenName, tokenSymbol)
       await tx.wait()
       const numOfContracts = await numOfDeployedContracts(account)
-      return +numOfContracts
+      const contractId = +numOfContracts - 1
+      const tokenAddress = await contractsByDeployer(account, contractId)
+      return {
+        contractId,
+        tokenAddress,
+      }
     },
     [contract, account]
   )
@@ -111,25 +119,18 @@ const useAirdrop = () => {
         images: Record<string, File>,
         inputHashes: Record<string, string>,
         assetType: string,
-        _assetData: NFTData,
         contractId: string
       ) =>
       async () => {
         if (assetType !== "NFT") throw new Error("Asset type not implemented")
-        if (contractId?.length <= 0) throw new Error("Invalid token contract")
+        if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
-        const assetData = _assetData
-
-        if (contractId?.length > 0 && contractId !== "DEPLOY") {
-          const tokenAddress = await contractsByDeployer(account, +contractId)
-          const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
-          const [name, symbol] = await Promise.all([
-            tokenContract.name(),
-            tokenContract.symbol(),
-          ])
-          assetData.name = name
-          assetData.symbol = symbol
-        }
+        const tokenAddress = await contractsByDeployer(account, +contractId)
+        const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
+        const assetData = await Promise.all([
+          tokenContract.name(),
+          tokenContract.symbol(),
+        ]).then(([name, symbol]) => ({ name, symbol }))
 
         const { signature } = await fetch("/api/get-signature/start-airdrop", {
           method: "POST",

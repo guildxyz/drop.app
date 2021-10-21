@@ -9,10 +9,11 @@ import ServerSelect from "components/start-airdrop/ServerSelect"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useDeployedTokens from "hooks/useDeployedTokens"
+import { useEffect } from "react"
 import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
-  const deployedTokens = useDeployedTokens()
+  const { deployedTokens } = useDeployedTokens()
   const { account } = useWeb3React()
   const methods = useForm({ mode: "all" })
   const serverId = useWatch({
@@ -24,6 +25,8 @@ const StartAirdropPage = (): JSX.Element => {
     control: methods.control,
   })
   const { errors } = useFormState({ control: methods.control })
+
+  useEffect(() => console.log(contractId), [contractId])
 
   if (!account)
     return (

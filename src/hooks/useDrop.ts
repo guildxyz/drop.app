@@ -7,9 +7,7 @@ const getDrop = async (
   getDataOfDrop: (name: string) => Promise<Drop & { name: string }>
 ): Promise<Drop> =>
   getDataOfDrop(name).then((drop) => ({
-    serverId: drop[0],
-    roleIds: drop[1],
-    tokenAddress: drop[2],
+    ...drop,
     name,
   }))
 

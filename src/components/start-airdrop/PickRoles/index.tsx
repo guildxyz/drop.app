@@ -26,7 +26,7 @@ const PickRoles = (): ReactElement => {
 
   const serverId = useWatch({ name: "serverId" })
   const contractId = useWatch({ name: "contractId" })
-  const deployedTokens = useDeployedTokens()
+  const { deployedTokens } = useDeployedTokens()
   const roles = useRoles(serverId)
 
   const { field } = useController({

@@ -5,7 +5,7 @@ import { useController } from "react-hook-form"
 import Token from "./components/Token"
 
 const TokenSelect = (): ReactElement => {
-  const deployedTokens = useDeployedTokens()
+  const { deployedTokens } = useDeployedTokens()
 
   const { field } = useController({
     defaultValue: "",

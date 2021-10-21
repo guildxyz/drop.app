@@ -32,7 +32,6 @@ const useStartAirdropMachine = (): {
             inputHashes,
             images,
             assetType,
-            assetData,
             contractId,
           },
         }: StartEvent
@@ -45,7 +44,6 @@ const useStartAirdropMachine = (): {
           images,
           inputHashes,
           assetType,
-          assetData,
           contractId
         )(),
     },
