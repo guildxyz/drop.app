@@ -7,9 +7,9 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import PhotoUploader from "components/common/PhotoUploader"
-import useAirdrop from "hooks/useAirdrop"
 import useIsActive from "hooks/useIsActive"
-import { Dispatch, ReactElement, SetStateAction, useEffect } from "react"
+import { Dispatch, ReactElement, SetStateAction, useEffect, useRef } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
 
 type Props = {
   id: string
@@ -38,26 +38,26 @@ const RoleCheckbox = ({
     getCheckboxProps,
     state: { isChecked },
   } = useCheckbox(checkBoxProps)
-  const { uploadedImages } = useAirdrop()
+  const checkBoxRef = useRef<HTMLInputElement>(null)
   const input = getInputProps()
   const checkbox = getCheckboxProps()
   const isActive = useIsActive(serverId, id, tokenAddress)
-  useEffect(
-    () =>
-      console.log({
-        serverId,
-        id,
-        tokenAddress,
-      }),
-    []
-  )
+  const { setValue } = useFormContext()
+  const roles = useWatch({ name: "roles", defaultValue: [] })
+  useEffect(() => {
+    if (isActive && roles.includes(id))
+      setValue(
+        "roles",
+        roles.filter((roleId) => roleId != id)
+      )
+  }, [isActive, roles, setValue, id])
 
   if (isActive) return null
 
   return (
     <VStack>
       <Box width="full" as="label">
-        <input {...input} />
+        <input ref={checkBoxRef} {...input} />
         <Box
           {...checkbox}
           cursor="pointer"

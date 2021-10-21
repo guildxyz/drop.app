@@ -1,32 +1,14 @@
-import {
-  FormControl,
-  FormErrorMessage,
-  Input,
-  useRadioGroup,
-} from "@chakra-ui/react"
+import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
 import DropdownRadio from "components/common/DropdownRadio"
 import { ReactElement } from "react"
-import { useController, useFormContext, useFormState } from "react-hook-form"
+import { useFormContext, useFormState } from "react-hook-form"
 
-const InputNFT = (): ReactElement => {
+const InputNFT = (props): ReactElement => {
   const { register } = useFormContext()
   const { errors } = useFormState()
-  const { field } = useController({
-    defaultValue: "NFT",
-    name: "assetType",
-    rules: {
-      validate: (value) => value.length > 0 || "You must pick at least one role",
-    },
-  })
-
-  const { getRadioProps } = useRadioGroup({
-    defaultValue: "NFT",
-    onChange: field.onChange,
-    value: field.value,
-  })
 
   return (
-    <DropdownRadio title="NFT" {...getRadioProps({ value: "NFT" })}>
+    <DropdownRadio title="NFT" {...props}>
       <FormControl isInvalid={errors.assetData?.name}>
         <Input
           type="text"

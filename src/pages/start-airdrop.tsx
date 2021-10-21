@@ -9,8 +9,13 @@ import ServerSelect from "components/start-airdrop/ServerSelect"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useDeployedTokens from "hooks/useDeployedTokens"
-import { useEffect } from "react"
-import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
+import {
+  FormProvider,
+  useController,
+  useForm,
+  useFormState,
+  useWatch
+} from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
   const { deployedTokens } = useDeployedTokens()
@@ -26,7 +31,14 @@ const StartAirdropPage = (): JSX.Element => {
   })
   const { errors } = useFormState({ control: methods.control })
 
-  useEffect(() => console.log(contractId), [contractId])
+  const { field } = useController({
+    control: methods.control,
+    defaultValue: "NFT",
+    name: "assetType",
+    rules: {
+      validate: (value) => value.length > 0 || "You must pick at least one role",
+    },
+  })
 
   if (!account)
     return (
@@ -55,7 +67,7 @@ const StartAirdropPage = (): JSX.Element => {
           )}
           {contractId === "DEPLOY" && (
             <Section title="Choose a type of asset to deploy">
-              <Asset />
+              <Asset field={field} />
             </Section>
           )}
           {!!serverId && errors?.name === undefined && (

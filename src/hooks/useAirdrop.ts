@@ -26,13 +26,17 @@ export type Drop = {
   id?: number
 }
 
-const uploadImages = async (images: Record<string, File>, serverId: string) => {
+const uploadImages = async (
+  images: Record<string, File>,
+  serverId: string,
+  tokenAddress: string
+) => {
   const formData = new FormData()
   Object.entries(images).forEach(([id, image]) =>
     formData.append(
-      `${serverId}-${id}.png`,
+      `${serverId}-${id}-${tokenAddress}.png`,
       image,
-      `${serverId}-${id}.${image.name.split(".").pop()}`
+      `${serverId}-${id}-${tokenAddress}.${image.name.split(".").pop()}`
     )
   )
   const hashes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/uploadImages`, {
@@ -149,7 +153,7 @@ const useAirdrop = () => {
         )
 
         const hashes = Object.keys(images).length
-          ? await uploadImages(images, serverId)
+          ? await uploadImages(images, serverId, tokenAddress)
           : {}
 
         setUploadedImages({

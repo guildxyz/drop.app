@@ -1,22 +1,30 @@
-import { Button, Center, Grid } from "@chakra-ui/react"
+import { Button, Center, Grid, useRadioGroup } from "@chakra-ui/react"
 import useDeployTokenMachine from "hooks/useDeployTokenMachine"
-import { ReactElement, useEffect } from "react"
-import { useWatch } from "react-hook-form"
+import { ReactElement } from "react"
+import { useForm, useFormContext, useWatch } from "react-hook-form"
 import InputNFT from "./components/InputNFT"
 
-const Asset = (): ReactElement => {
+const Asset = ({ field }): ReactElement => {
+  const startFormMethods = useFormContext()
+  const methods = useForm({ mode: "all" })
   const assetData = useWatch({
     name: "assetData",
     defaultValue: { name: "", symbol: "" },
+    control: methods.control,
   })
-  const { onSubmit, isLoading, isSuccess, state } = useDeployTokenMachine()
 
-  useEffect(() => console.log(state), [state])
+  const { getRadioProps, getRootProps } = useRadioGroup({
+    defaultValue: "NFT",
+    onChange: field.onChange,
+    value: field.value,
+  })
+
+  const { onSubmit, isLoading, isSuccess } = useDeployTokenMachine()
 
   return (
     <Grid gridTemplateColumns="1fr" gap={10}>
-      <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-        <InputNFT />
+      <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} {...getRootProps()}>
+        <InputNFT {...getRadioProps({ value: "NFT" })} />
         <Button disabled>Token</Button>
         <Button disabled>ERC 1155</Button>
       </Grid>
