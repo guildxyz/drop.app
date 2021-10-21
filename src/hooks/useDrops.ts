@@ -14,9 +14,7 @@ const getDrops = async (
   const drops = await Promise.all(
     dropNames.map((name, id) =>
       getDataOfDrop(name).then((drop) => ({
-        serverId: drop[0],
-        roleIds: drop[1],
-        tokenAddress: drop[2],
+        ...drop,
         name,
         id,
       }))

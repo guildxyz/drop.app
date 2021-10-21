@@ -1,4 +1,4 @@
-import { Grid, useRadioGroup } from "@chakra-ui/react"
+import { Grid, Text, useRadioGroup } from "@chakra-ui/react"
 import useDeployedTokens from "hooks/useDeployedTokens"
 import { ReactElement } from "react"
 import { useController } from "react-hook-form"
@@ -21,16 +21,20 @@ const TokenSelect = (): ReactElement => {
     value: field.value,
   })
 
+  if (deployedTokens === undefined || deployedTokens?.length <= 0) return null
+
   return (
-    <Grid {...getRootProps()} w="full">
-      {deployedTokens &&
-        deployedTokens.map((address, index) => (
-          <Token
-            key={address}
-            address={address}
-            {...getRadioProps({ value: index.toString() })}
-          />
-        ))}
+    <Grid {...getRootProps()} w="full" gap={5}>
+      {deployedTokens.map((address, index) => (
+        <Token
+          key={address}
+          address={address}
+          {...getRadioProps({ value: index.toString() })}
+        />
+      ))}
+      <Token {...getRadioProps({ value: "DEPLOY" })}>
+        <Text>Deploy a new asset</Text>
+      </Token>
     </Grid>
   )
 }

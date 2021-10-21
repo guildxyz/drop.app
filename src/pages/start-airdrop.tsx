@@ -8,10 +8,11 @@ import PickRoles from "components/start-airdrop/PickRoles"
 import ServerSelect from "components/start-airdrop/ServerSelect"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
-import { useEffect } from "react"
+import useDeployedTokens from "hooks/useDeployedTokens"
 import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
+  const deployedTokens = useDeployedTokens()
   const { account } = useWeb3React()
   const methods = useForm({ mode: "all" })
   const serverId = useWatch({
@@ -23,8 +24,6 @@ const StartAirdropPage = (): JSX.Element => {
     control: methods.control,
   })
   const { errors } = useFormState({ control: methods.control })
-
-  useEffect(() => console.log(errors, serverId), [errors, serverId])
 
   if (!account)
     return (
@@ -46,11 +45,13 @@ const StartAirdropPage = (): JSX.Element => {
           <Section title="Choose a server">
             <ServerSelect />
           </Section>
-          <Section title="Choose an existiong token">
-            <TokenSelect />
-          </Section>
-          {(!contractId || contractId?.length <= 0) && (
-            <Section title="Or choose a type of asset to deploy">
+          {deployedTokens?.length > 0 && (
+            <Section title="Choose an existiong token">
+              <TokenSelect />
+            </Section>
+          )}
+          {contractId === "DEPLOY" && (
+            <Section title="Choose a type of asset to deploy">
               <Asset />
             </Section>
           )}

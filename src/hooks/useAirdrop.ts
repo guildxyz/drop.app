@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
@@ -47,7 +48,8 @@ const useAirdrop = () => {
   const contract = useContract(AirdropAddresses[Chains[chainId]], AIRDROP_ABI, true)
 
   const numOfDeployedContracts = useCallback(
-    (address: string): Promise<number> => contract.numOfDeployedContracts(address),
+    (address: string): Promise<BigNumber> =>
+      contract.numOfDeployedContracts(address),
     [contract]
   )
 
@@ -82,7 +84,7 @@ const useAirdrop = () => {
       const tx = await contract.deployTokenContract(tokenName, tokenSymbol)
       await tx.wait()
       const numOfContracts = await numOfDeployedContracts(account)
-      return numOfContracts
+      return +numOfContracts
     },
     [contract, account]
   )
@@ -91,7 +93,7 @@ const useAirdrop = () => {
     async (address: string) => {
       const numberOfTokens = await contract.numOfDeployedContracts(address)
       const tokenAddresses = await Promise.all(
-        [...Array(numberOfTokens)].map((_, index) =>
+        [...Array(+numberOfTokens)].map((_, index) =>
           contract.contractsByDeployer(address, index)
         )
       )
@@ -118,7 +120,7 @@ const useAirdrop = () => {
 
         const assetData = _assetData
 
-        if (contractId?.length > 0) {
+        if (contractId?.length > 0 && contractId !== "DEPLOY") {
           const tokenAddress = await contractsByDeployer(account, +contractId)
           const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
           const [name, symbol] = await Promise.all([

@@ -1,9 +1,17 @@
-import { Box, HStack, Text, useRadio } from "@chakra-ui/react"
+import { Box, HStack, RadioProps, Text, useRadio } from "@chakra-ui/react"
 import useTokenName from "hooks/useTokenName"
 import useTokenSymbol from "hooks/useTokenSymbol"
-import { ReactElement } from "react"
+import { PropsWithChildren, ReactElement } from "react"
 
-const Token = ({ address, ...props }): ReactElement => {
+type Props = {
+  address?: string
+} & RadioProps
+
+const Token = ({
+  address,
+  children,
+  ...props
+}: PropsWithChildren<Props>): ReactElement => {
   const { getInputProps, getCheckboxProps } = useRadio(props)
   const name = useTokenName(address)
   const symbol = useTokenSymbol(address)
@@ -12,7 +20,7 @@ const Token = ({ address, ...props }): ReactElement => {
   const checkbox = getCheckboxProps()
 
   return (
-    <Box as="label" key={address}>
+    <Box as="label">
       <input {...input} />
       <HStack
         {...checkbox}
@@ -29,11 +37,17 @@ const Token = ({ address, ...props }): ReactElement => {
         py={3}
         justifyContent="space-between"
       >
-        <Text>
-          {name} ({symbol})
-        </Text>
+        {children ? (
+          children
+        ) : (
+          <>
+            <Text>
+              {name} ({symbol})
+            </Text>
 
-        <Text>{address}</Text>
+            <Text>{address}</Text>
+          </>
+        )}
       </HStack>
     </Box>
   )
