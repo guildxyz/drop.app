@@ -2,11 +2,14 @@ import {
   Box,
   CheckboxProps,
   Fade,
+  FormControl,
+  FormLabel,
   Input,
   useCheckbox,
   VStack,
 } from "@chakra-ui/react"
 import PhotoUploader from "components/common/PhotoUploader"
+import useRoles from "hooks/discord/useRoles"
 import useIsActive from "hooks/useIsActive"
 import { Dispatch, ReactElement, SetStateAction, useEffect, useRef } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
@@ -44,6 +47,7 @@ const RoleCheckbox = ({
   const isActive = useIsActive(serverId, id, tokenAddress)
   const { setValue } = useFormContext()
   const roles = useWatch({ name: "roles", defaultValue: [] })
+  const metaDataKeys = useWatch({ name: "metaDataKeys", defaultValue: [] })
   useEffect(() => {
     if (isActive && roles.includes(id))
       setValue(
@@ -51,6 +55,17 @@ const RoleCheckbox = ({
         roles.filter((roleId) => roleId != id)
       )
   }, [isActive, roles, setValue, id])
+
+  const allRoles = useRoles(serverId)
+  const traits = useWatch({
+    name: "traits",
+    defaultValue: Object.fromEntries(
+      Object.keys(allRoles ?? {}).map((roleId) => [
+        roleId,
+        Object.fromEntries(metaDataKeys.map((key) => [key, ""])),
+      ])
+    ),
+  })
 
   if (isActive) return null
 
@@ -95,6 +110,20 @@ const RoleCheckbox = ({
               }
             />
           </Fade>
+          {metaDataKeys.map((key) => (
+            <FormControl key={key}>
+              <FormLabel>{key}</FormLabel>
+              <Input
+                value={traits[id][key]}
+                onChange={({ target: { value } }) =>
+                  setValue("traits", {
+                    ...traits,
+                    [id]: { ...traits[id], [key]: value },
+                  })
+                }
+              />
+            </FormControl>
+          ))}
         </VStack>
       )}
     </VStack>

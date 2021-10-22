@@ -17,6 +17,7 @@ export type StartAirdropData = {
   images: Record<string, File>
   inputHashes: Record<string, string>
   contractId: string
+  traits: Record<string, Record<string, string>>
 }
 
 export type Context = Record<string, unknown>

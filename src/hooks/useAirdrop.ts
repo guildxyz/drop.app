@@ -13,11 +13,6 @@ export enum AirdropAddresses {
   GOERLI = "0xb33F85251De73bAd4343080d6D6266fA88f5117f",
 }
 
-type NFTData = {
-  name: string
-  symbol: string
-}
-
 export type Drop = {
   serverId: string
   roleIds: string[]
@@ -123,7 +118,8 @@ const useAirdrop = () => {
         images: Record<string, File>,
         inputHashes: Record<string, string>,
         assetType: string,
-        contractId: string
+        contractId: string,
+        traits: Record<string, Record<string, string>>
       ) =>
       async () => {
         if (assetType !== "NFT") throw new Error("Asset type not implemented")
@@ -178,8 +174,8 @@ const useAirdrop = () => {
               tokenImageHash:
                 hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
               tokenName: assetData.name,
-              traitTypes: [],
-              values: [],
+              traitTypes: Object.keys(traits[roleId] ?? {}),
+              values: Object.values(traits[roleId] ?? {}),
             })),
             contractId,
             channelId,
@@ -193,8 +189,8 @@ const useAirdrop = () => {
               tokenImageHash:
                 hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
               tokenName: assetData.name,
-              traitTypes: [],
-              values: [],
+              traitTypes: Object.keys(traits[roleId] ?? {}),
+              values: Object.values(traits[roleId] ?? {}),
             })),
             +contractId,
             channelId

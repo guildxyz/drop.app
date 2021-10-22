@@ -6,6 +6,7 @@ import Asset from "components/start-airdrop/Asset"
 import NameInput from "components/start-airdrop/NameInput"
 import PickRoles from "components/start-airdrop/PickRoles"
 import ServerSelect from "components/start-airdrop/ServerSelect"
+import SetMetadata from "components/start-airdrop/SetMetadata"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useDeployedTokens from "hooks/useDeployedTokens"
@@ -14,7 +15,7 @@ import {
   useController,
   useForm,
   useFormState,
-  useWatch
+  useWatch,
 } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
@@ -26,6 +27,7 @@ const StartAirdropPage = (): JSX.Element => {
     control: methods.control,
   })
   const contractId = useWatch({
+    defaultValue: "",
     name: "contractId",
     control: methods.control,
   })
@@ -65,9 +67,13 @@ const StartAirdropPage = (): JSX.Element => {
               <TokenSelect />
             </Section>
           )}
-          {contractId === "DEPLOY" && (
+          {contractId === "" ? null : contractId === "DEPLOY" ? (
             <Section title="Choose a type of asset to deploy">
               <Asset field={field} />
+            </Section>
+          ) : (
+            <Section title="Set metadata">
+              <SetMetadata />
             </Section>
           )}
           {!!serverId && errors?.name === undefined && (
