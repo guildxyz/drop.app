@@ -12,12 +12,19 @@ import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import useServersOfUser from "hooks/discord/useServersOfUser"
 import useDrops from "hooks/useDrops"
+import { GetServerSideProps } from "next"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 
-const Page = (): JSX.Element => {
+type Props = {
+  serverId?: string
+}
+
+const Page = ({ serverId }: Props): JSX.Element => {
   const { account } = useWeb3React()
-  const [searchInput, setSeacrhInput] = useState<string>("")
+  const [searchInput, setSeacrhInput] = useState<string>(
+    serverId?.length > 0 ? `server:${serverId}` : ""
+  )
 
   const serversOfUser = useServersOfUser()
 
@@ -64,7 +71,11 @@ const Page = (): JSX.Element => {
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
             {yourDrops
-              .filter(({ name }) => new RegExp(searchInput).test(name))
+              .filter(({ name, serverId: server }) => {
+                if (/^server:[0-9]{18}$/.test(searchInput.trim()))
+                  return server === searchInput.trim().slice(7)
+                return new RegExp(searchInput).test(name)
+              })
               .map(({ name, id }) => (
                 <Link key={id} href={`/${id}`} passHref>
                   <Center
@@ -104,4 +115,11 @@ const Page = (): JSX.Element => {
   )
 }
 
+const getServerSideProps: GetServerSideProps = async ({ query }) => ({
+  props: {
+    serverId: query.serverId as string,
+  },
+})
+
+export { getServerSideProps }
 export default Page
