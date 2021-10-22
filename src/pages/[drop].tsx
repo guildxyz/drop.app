@@ -44,7 +44,7 @@ const DropPage = (props: Drop): ReactElement => {
       </HStack>
 
       {drop.roleIds && (
-        <Grid mt={20} gridTemplateColumns="repeat(4, 1fr)">
+        <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
           {drop.roleIds.map((roleId) => (
             <ClaimCard roleId={roleId} key={roleId} drop={drop} />
           ))}

@@ -1,4 +1,16 @@
-import { Box, Button, HStack, Skeleton, Text, VStack } from "@chakra-ui/react"
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Button,
+  HStack,
+  Skeleton,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 import useRoleName from "hooks/discord/useRoleName"
 import { Drop } from "hooks/useAirdrop"
 import useClaimMachine from "hooks/useClaimMachine"
@@ -45,7 +57,23 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
             objectFit="cover"
           />
         </Box>
-        <Text>{roleData?.tokenName}</Text>
+        <Accordion allowMultiple>
+          <AccordionItem border="none">
+            <AccordionButton>
+              <HStack width="full" justifyContent="space-between">
+                <Text>{roleData?.tokenName}</Text>
+                <AccordionIcon />
+              </HStack>
+            </AccordionButton>
+            <AccordionPanel pb={4}>
+              {roleData?.traits.map(([key, value]) => (
+                <Text key={key}>
+                  {key}: {value}
+                </Text>
+              ))}
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
         <Button
           isLoading={isLoading}
           isDisabled={isClaimed || isSuccess}

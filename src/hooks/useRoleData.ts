@@ -4,7 +4,7 @@ import useRoleToken from "./useRoleToken"
 export type RoleData = {
   imageHash: string
   tokenName: string
-  traits: Array<[string, string]> // ?
+  traits: Array<[string, string]>
 }
 
 const getRoleData = (
