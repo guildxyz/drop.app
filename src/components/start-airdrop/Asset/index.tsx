@@ -1,16 +1,13 @@
 import { Button, Center, Grid, useRadioGroup } from "@chakra-ui/react"
 import useDeployTokenMachine from "hooks/useDeployTokenMachine"
 import { ReactElement } from "react"
-import { useForm, useFormContext, useWatch } from "react-hook-form"
+import { useWatch } from "react-hook-form"
 import InputNFT from "./components/InputNFT"
 
 const Asset = ({ field }): ReactElement => {
-  const startFormMethods = useFormContext()
-  const methods = useForm({ mode: "all" })
   const assetData = useWatch({
     name: "assetData",
     defaultValue: { name: "", symbol: "" },
-    control: methods.control,
   })
 
   const { getRadioProps, getRootProps } = useRadioGroup({

@@ -11,7 +11,10 @@ const TokenSelect = (): ReactElement => {
     defaultValue: "",
     name: "contractId",
     rules: {
-      validate: (value) => value.length > 0 || "You must pick a token",
+      validate: (value) => {
+        if (value === "DEPLOY") return "You need to complete the deployment"
+        return value.length > 0 || "You must pick a token"
+      },
     },
   })
 
