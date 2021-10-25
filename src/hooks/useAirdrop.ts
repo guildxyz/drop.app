@@ -122,7 +122,6 @@ const useAirdrop = () => {
         traits: Record<string, Record<string, string>>
       ) =>
       async () => {
-        if (assetType !== "NFT") throw new Error("Asset type not implemented")
         if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
         const tokenAddress = await contractsByDeployer(account, +contractId)
