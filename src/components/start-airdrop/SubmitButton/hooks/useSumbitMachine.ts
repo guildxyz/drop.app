@@ -47,7 +47,6 @@ const useSubmitMachine = () => {
   })
 
   const onSubmit = (data) => {
-    console.log("data")
     console.log(data)
     send("SUBMIT", { data })
   }

@@ -77,8 +77,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return
       }
 
-      console.log([AirdropAddresses[Chains[chainId]], serverId, name, address])
-
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "address"],
         [AirdropAddresses[Chains[chainId]], serverId, name, address]

@@ -65,14 +65,6 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const dropData = await response.json()
 
-  console.log({
-    serverId: dropData[0],
-    roleIds: dropData[1],
-    tokenAddress: dropData[2],
-    name: dropData.name,
-    id: dropData.id,
-  })
-
   return {
     props: {
       serverId: dropData[0],
