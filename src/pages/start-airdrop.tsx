@@ -62,11 +62,9 @@ const StartAirdropPage = (): JSX.Element => {
           <Section title="Choose a server">
             <ServerSelect />
           </Section>
-          {deployedTokens?.length > 0 && (
-            <Section title="Choose an existiong token">
-              <TokenSelect />
-            </Section>
-          )}
+          <Section title="Choose an existing token, or deploy a new one">
+            <TokenSelect />
+          </Section>
           {contractId === "" ? null : contractId === "DEPLOY" ? (
             <Section title="Choose a type of asset to deploy">
               <Asset field={field} />

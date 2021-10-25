@@ -21,17 +21,16 @@ const TokenSelect = (): ReactElement => {
     value: field.value,
   })
 
-  if (deployedTokens === undefined || deployedTokens?.length <= 0) return null
-
   return (
     <Grid {...getRootProps()} w="full" gap={5}>
-      {deployedTokens.map((address, index) => (
-        <Token
-          key={address}
-          address={address}
-          {...getRadioProps({ value: index.toString() })}
-        />
-      ))}
+      {deployedTokens?.length > 0 &&
+        deployedTokens.map((address, index) => (
+          <Token
+            key={address}
+            address={address}
+            {...getRadioProps({ value: index.toString() })}
+          />
+        ))}
       <Token {...getRadioProps({ value: "DEPLOY" })}>
         <Text>Deploy a new asset</Text>
       </Token>
