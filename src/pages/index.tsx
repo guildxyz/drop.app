@@ -35,25 +35,31 @@ const Page = ({ serverId }: Props): JSX.Element => {
   const [yourDrops, allDrops] = useMemo(
     () =>
       drops
-        ? drops
-            .filter(({ name, serverId: server }) => {
-              if (/^server:[0-9]{18}$/.test(searchInput.trim()))
-                return server === searchInput.trim().slice(7)
-              return new RegExp(searchInput).test(name)
-            })
-            .reduce(
-              (acc, airdrop) => {
-                if (serversOfUser?.includes(airdrop.serverId)) {
-                  acc[0].push(airdrop)
-                } else {
-                  acc[1].push(airdrop)
-                }
-                return acc
-              },
-              [[], []]
-            )
+        ? drops.reduce(
+            (acc, airdrop) => {
+              if (serversOfUser?.includes(airdrop.serverId)) {
+                acc[0].push(airdrop)
+              } else {
+                acc[1].push(airdrop)
+              }
+              return acc
+            },
+            [[], []]
+          )
         : [[], []],
     [drops, serversOfUser]
+  )
+
+  const [filteredYourDrops, filteredAllDrops] = useMemo(
+    () =>
+      [yourDrops, allDrops].map((_) =>
+        _.filter(({ name, serverId: server }) => {
+          if (/^server:[0-9]{18}$/.test(searchInput.trim()))
+            return server === searchInput.trim().slice(7)
+          return new RegExp(searchInput).test(name)
+        })
+      ),
+    [yourDrops, allDrops, searchInput]
   )
 
   if (!account)
@@ -78,7 +84,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
         />
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-            {yourDrops.map(({ name, id }) => (
+            {filteredYourDrops.map(({ name, id }) => (
               <Link key={id} href={`/${id}`} passHref>
                 <Center
                   backgroundColor="primary.700"
@@ -111,10 +117,10 @@ const Page = ({ serverId }: Props): JSX.Element => {
             </Link>
           </Grid>
         </Section>
-        {allDrops?.length > 0 && (
+        {filteredAllDrops?.length > 0 && (
           <Section title="All drops">
             <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-              {allDrops.map(({ name }) => (
+              {filteredAllDrops.map(({ name }) => (
                 <Link key={name} href={`/${name}`} passHref>
                   <Center
                     backgroundColor="primary.700"
