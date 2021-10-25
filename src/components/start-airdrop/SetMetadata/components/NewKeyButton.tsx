@@ -1,4 +1,4 @@
-import { Button, Input } from "@chakra-ui/react"
+import { IconButton, Input } from "@chakra-ui/react"
 import { Plus } from "phosphor-react"
 import { ReactElement, useState } from "react"
 import { Send, State } from "../hooks/useMetaDataKeysMachine"
@@ -13,14 +13,13 @@ const NewKeyButton = ({ state, send }: Props): ReactElement => {
 
   if (state.matches("idle"))
     return (
-      <Button
-        leftIcon={<Plus />}
+      <IconButton
+        aria-label="Add metadata key"
+        icon={<Plus />}
         colorScheme="purple"
         variant="outline"
         onClick={() => send("START")}
-      >
-        add more
-      </Button>
+      />
     )
 
   return (

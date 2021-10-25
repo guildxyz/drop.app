@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import { useFormContext } from "react-hook-form"
 import { mutate } from "swr"
-import useAirdrop from "./useAirdrop"
+import useAirdrop from "../useAirdrop"
 import useFetchMachine from "./useFetchMachine"
 
 type DeployToken = {

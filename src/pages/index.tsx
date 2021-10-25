@@ -1,6 +1,7 @@
 import {
   Alert,
   AlertIcon,
+  Button,
   Center,
   Grid,
   Input,
@@ -14,6 +15,7 @@ import useServersOfUser from "hooks/discord/useServersOfUser"
 import useDrops from "hooks/useDrops"
 import { GetServerSideProps } from "next"
 import Link from "next/link"
+import { Plus } from "phosphor-react"
 import { useMemo, useState } from "react"
 
 type Props = {
@@ -33,17 +35,23 @@ const Page = ({ serverId }: Props): JSX.Element => {
   const [yourDrops, allDrops] = useMemo(
     () =>
       drops
-        ? drops.reduce(
-            (acc, airdrop) => {
-              if (serversOfUser?.includes(airdrop.serverId)) {
-                acc[0].push(airdrop)
-              } else {
-                acc[1].push(airdrop)
-              }
-              return acc
-            },
-            [[], []]
-          )
+        ? drops
+            .filter(({ name, serverId: server }) => {
+              if (/^server:[0-9]{18}$/.test(searchInput.trim()))
+                return server === searchInput.trim().slice(7)
+              return new RegExp(searchInput).test(name)
+            })
+            .reduce(
+              (acc, airdrop) => {
+                if (serversOfUser?.includes(airdrop.serverId)) {
+                  acc[0].push(airdrop)
+                } else {
+                  acc[1].push(airdrop)
+                }
+                return acc
+              },
+              [[], []]
+            )
         : [[], []],
     [drops, serversOfUser]
   )
@@ -70,32 +78,42 @@ const Page = ({ serverId }: Props): JSX.Element => {
         />
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-            {yourDrops
-              .filter(({ name, serverId: server }) => {
-                if (/^server:[0-9]{18}$/.test(searchInput.trim()))
-                  return server === searchInput.trim().slice(7)
-                return new RegExp(searchInput).test(name)
-              })
-              .map(({ name, id }) => (
-                <Link key={id} href={`/${id}`} passHref>
-                  <Center
-                    backgroundColor="primary.700"
-                    borderRadius="lg"
-                    padding={10}
-                    transition="background-color .2s linear"
-                    _hover={{ cursor: "pointer", backgroundColor: "purple.500" }}
-                  >
-                    <Text fontSize="xl">{name}</Text>
-                  </Center>
-                </Link>
-              ))}
+            {yourDrops.map(({ name, id }) => (
+              <Link key={id} href={`/${id}`} passHref>
+                <Center
+                  backgroundColor="primary.700"
+                  borderRadius="lg"
+                  padding={10}
+                  transition="background-color .2s linear"
+                  _hover={{ cursor: "pointer", backgroundColor: "purple.500" }}
+                >
+                  <Text fontSize="xl">{name}</Text>
+                </Center>
+              </Link>
+            ))}
+            <Link href="/start-airdrop" passHref>
+              <Button
+                height="full"
+                colorScheme="purple"
+                variant="outline"
+                leftIcon={
+                  <Plus
+                    size={20}
+                    weight="light"
+                    color="var(--chakra-colors-purple-300)"
+                  />
+                }
+                aria-label="Start a new airdrop"
+              >
+                New drop
+              </Button>
+            </Link>
           </Grid>
         </Section>
-        <Section title="All drops">
-          <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-            {allDrops
-              .filter(({ name }) => new RegExp(searchInput).test(name))
-              .map(({ name }) => (
+        {allDrops?.length > 0 && (
+          <Section title="All drops">
+            <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+              {allDrops.map(({ name }) => (
                 <Link key={name} href={`/${name}`} passHref>
                   <Center
                     backgroundColor="primary.700"
@@ -108,8 +126,9 @@ const Page = ({ serverId }: Props): JSX.Element => {
                   </Center>
                 </Link>
               ))}
-          </Grid>
-        </Section>
+            </Grid>
+          </Section>
+        )}
       </VStack>
     </Layout>
   )

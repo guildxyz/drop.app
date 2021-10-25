@@ -9,13 +9,8 @@ import ServerSelect from "components/start-airdrop/ServerSelect"
 import SetMetadata from "components/start-airdrop/SetMetadata"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
-import {
-  FormProvider,
-  useController,
-  useForm,
-  useFormState,
-  useWatch,
-} from "react-hook-form"
+import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
+
 const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
   const methods = useForm({ mode: "all" })
@@ -28,16 +23,7 @@ const StartAirdropPage = (): JSX.Element => {
     name: "contractId",
     control: methods.control,
   })
-  const { errors } = useFormState({ control: methods.control })
-
-  const { field } = useController({
-    control: methods.control,
-    defaultValue: "NFT",
-    name: "assetType",
-    rules: {
-      validate: (value) => value.length > 0 || "You must pick at least one role",
-    },
-  })
+  const { errors, isValid } = useFormState({ control: methods.control })
 
   if (!account)
     return (
@@ -64,7 +50,7 @@ const StartAirdropPage = (): JSX.Element => {
           </Section>
           {contractId === "" ? null : contractId === "DEPLOY" ? (
             <Section title="Choose a type of asset to deploy">
-              <Asset field={field} />
+              <Asset />
             </Section>
           ) : (
             <Section title="Set metadata">
@@ -77,7 +63,7 @@ const StartAirdropPage = (): JSX.Element => {
             </Section>
           )}
 
-          <SubmitButton />
+          {isValid && <SubmitButton />}
         </VStack>
       </Layout>
     </FormProvider>

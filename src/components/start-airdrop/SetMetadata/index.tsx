@@ -13,7 +13,13 @@ const SetMetadata = (): ReactElement => {
   return (
     <Grid templateColumns="repeat(7, 1fr)" gap={2}>
       {metaDataKeys.map((key: string) => (
-        <Center key={key} backgroundColor="gray.700" paddingX={8} paddingY={2}>
+        <Center
+          key={key}
+          backgroundColor="gray.700"
+          paddingX={8}
+          paddingY={2}
+          borderRadius="lg"
+        >
           {key}
         </Center>
       ))}

@@ -1,15 +1,15 @@
 import CtaButton from "components/common/CtaButton"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useDCAuthMachine from "hooks/machines/useDCAuthMachine"
+import useStartAirdropMachine from "hooks/machines/useStartAirdropMachine"
 import usePersonalSign from "hooks/usePersonalSign"
-import useStartAirdropMAchine from "hooks/useStartAirdropMachine"
 import { ReactElement, useMemo } from "react"
 import { useFormContext } from "react-hook-form"
 
 const SubmitButton = (): ReactElement => {
   const isAuthenticated = useIsAuthenticated()
   const { isSigning, callbackWithSign } = usePersonalSign(true)
-  const { onSubmit, isLoading, isSuccess } = useStartAirdropMAchine()
+  const { onSubmit, isLoading, isSuccess } = useStartAirdropMachine()
   const {
     isSuccess: isAuthSuccess,
     isLoading: isAuthLoading,
