@@ -117,7 +117,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
 
 const getServerSideProps: GetServerSideProps = async ({ query }) => ({
   props: {
-    serverId: query.serverId as string,
+    serverId: query.serverId ? (query.serverId as string) : null,
   },
 })
 
