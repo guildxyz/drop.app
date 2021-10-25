@@ -94,6 +94,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
             <Link href="/start-airdrop" passHref>
               <Button
                 height="full"
+                minHeight={20}
                 colorScheme="purple"
                 variant="outline"
                 leftIcon={
