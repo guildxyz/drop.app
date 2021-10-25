@@ -1,13 +1,14 @@
 import { Box, Button, Img, Tooltip } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { Chains, RPC } from "connectors"
+import { ReactElement } from "react"
 
 type Props = {
   chain: string
   requestNetworkChange: () => void
 }
 
-const NetworkButton = ({ chain, requestNetworkChange }: Props) => {
+const NetworkButton = ({ chain, requestNetworkChange }: Props): ReactElement => {
   const { chainId } = useWeb3React()
 
   const isCurrentChain = Chains[chain] === chainId

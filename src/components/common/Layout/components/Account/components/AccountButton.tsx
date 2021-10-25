@@ -1,6 +1,12 @@
 import { Button, useColorMode } from "@chakra-ui/react"
+import { PropsWithChildren } from "react"
 
-const AccountButton = ({ children, ...rest }): JSX.Element => {
+type Props = Record<string, any>
+
+const AccountButton = ({
+  children,
+  ...rest
+}: PropsWithChildren<Props>): JSX.Element => {
   const { colorMode } = useColorMode()
 
   return (

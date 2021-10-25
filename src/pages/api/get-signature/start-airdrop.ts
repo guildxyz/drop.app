@@ -22,7 +22,7 @@ const REQUIRED_BODY = [
   { key: "name", type: "string" },
 ]
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   if (req.method === "POST") {
     const missingKeys = REQUIRED_BODY.filter(({ key }) => !(key in req.body))
     if (missingKeys.length > 0) {

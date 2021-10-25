@@ -208,7 +208,12 @@ const chakraComponents = {
       </selectComponents.Menu>
     )
   },
-  MenuList: ({ innerRef, children, maxHeight, selectProps: { size } }) => {
+  MenuList: ({
+    innerRef,
+    children,
+    maxHeight: _maxHeight,
+    selectProps: { size },
+  }) => {
     const { list } = useStyles()
     const chakraTheme = useTheme()
 

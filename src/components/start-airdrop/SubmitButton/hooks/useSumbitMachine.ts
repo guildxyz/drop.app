@@ -1,10 +1,13 @@
 import { useMachine } from "@xstate/react"
-import usePersonalSign from "hooks/usePersonalSign"
 import useToast from "hooks/useToast"
-import { useRouter } from "next/router"
-import { useSWRConfig } from "swr"
 import { assign, createMachine } from "xstate"
 import useShowErrorToast from "./useShowErrorToast"
+
+type SubmitMachine = {
+  onSubmit: (data: any) => void
+  isLoading: boolean
+  isSuccess: boolean
+}
 
 const machine = createMachine(
   {
@@ -22,12 +25,9 @@ const machine = createMachine(
   }
 )
 
-const useSubmitMachine = () => {
-  const { mutate } = useSWRConfig()
+const useSubmitMachine = (): SubmitMachine => {
   const toast = useToast()
   const showErrorToast = useShowErrorToast()
-  const router = useRouter()
-  const { addressSignedMessage } = usePersonalSign()
 
   const [state, send] = useMachine(machine, {
     services: {},

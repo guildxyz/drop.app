@@ -5,7 +5,7 @@ import { Chains, RPC } from "connectors"
 type WindowType = Window & typeof globalThis & { ethereum: ExternalProvider }
 
 const requestNetworkChange =
-  (targetNetwork: string, callback?: () => void) => async () => {
+  (targetNetwork: string, callback?: () => void) => async (): Promise<void> => {
     // Not using .toHexString(), because the method requires unpadded format: '0x1' for mainnet, not '0x01'
     const chainId = `0x${(+BigNumber.from(Chains[targetNetwork])).toString(16)}`
 

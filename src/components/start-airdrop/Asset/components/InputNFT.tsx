@@ -1,9 +1,9 @@
-import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
+import { FormControl, FormErrorMessage, Input, RadioProps } from "@chakra-ui/react"
 import DropdownRadio from "components/common/DropdownRadio"
 import { ReactElement } from "react"
 import { useFormContext, useFormState } from "react-hook-form"
 
-const InputNFT = (props): ReactElement => {
+const InputNFT = (props: RadioProps): ReactElement => {
   const { register } = useFormContext()
   const { errors } = useFormState()
 

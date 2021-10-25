@@ -14,10 +14,15 @@ import CopyableAddress from "components/common/CopyableAddress"
 import GuildAvatar from "components/common/GuildAvatar"
 import Modal from "components/common/Modal"
 import { injected } from "connectors"
-import { useContext } from "react"
+import { ReactElement, useContext } from "react"
 import { Web3Connection } from "../../../../../../_app/Web3ConnectionManager"
 
-const AccountModal = ({ isOpen, onClose }) => {
+type Props = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+const AccountModal = ({ isOpen, onClose }: Props): ReactElement => {
   const { account, connector } = useWeb3React()
   const { openWalletSelectorModal } = useContext(Web3Connection)
 

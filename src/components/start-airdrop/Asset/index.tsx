@@ -1,10 +1,14 @@
 import { Button, Center, Grid, useRadioGroup } from "@chakra-ui/react"
 import useDeployTokenMachine from "hooks/useDeployTokenMachine"
 import { ReactElement } from "react"
-import { useWatch } from "react-hook-form"
+import { ControllerRenderProps, useWatch } from "react-hook-form"
 import InputNFT from "./components/InputNFT"
 
-const Asset = ({ field }): ReactElement => {
+type Props = {
+  field: ControllerRenderProps
+}
+
+const Asset = ({ field }: Props): ReactElement => {
   const assetData = useWatch({
     name: "assetData",
     defaultValue: { name: "", symbol: "" },

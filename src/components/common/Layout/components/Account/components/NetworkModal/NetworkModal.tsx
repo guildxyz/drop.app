@@ -12,10 +12,16 @@ import Modal from "components/common/Modal"
 import processConnectionError from "components/_app/Web3ConnectionManager/components/WalletSelectorModal/utils/processConnectionError"
 import { supportedChains, walletConnect } from "connectors"
 import useToast from "hooks/useToast"
+import { ReactElement } from "react"
 import NetworkButton from "./components/NetworkButton"
 import requestNetworkChange from "./utils/requestNetworkChange"
 
-const NetworkModal = ({ isOpen, onClose }) => {
+type Props = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+const NetworkModal = ({ isOpen, onClose }: Props): ReactElement => {
   const { error, connector } = useWeb3React()
   const toast = useToast()
 

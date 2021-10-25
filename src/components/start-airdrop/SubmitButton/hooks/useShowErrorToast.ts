@@ -7,7 +7,7 @@ export type ApiError = {
   location?: string
 }
 
-const useShowErrorToast = () => {
+const useShowErrorToast = (): ((errors: string | ApiError[]) => void) => {
   const toast = useToast()
 
   const showErrorToast = (errors: string | ApiError[]) => {
