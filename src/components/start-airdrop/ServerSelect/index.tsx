@@ -27,7 +27,7 @@ const ServerSelect = (): ReactElement => {
   useEffect(() => setValue("serverId", serverId), [setValue, serverId])
 
   const isBotAdded = useMemo(
-    () => Object.keys(channels ?? {})?.length > 0 && serverId > 0,
+    () => Object.keys(channels ?? {})?.length > 0 && serverId?.length > 0,
     [channels, serverId]
   )
 
