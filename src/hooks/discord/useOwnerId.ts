@@ -1,7 +1,7 @@
 import useSWRImmutable from "swr/immutable"
 
 const fetchOwnerId = (_: string, serverId: string) =>
-  fetch(`${process.env.NEXT_PUBLIC_DISCORD_API}/owner/${serverId}`).then(
+  fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/owner/${serverId}`).then(
     (response) =>
       response.ok
         ? response.json()

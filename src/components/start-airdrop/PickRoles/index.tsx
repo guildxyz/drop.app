@@ -5,11 +5,11 @@ import {
   Grid,
   useCheckboxGroup,
 } from "@chakra-ui/react"
+import useRoles from "hooks/discord/useRoles"
 import useDeployedTokens from "hooks/useDeployedTokens"
 import { ReactElement, useEffect, useState } from "react"
 import { useController, useFormContext, useWatch } from "react-hook-form"
 import RoleCheckbox from "./components/RoleCheckbox"
-import useRoles from "./hooks/useRoles"
 
 const PickRoles = (): ReactElement => {
   const [images, setImages] = useState<Record<string, File>>({})
