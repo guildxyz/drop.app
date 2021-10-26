@@ -120,8 +120,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
         {filteredAllDrops?.length > 0 && (
           <Section title="All drops">
             <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-              {filteredAllDrops.map(({ name }) => (
-                <Link key={name} href={`/${name}`} passHref>
+              {filteredAllDrops.map(({ id, name }) => (
+                <Link key={id} href={`/${id}`} passHref>
                   <Center
                     backgroundColor="primary.700"
                     borderRadius="lg"
