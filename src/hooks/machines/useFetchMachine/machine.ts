@@ -1,7 +1,13 @@
 import BackendError from "utils/errors/BackendError"
 import SignError from "utils/errors/SignError"
 import TransactionError from "utils/errors/TransactionError"
-import { createMachine, DoneInvokeEvent, State as XStateState } from "xstate"
+import {
+  createMachine,
+  DoneInvokeEvent,
+  State as XStateState,
+  StateMachine,
+  StateSchema,
+} from "xstate"
 
 export type Context = Record<string, unknown>
 export type ErrorEvent = DoneInvokeEvent<
@@ -11,7 +17,11 @@ export type SubmitEvent<SumbitData> = DoneInvokeEvent<SumbitData>
 export type Event<SumbitData> = ErrorEvent | SubmitEvent<SumbitData>
 export type State<SubmitData> = XStateState<Context, Event<SubmitData>>
 
-const getMachine = <SubmitData>() =>
+const getMachine = <SubmitData>(): StateMachine<
+  Context,
+  StateSchema,
+  Event<SubmitData>
+> =>
   createMachine<Context, Event<SubmitData>>({
     initial: "idle",
     states: {

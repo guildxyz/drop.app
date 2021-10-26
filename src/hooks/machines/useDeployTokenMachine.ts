@@ -1,15 +1,15 @@
 import { useWeb3React } from "@web3-react/core"
+import useAirdrop from "hooks/airdrop/useAirdrop"
 import { useFormContext } from "react-hook-form"
 import { mutate } from "swr"
-import useAirdrop from "../useAirdrop"
-import useFetchMachine from "./useFetchMachine"
+import useFetchMachine, { FetchMachine } from "./useFetchMachine"
 
 type DeployToken = {
   name: string
   symbol: string
 }
 
-const useDeployTokenMachine = () => {
+const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
   const { account } = useWeb3React()
   const { deployTokenContract } = useAirdrop()
   const { setValue } = useFormContext()

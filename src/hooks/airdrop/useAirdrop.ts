@@ -7,7 +7,7 @@ import { useCallback, useState } from "react"
 import AIRDROP_ABI from "static/abis/airdrop.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 import TransactionError from "utils/errors/TransactionError"
-import useContract from "./useContract"
+import useContract from "../useContract"
 
 export enum AirdropAddresses {
   GOERLI = "0xb33F85251De73bAd4343080d6D6266fA88f5117f",
@@ -110,102 +110,101 @@ const useAirdrop = () => {
   )
 
   const startAirdrop = useCallback(
-    (
-        dropName: string,
-        channelId: string,
-        roles: string[],
-        serverId: string,
-        images: Record<string, File>,
-        inputHashes: Record<string, string>,
-        assetType: string,
-        contractId: string,
-        traits: Record<string, Record<string, string>>
-      ) =>
-      async () => {
-        if (contractId === "DEPLOY") throw new Error("Invalid token contract")
+    async (
+      dropName: string,
+      channelId: string,
+      roles: string[],
+      serverId: string,
+      images: Record<string, File>,
+      inputHashes: Record<string, string>,
+      assetType: string,
+      contractId: string,
+      traits: Record<string, Record<string, string>>
+    ) => {
+      if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
-        const tokenAddress = await contractsByDeployer(account, +contractId)
-        const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
-        const assetData = await Promise.all([
-          tokenContract.name(),
-          tokenContract.symbol(),
-        ]).then(([name, symbol]) => ({ name, symbol }))
+      const tokenAddress = await contractsByDeployer(account, +contractId)
+      const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
+      const assetData = await Promise.all([
+        tokenContract.name(),
+        tokenContract.symbol(),
+      ]).then(([name, symbol]) => ({ name, symbol }))
 
-        const { signature } = await fetch("/api/get-signature/start-airdrop", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            serverId,
-            address: account,
-            chainId,
-            name: dropName,
-          }),
-        }).then((response) =>
-          response.json().then((body) => {
-            if (response.ok) return body
-            throw new Error(JSON.stringify(body.errors))
-          })
-        )
-
-        const hashes = Object.keys(images).length
-          ? await uploadImages(images, serverId, tokenAddress)
-          : {}
-
-        setUploadedImages({
-          ...hashes,
-          ...Object.fromEntries(
-            roles
-              .filter((id) => !hashes[id]?.length)
-              .map((id) => [
-                id,
-                inputHashes[id] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-              ])
-          ),
+      const { signature } = await fetch("/api/get-signature/start-airdrop", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serverId,
+          address: account,
+          chainId,
+          name: dropName,
+        }),
+      }).then((response) =>
+        response.json().then((body) => {
+          if (response.ok) return body
+          throw new Error(JSON.stringify(body.errors))
         })
+      )
 
-        try {
-          console.log({
-            signature,
-            dropName,
-            serverId,
-            roles: roles.map((roleId) => ({
-              roleId,
-              tokenImageHash:
-                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-              tokenName: assetData.name,
-              traitTypes: Object.keys(traits[roleId] ?? {}),
-              values: Object.values(traits[roleId] ?? {}),
-            })),
-            contractId,
-            channelId,
-          })
-          const tx = await contract.newAirdrop(
-            signature,
-            dropName,
-            serverId,
-            roles.map((roleId) => ({
-              roleId,
-              tokenImageHash:
-                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-              tokenName: assetData.name,
-              traitTypes: Object.keys(traits[roleId] ?? {}),
-              values: Object.values(traits[roleId] ?? {}),
-            })),
-            +contractId,
-            channelId
-          )
-          await tx.wait()
-          return contractId
-        } catch (e) {
-          console.error(e)
-          throw new TransactionError("Failed to start airdrop.")
-        }
-      },
+      const hashes = Object.keys(images).length
+        ? await uploadImages(images, serverId, tokenAddress)
+        : {}
+
+      setUploadedImages({
+        ...hashes,
+        ...Object.fromEntries(
+          roles
+            .filter((id) => !hashes[id]?.length)
+            .map((id) => [
+              id,
+              inputHashes[id] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+            ])
+        ),
+      })
+
+      try {
+        console.log({
+          signature,
+          dropName,
+          serverId,
+          roles: roles.map((roleId) => ({
+            roleId,
+            tokenImageHash:
+              hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+            tokenName: assetData.name,
+            traitTypes: Object.keys(traits[roleId] ?? {}),
+            values: Object.values(traits[roleId] ?? {}),
+          })),
+          contractId,
+          channelId,
+        })
+        const tx = await contract.newAirdrop(
+          signature,
+          dropName,
+          serverId,
+          roles.map((roleId) => ({
+            roleId,
+            tokenImageHash:
+              hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+            tokenName: assetData.name,
+            traitTypes: Object.keys(traits[roleId] ?? {}),
+            values: Object.values(traits[roleId] ?? {}),
+          })),
+          +contractId,
+          channelId
+        )
+        await tx.wait()
+        return contractId
+      } catch (e) {
+        console.error(e)
+        throw new TransactionError("Failed to start airdrop.")
+      }
+    },
     [contract, chainId]
   )
 
   const claim = useCallback(
-    (roleId: string, serverId: string, tokenAddress: string) => async () => {
+    async (roleId: string, serverId: string, tokenAddress: string) => {
       const { signature } = await fetch("/api/get-signature/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -4,7 +4,7 @@ import type { DoneInvokeEvent, EventData, State as XStateState } from "xstate"
 export type Context = unknown
 
 // Data
-type DiscordData = {
+export type DiscordData = {
   tokenType: string
   accessToken: string
 }

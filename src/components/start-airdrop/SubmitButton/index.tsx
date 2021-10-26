@@ -1,6 +1,6 @@
 import CtaButton from "components/common/CtaButton"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
-import useDCAuthMachine from "hooks/machines/useDCAuthMachine"
+import useAuthMachine from "hooks/machines/useAuthMachine"
 import useStartAirdropMachine from "hooks/machines/useStartAirdropMachine"
 import usePersonalSign from "hooks/usePersonalSign"
 import { ReactElement, useMemo } from "react"
@@ -14,7 +14,7 @@ const SubmitButton = (): ReactElement => {
     isSuccess: isAuthSuccess,
     isLoading: isAuthLoading,
     authenticate,
-  } = useDCAuthMachine()
+  } = useAuthMachine()
 
   const {
     handleSubmit,

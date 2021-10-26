@@ -5,8 +5,8 @@ import {
   Grid,
   useCheckboxGroup,
 } from "@chakra-ui/react"
+import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
 import useRoles from "hooks/discord/useRoles"
-import useDeployedTokens from "hooks/useDeployedTokens"
 import { ReactElement, useEffect, useState } from "react"
 import { useController, useFormContext, useWatch } from "react-hook-form"
 import RoleCheckbox from "./components/RoleCheckbox"
@@ -26,7 +26,7 @@ const PickRoles = (): ReactElement => {
 
   const serverId = useWatch({ name: "serverId" })
   const contractId = useWatch({ name: "contractId" })
-  const { deployedTokens } = useDeployedTokens()
+  const deployedTokens = useDeployedTokens()
   const roles = useRoles(serverId)
 
   const { field } = useController({

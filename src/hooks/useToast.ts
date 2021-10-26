@@ -5,6 +5,7 @@ const useToast = (toastOptions?: UseToastOptions) => {
     position: "top-right",
     variant: "toastSubtle",
     isClosable: true,
+    duration: 3000,
     ...toastOptions,
   })
 

@@ -1,5 +1,5 @@
-import { useToast } from "@chakra-ui/react"
 import { useMachine } from "@xstate/react"
+import useToast from "hooks/useToast"
 import getMachine, {
   Context,
   ErrorEvent,
@@ -8,7 +8,7 @@ import getMachine, {
   SubmitEvent,
 } from "./machine"
 
-type FetchMachineValues<SubmitData> = {
+export type FetchMachine<SubmitData> = {
   onSubmit: (data: SubmitData) => void
   isLoading: boolean
   isSuccess: boolean
@@ -17,7 +17,7 @@ type FetchMachineValues<SubmitData> = {
 
 const useFetchMachine = <SubmitData>(
   fetcher: (context: Context, event: SubmitEvent<SubmitData>) => Promise<any>
-): FetchMachineValues<SubmitData> => {
+): FetchMachine<SubmitData> => {
   const toast = useToast()
 
   const [state, send] = useMachine<Context, Event<SubmitData>>(

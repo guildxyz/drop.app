@@ -32,7 +32,9 @@ const getMachine = <FetchedData>() =>
           AUTH: "authenticating",
         },
       },
-      success: {},
+      success: {
+        entry: "showSuccessToast",
+      },
     },
   })
 

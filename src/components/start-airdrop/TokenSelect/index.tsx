@@ -1,11 +1,11 @@
 import { Grid, Text, useRadioGroup } from "@chakra-ui/react"
-import useDeployedTokens from "hooks/useDeployedTokens"
+import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
 import { ReactElement } from "react"
 import { useController } from "react-hook-form"
 import Token from "./components/Token"
 
 const TokenSelect = (): ReactElement => {
-  const { deployedTokens } = useDeployedTokens()
+  const deployedTokens = useDeployedTokens()
 
   const { field } = useController({
     defaultValue: "",

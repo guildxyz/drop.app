@@ -1,5 +1,5 @@
 import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
-import useAirdrop from "hooks/useAirdrop"
+import useAirdrop from "hooks/airdrop/useAirdrop"
 import { ReactElement } from "react"
 import { useFormContext } from "react-hook-form"
 

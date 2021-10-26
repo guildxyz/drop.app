@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
-import { Event } from "hooks/machines/useDCAuthMachine/utils/types"
+import { Event } from "hooks/machines/useAuthMachine/utils/types"
 import { mutate } from "swr"
 import BackendError from "utils/errors/BackendError"
 import fetchUserData, { UserData } from "./fetchUserData"

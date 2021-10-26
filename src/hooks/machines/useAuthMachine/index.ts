@@ -5,7 +5,6 @@ import useToast from "hooks/useToast"
 import { useRef } from "react"
 import authenticate from "utils/discord/authenticate"
 import { UserData } from "utils/discord/fetchUserData"
-import showErrorToast from "../common/showErrorToast"
 import handleMessage from "./utils/handleMessage"
 import getMachine from "./utils/machine"
 import type { Context, Event, State } from "./utils/types"
@@ -59,7 +58,18 @@ const useDCAuthMachine = (): AuthMachine => {
       },
 
       showErrorToast: (_context: Context, event: Event<UserData>) =>
-        showErrorToast(event.data.error, toast),
+        toast({
+          status: "error",
+          title: event.data.error.name,
+          description: event.data.error.message,
+        }),
+
+      showSuccessToast: () =>
+        toast({
+          status: "success",
+          title: "Success",
+          description: "Authentication successful",
+        }),
     },
     services: {
       fetcher: (_context: Context, event: Event<UserData>) =>

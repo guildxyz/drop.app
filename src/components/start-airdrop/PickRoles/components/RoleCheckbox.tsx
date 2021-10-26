@@ -9,8 +9,8 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import PhotoUploader from "components/common/PhotoUploader"
+import useIsActive from "hooks/airdrop/useIsActive"
 import useRoles from "hooks/discord/useRoles"
-import useIsActive from "hooks/useIsActive"
 import { Dispatch, ReactElement, SetStateAction, useEffect, useRef } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 

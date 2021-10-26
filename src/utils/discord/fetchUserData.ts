@@ -1,4 +1,4 @@
-import { Event } from "hooks/machines/useDCAuthMachine/utils/types"
+import { Event } from "hooks/machines/useAuthMachine/utils/types"
 import BackendError from "utils/errors/BackendError"
 
 export type UserData = {

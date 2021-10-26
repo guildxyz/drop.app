@@ -11,10 +11,10 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
+import { Drop } from "hooks/airdrop/useAirdrop"
+import useIsClaimed from "hooks/airdrop/useIsClaimed"
 import useRoleName from "hooks/discord/useRoleName"
 import useClaimMachine from "hooks/machines/useClaimMachine"
-import { Drop } from "hooks/useAirdrop"
-import useIsClaimed from "hooks/useIsClaimed"
 import useRoleData from "hooks/useRoleData"
 import Image from "next/image"
 import { Check } from "phosphor-react"
