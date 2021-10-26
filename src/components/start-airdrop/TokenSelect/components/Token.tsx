@@ -1,6 +1,6 @@
 import { Box, HStack, RadioProps, Text, useRadio } from "@chakra-ui/react"
-import useTokenName from "hooks/useTokenName"
-import useTokenSymbol from "hooks/useTokenSymbol"
+import useTokenName from "hooks/roletoken/useTokenName"
+import useTokenSymbol from "hooks/roletoken/useTokenSymbol"
 import { PropsWithChildren, ReactElement } from "react"
 
 type Props = {

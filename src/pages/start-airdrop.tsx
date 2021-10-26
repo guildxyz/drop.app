@@ -9,6 +9,7 @@ import ServerSelect from "components/start-airdrop/ServerSelect"
 import SetMetadata from "components/start-airdrop/SetMetadata"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
+import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
@@ -24,6 +25,10 @@ const StartAirdropPage = (): JSX.Element => {
     control: methods.control,
   })
   const { errors, isValid } = useFormState({ control: methods.control })
+
+  useWarnIfUnsavedChanges(
+    methods.formState?.isDirty && !methods.formState.isSubmitted
+  )
 
   if (!account)
     return (

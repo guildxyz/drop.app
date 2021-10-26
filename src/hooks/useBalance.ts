@@ -3,7 +3,6 @@ import { Web3Provider } from "@ethersproject/providers"
 import { formatUnits } from "@ethersproject/units"
 import { useWeb3React } from "@web3-react/core"
 import useContract from "hooks/useContract"
-import useKeepSWRDataLiveAsBlocksArrive from "hooks/useKeepSWRDataLiveAsBlocksArrive"
 import ERC20_ABI from "static/abis/erc20abi.json"
 import useSWR from "swr"
 import type { Token } from "types"
@@ -23,18 +22,17 @@ const useBalance = (token: Token): number => {
 
   const shouldFetch = account && library && token?.address
 
-  const { data, mutate } = useSWR(
+  const { data } = useSWR(
     shouldFetch
       ? [`${token?.name}_balance`, account, tokenContract, token.decimals, chainId]
       : null,
     getBalance,
     {
+      refreshInterval: 10_000,
       revalidateOnFocus: false,
       revalidateOnMount: false,
     }
   )
-
-  useKeepSWRDataLiveAsBlocksArrive(mutate)
 
   return data
 }
