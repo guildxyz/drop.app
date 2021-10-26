@@ -10,17 +10,39 @@ import SetMetadata from "components/start-airdrop/SetMetadata"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
+import { GetServerSideProps } from "next"
 import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
 
-const StartAirdropPage = (): JSX.Element => {
+type Props = {
+  inviteCode?: string
+}
+
+const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
   const { account } = useWeb3React()
-  const methods = useForm({ mode: "all" })
+  const methods = useForm({
+    mode: "all",
+    defaultValues: {
+      name: "",
+      channel: "",
+      assetData: {
+        name: "",
+        symbol: "",
+      },
+      invite_link: inviteCode?.length > 0 ? `https://discord.gg/${inviteCode}` : "",
+      contractId: "",
+      serverId: "",
+      images: {},
+      inputHashes: {},
+      roles: [],
+      traits: {},
+      metaDataKeys: [],
+    },
+  })
   const serverId = useWatch({
     name: "serverId",
     control: methods.control,
   })
   const contractId = useWatch({
-    defaultValue: "",
     name: "contractId",
     control: methods.control,
   })
@@ -75,4 +97,14 @@ const StartAirdropPage = (): JSX.Element => {
   )
 }
 
+const getServerSideProps: GetServerSideProps = async ({ query }) => ({
+  props: {
+    inviteCode:
+      !!query.inviteCode && (query.inviteCode as string).match(/[a-z0-9]{8}/i)
+        ? (query.inviteCode as string)
+        : null,
+  },
+})
+
+export { getServerSideProps }
 export default StartAirdropPage

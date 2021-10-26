@@ -14,9 +14,9 @@ import useChannels from "./hooks/useChannels"
 
 const ServerSelect = (): ReactElement => {
   const { register, setValue } = useFormContext()
+
   const inviteLink = useWatch<{ invite_link: string }>({
     name: "invite_link",
-    defaultValue: "",
   })
   const { errors } = useFormState()
 
@@ -82,7 +82,6 @@ const ServerSelect = (): ReactElement => {
       <FormControl isDisabled={!isBotAdded} isInvalid={errors.channel}>
         <FormLabel>3. Select channel</FormLabel>
         <Select
-          defaultValue=""
           {...register("channel", {
             required: "Please select a channel",
           })}
