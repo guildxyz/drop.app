@@ -78,7 +78,7 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
         </Accordion>
         <Button
           isLoading={isLoading}
-          isDisabled={isClaimed || isSuccess || !userServers.includes(serverId)}
+          isDisabled={isClaimed || isSuccess || !userServers?.includes(serverId)}
           w="full"
           colorScheme="purple"
           onClick={() => onSubmit({ roleId, serverId, tokenAddress })}
