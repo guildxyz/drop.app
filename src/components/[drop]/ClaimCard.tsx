@@ -14,6 +14,7 @@ import {
 import { Drop } from "hooks/airdrop/useAirdrop"
 import useIsClaimed from "hooks/airdrop/useIsClaimed"
 import useRoleName from "hooks/discord/useRoleName"
+import useServersOfUser from "hooks/discord/useServersOfUser"
 import useClaimMachine from "hooks/machines/useClaimMachine"
 import useRoleData from "hooks/roletoken/useRoleData"
 import Image from "next/image"
@@ -27,6 +28,7 @@ type Props = {
 
 const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
   const { tokenAddress, serverId } = drop
+  const userServers = useServersOfUser()
   const roleData = useRoleData(tokenAddress, serverId, roleId)
   const { isLoading, isSuccess, onSubmit } = useClaimMachine()
   const isClaimed = useIsClaimed(serverId, roleId, tokenAddress)
@@ -76,7 +78,7 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
         </Accordion>
         <Button
           isLoading={isLoading}
-          isDisabled={isClaimed || isSuccess}
+          isDisabled={isClaimed || isSuccess || !userServers.includes(serverId)}
           w="full"
           colorScheme="purple"
           onClick={() => onSubmit({ roleId, serverId, tokenAddress })}
