@@ -44,7 +44,7 @@ const ServerSelect = (): ReactElement => {
           {...register("invite_link", {
             required: "This field is required.",
             pattern: {
-              value: /^https:\/\/discord.gg\/[a-z0-9]{8}$/i,
+              value: /^https:\/\/discord.gg\/[a-z0-9]+$/i,
               message: "Not a valid discord invite link",
             },
           })}
