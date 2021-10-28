@@ -73,6 +73,7 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
       name: dropData.name,
       id: dropData.id,
     },
+    revalidate: 10_000,
   }
 }
 
@@ -81,7 +82,7 @@ const getStaticPaths: GetStaticPaths = async () => {
   const dropIds = await response.json()
   return {
     paths: dropIds.map((id: string) => ({ params: { drop: id } })),
-    fallback: false,
+    fallback: "blocking",
   }
 }
 
