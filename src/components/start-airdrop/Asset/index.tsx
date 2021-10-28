@@ -1,7 +1,6 @@
-import { Button, Center, Grid, useRadioGroup } from "@chakra-ui/react"
-import useDeployTokenMachine from "hooks/machines/useDeployTokenMachine"
+import { Button, Grid, useRadioGroup } from "@chakra-ui/react"
 import { ReactElement } from "react"
-import { useController, useWatch } from "react-hook-form"
+import { useController } from "react-hook-form"
 import InputNFT from "./components/InputNFT"
 
 /*
@@ -24,18 +23,11 @@ const Asset = (): ReactElement => {
     name: "assetType",
   })
 
-  const assetData = useWatch({
-    name: "assetData",
-    defaultValue: { name: "", symbol: "" },
-  })
-
   const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue: "NFT",
     onChange: field.onChange,
     value: field.value,
   })
-
-  const { onSubmit, isLoading, isSuccess } = useDeployTokenMachine()
 
   return (
     <Grid gridTemplateColumns="1fr" gap={10}>
@@ -44,18 +36,6 @@ const Asset = (): ReactElement => {
         <Button disabled>Token</Button>
         <Button disabled>ERC 1155</Button>
       </Grid>
-      <Center>
-        <Button
-          onClick={() => onSubmit(assetData)}
-          isLoading={isLoading}
-          isDisabled={
-            isSuccess || assetData.name.length <= 0 || assetData.symbol.length <= 0
-          }
-          colorScheme="purple"
-        >
-          Deploy
-        </Button>
-      </Center>
     </Grid>
   )
 }

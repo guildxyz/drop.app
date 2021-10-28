@@ -90,7 +90,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
             </Section>
           )}
 
-          {isValid && <SubmitButton />}
+          <SubmitButton />
         </VStack>
       </Layout>
     </FormProvider>

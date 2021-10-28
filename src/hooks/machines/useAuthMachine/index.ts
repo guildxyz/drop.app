@@ -16,7 +16,7 @@ type AuthMachine = {
   authenticate: () => void
 }
 
-const useDCAuthMachine = (): AuthMachine => {
+const useAuthMachine = (): AuthMachine => {
   const { addressSignedMessage } = usePersonalSign(true)
   const { account } = useWeb3React()
   const authWindow = useRef<Window>(null)
@@ -90,4 +90,4 @@ const useDCAuthMachine = (): AuthMachine => {
   }
 }
 
-export default useDCAuthMachine
+export default useAuthMachine

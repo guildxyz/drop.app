@@ -1,51 +1,30 @@
 import CtaButton from "components/common/CtaButton"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
-import useAuthMachine from "hooks/machines/useAuthMachine"
 import useStartAirdropMachine from "hooks/machines/useStartAirdropMachine"
 import usePersonalSign from "hooks/usePersonalSign"
 import { ReactElement, useMemo } from "react"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import AuthenticateButton from "./components/AuthenticateButton"
+import DeployTokenButton from "./components/DeployTokenButton"
 
 const SubmitButton = (): ReactElement => {
   const isAuthenticated = useIsAuthenticated()
   const { isSigning, callbackWithSign } = usePersonalSign(true)
   const { onSubmit, isLoading, isSuccess } = useStartAirdropMachine()
-  const {
-    isSuccess: isAuthSuccess,
-    isLoading: isAuthLoading,
-    authenticate,
-  } = useAuthMachine()
 
-  const {
-    handleSubmit,
-    formState: { isValid },
-  } = useFormContext()
+  const { handleSubmit } = useFormContext()
+  const { isValid } = useFormState()
 
   const loadingText = useMemo(() => {
     if (isSigning) return "Signing"
     if (isLoading) return "Starting airdrop"
   }, [isSigning, isLoading])
 
-  if (!isAuthenticated)
-    return (
-      <CtaButton
-        colorScheme="purple"
-        disabled={
-          !!isAuthenticated ||
-          !isValid ||
-          isSigning ||
-          isAuthSuccess ||
-          isAuthLoading
-        }
-        flexShrink={0}
-        size="lg"
-        isLoading={isAuthLoading || isSigning}
-        loadingText="Authenticating"
-        onClick={callbackWithSign(authenticate)}
-      >
-        Authenticate
-      </CtaButton>
-    )
+  const contractId = useWatch({ name: "contractId" })
+
+  if (contractId === "DEPLOY") return <DeployTokenButton />
+
+  if (!isAuthenticated) return <AuthenticateButton />
 
   return (
     <CtaButton
