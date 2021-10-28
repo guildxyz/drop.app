@@ -10,7 +10,7 @@ import TransactionError from "utils/errors/TransactionError"
 import useContract from "../useContract"
 
 export enum AirdropAddresses {
-  GOERLI = "0xb33F85251De73bAd4343080d6D6266fA88f5117f",
+  GOERLI = "0xa16aE8024327d2eBF2211108583FB1193C3EC9fe",
 }
 
 export type Drop = {
