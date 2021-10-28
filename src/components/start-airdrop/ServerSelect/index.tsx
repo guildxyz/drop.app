@@ -12,6 +12,8 @@ import { ReactElement, useEffect, useMemo } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import useChannels from "./hooks/useChannels"
 
+const INVITE_REGEX = /^https:\/\/discord.gg\/([a-z0-9]+)$/i
+
 const ServerSelect = (): ReactElement => {
   const { register, setValue } = useFormContext()
 
@@ -43,9 +45,16 @@ const ServerSelect = (): ReactElement => {
         <Input
           {...register("invite_link", {
             required: "This field is required.",
-            pattern: {
-              value: /^https:\/\/discord.gg\/[a-z0-9]+$/i,
-              message: "Not a valid discord invite link",
+            validate: async (value) => {
+              if (!INVITE_REGEX.test(value)) return "Not a valid invite"
+              const inviteCode = value.match(
+                /^https:\/\/discord.gg\/([a-z0-9]+)$/i
+              )[1]
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
+              )
+              if (!response.ok) return "Not a valid invite"
+              return true
             },
           })}
         />
