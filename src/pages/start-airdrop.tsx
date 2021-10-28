@@ -6,7 +6,7 @@ import Asset from "components/start-airdrop/Asset"
 import NameInput from "components/start-airdrop/NameInput"
 import PickRoles from "components/start-airdrop/PickRoles"
 import ServerSelect from "components/start-airdrop/ServerSelect"
-import SetMetadata from "components/start-airdrop/SetMetadata"
+import SetMetaData from "components/start-airdrop/SetMetaData"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
@@ -46,7 +46,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
     name: "contractId",
     control: methods.control,
   })
-  const { errors, isValid } = useFormState({ control: methods.control })
+  const { errors } = useFormState({ control: methods.control })
 
   useWarnIfUnsavedChanges(
     methods.formState?.isDirty && !methods.formState.isSubmitted
@@ -81,7 +81,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
             </Section>
           ) : (
             <Section title="Set metadata">
-              <SetMetadata />
+              <SetMetaData />
             </Section>
           )}
           {!!serverId && errors?.name === undefined && (
