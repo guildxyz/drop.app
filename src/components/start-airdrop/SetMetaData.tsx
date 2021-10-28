@@ -10,9 +10,10 @@ import {
   TagLabel,
   VStack,
 } from "@chakra-ui/react"
+import { useWeb3React } from "@web3-react/core"
 import useToast from "hooks/useToast"
 import { Plus } from "phosphor-react"
-import { ReactElement, useRef, useState } from "react"
+import { ReactElement, useEffect, useRef, useState } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 
 export type MetaData = Record<string, string>
@@ -23,6 +24,9 @@ const SetMetadata = (): ReactElement => {
   const metaDataKeys = useWatch({ name: "metaDataKeys" })
   const { setValue } = useFormContext()
   const toast = useToast()
+  const { account } = useWeb3React()
+
+  useEffect(() => setValue("metaDataKeys", {}), [account, setValue])
 
   const addNewKey = () => {
     if (inputKey.length === 0) {

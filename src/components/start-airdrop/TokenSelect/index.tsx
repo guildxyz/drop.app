@@ -1,11 +1,16 @@
 import { Grid, Text, useRadioGroup } from "@chakra-ui/react"
+import { useWeb3React } from "@web3-react/core"
 import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
-import { ReactElement } from "react"
-import { useController } from "react-hook-form"
+import { ReactElement, useEffect } from "react"
+import { useController, useFormContext } from "react-hook-form"
 import Token from "./components/Token"
 
 const TokenSelect = (): ReactElement => {
   const deployedTokens = useDeployedTokens()
+  const { setValue } = useFormContext()
+  const { account } = useWeb3React()
+
+  useEffect(() => setValue("contractId", ""), [account, setValue])
 
   const { field } = useController({
     defaultValue: "",

@@ -3,13 +3,10 @@ import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useAuthMachine from "hooks/machines/useAuthMachine"
 import usePersonalSign from "hooks/usePersonalSign"
 import { ReactElement, useMemo } from "react"
-import { useFormState } from "react-hook-form"
 
 const AuthenticateButton = (): ReactElement => {
   const isAuthenticated = useIsAuthenticated()
   const { isSigning, callbackWithSign } = usePersonalSign(true)
-
-  const { isValid } = useFormState()
 
   const { isSuccess, isLoading, authenticate } = useAuthMachine()
 
@@ -21,7 +18,7 @@ const AuthenticateButton = (): ReactElement => {
   return (
     <CtaButton
       colorScheme="purple"
-      disabled={!!isAuthenticated || !isValid || isSigning || isSuccess || isLoading}
+      disabled={!!isAuthenticated || isSuccess}
       flexShrink={0}
       size="lg"
       isLoading={isLoading || isSigning}
