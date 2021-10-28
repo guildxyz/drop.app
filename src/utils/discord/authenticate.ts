@@ -21,7 +21,10 @@ const authenticate = async (
     body: JSON.stringify({ discordId: id, signature }),
   })
 
-  if (!authResponse.ok) throw { error: new BackendError("Failed to authenticate") }
+  if (!authResponse.ok) {
+    const errorBody = await authResponse.json()
+    throw { error: new BackendError(errorBody.message ?? "Failed to authenticate") }
+  }
 
   await mutate(["discordId", signer])
 }
