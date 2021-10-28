@@ -119,7 +119,8 @@ const useAirdrop = () => {
       inputHashes: Record<string, string>,
       assetType: string,
       contractId: string,
-      traits: Record<string, Record<string, string>>
+      traits: Record<string, Record<string, string>>,
+      metaDataKeys: Record<string, string>
     ) => {
       if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
@@ -167,14 +168,22 @@ const useAirdrop = () => {
           signature,
           dropName,
           serverId,
-          roles: roles.map((roleId) => ({
-            roleId,
-            tokenImageHash:
-              hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-            tokenName: assetData.name,
-            traitTypes: Object.keys(traits[roleId] ?? {}),
-            values: Object.values(traits[roleId] ?? {}),
-          })),
+          roles: roles.map((roleId) => {
+            const traitKeys = Object.entries(traits[roleId] ?? {}).filter(([key]) =>
+              Object.keys(metaDataKeys).includes(key)
+            )
+            const traitTypes = traitKeys.map(([key]) => metaDataKeys[key])
+            const values = traitKeys.map(([, value]) => value)
+
+            return {
+              roleId,
+              tokenImageHash:
+                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+              tokenName: assetData.name,
+              traitTypes,
+              values,
+            }
+          }),
           contractId,
           channelId,
         })
@@ -182,14 +191,22 @@ const useAirdrop = () => {
           signature,
           dropName,
           serverId,
-          roles.map((roleId) => ({
-            roleId,
-            tokenImageHash:
-              hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-            tokenName: assetData.name,
-            traitTypes: Object.keys(traits[roleId] ?? {}),
-            values: Object.values(traits[roleId] ?? {}),
-          })),
+          roles.map((roleId) => {
+            const traitKeys = Object.entries(traits[roleId] ?? {}).filter(([key]) =>
+              Object.keys(metaDataKeys).includes(key)
+            )
+            const traitTypes = traitKeys.map(([key]) => metaDataKeys[key])
+            const values = traitKeys.map(([, value]) => value)
+
+            return {
+              roleId,
+              tokenImageHash:
+                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
+              tokenName: assetData.name,
+              traitTypes,
+              values,
+            }
+          }),
           +contractId,
           channelId
         )

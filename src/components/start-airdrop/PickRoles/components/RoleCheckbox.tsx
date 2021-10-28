@@ -62,7 +62,7 @@ const RoleCheckbox = ({
     defaultValue: Object.fromEntries(
       Object.keys(allRoles ?? {}).map((roleId) => [
         roleId,
-        Object.fromEntries(metaDataKeys.map((key) => [key, ""])),
+        Object.fromEntries(Object.keys(metaDataKeys).map((key) => [key, ""])),
       ])
     ),
   })
@@ -110,15 +110,15 @@ const RoleCheckbox = ({
               }
             />
           </Fade>
-          {metaDataKeys.map((key) => (
+          {Object.entries(metaDataKeys).map(([key, value]) => (
             <FormControl key={key}>
-              <FormLabel>{key}</FormLabel>
+              <FormLabel>{value}</FormLabel>
               <Input
                 value={traits[id][key]}
-                onChange={({ target: { value } }) =>
+                onChange={({ target: { value: inputValue } }) =>
                   setValue("traits", {
                     ...traits,
-                    [id]: { ...traits[id], [key]: value },
+                    [id]: { ...traits[id], [key]: inputValue },
                   })
                 }
               />

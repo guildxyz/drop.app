@@ -35,7 +35,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
       inputHashes: {},
       roles: [],
       traits: {},
-      metaDataKeys: [],
+      metaDataKeys: {},
     },
   })
   const serverId = useWatch({

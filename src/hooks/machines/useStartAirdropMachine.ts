@@ -17,6 +17,7 @@ type StartAirdropData = {
   inputHashes: Record<string, string>
   contractId: string
   traits: Record<string, Record<string, string>>
+  metaDataKeys: Record<string, string>
 }
 
 const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
@@ -36,6 +37,7 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
           assetType,
           contractId,
           traits,
+          metaDataKeys,
         },
       }: SubmitEvent<StartAirdropData>
     ) =>
@@ -48,7 +50,8 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
         inputHashes,
         assetType,
         contractId,
-        traits
+        traits,
+        metaDataKeys
       )
   )
 }

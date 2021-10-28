@@ -3,7 +3,7 @@ import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useStartAirdropMachine from "hooks/machines/useStartAirdropMachine"
 import usePersonalSign from "hooks/usePersonalSign"
 import { ReactElement, useMemo } from "react"
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 import AuthenticateButton from "./components/AuthenticateButton"
 import DeployTokenButton from "./components/DeployTokenButton"
 
@@ -13,7 +13,6 @@ const SubmitButton = (): ReactElement => {
   const { onSubmit, isLoading, isSuccess } = useStartAirdropMachine()
 
   const { handleSubmit } = useFormContext()
-  const { isValid } = useFormState()
 
   const loadingText = useMemo(() => {
     if (isSigning) return "Signing"
@@ -29,7 +28,7 @@ const SubmitButton = (): ReactElement => {
   return (
     <CtaButton
       colorScheme="purple"
-      disabled={!isAuthenticated || !isValid || isLoading || isSigning || isSuccess}
+      disabled={!isAuthenticated || isSuccess}
       flexShrink={0}
       size="lg"
       isLoading={isLoading || isSigning}
