@@ -33,7 +33,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
       serverId: "",
       images: {},
       inputHashes: {},
-      roles: [],
+      roles: {},
       traits: {},
       metaDataKeys: {},
     },
@@ -84,7 +84,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
               <SetMetaData />
             </Section>
           )}
-          {!!serverId && errors?.name === undefined && (
+          {serverId?.length > 0 && (
             <Section title="Pick roles">
               <PickRoles />
             </Section>
