@@ -9,7 +9,7 @@ type Props = {
 }
 
 const NFTPage = ({ tokenURI }: Props): ReactElement => (
-  <Layout title={tokenURI?.name}>
+  <Layout title={tokenURI.name}>
     <Text as="pre">{JSON.stringify(tokenURI, null, 2)}</Text>
   </Layout>
 )
