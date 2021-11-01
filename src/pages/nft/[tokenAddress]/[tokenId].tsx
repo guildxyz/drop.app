@@ -1,45 +1,39 @@
 import { Text } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
-import useTokenURI from "hooks/roletoken/useTokenURI"
+import { TokenURI } from "hooks/roletoken/useRoleToken"
 import { GetServerSideProps } from "next"
+import { ReactElement } from "react"
 
 type Props = {
-  tokenAddress: string
-  tokenId: number
+  tokenURI: TokenURI
 }
 
-const NFTPage = ({ tokenAddress, tokenId }: Props) => {
-  const tokenURI = useTokenURI(tokenAddress, tokenId)
-
-  return (
-    <Layout title={tokenURI?.name}>
-      <Text as="pre">{JSON.stringify(tokenURI, null, 2)}</Text>
-    </Layout>
-  )
-}
+const NFTPage = ({ tokenURI }: Props): ReactElement => (
+  <Layout title={tokenURI?.name}>
+    <Text as="pre">{JSON.stringify(tokenURI, null, 2)}</Text>
+  </Layout>
+)
 
 const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { tokenAddress, tokenId } = params
 
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/token-uri/${tokenAddress}/${tokenId}`
+  )
+
+  if (!response.ok)
+    return {
+      notFound: true,
+    }
+
+  const tokenURI = await response.json()
+
   return {
     props: {
-      tokenAddress: tokenAddress as string,
-      tokenId: +(tokenId as string),
+      tokenURI,
     },
   }
 }
-
-/* const getStaticProps: GetStaticProps = ({ params }) => {
-  const { tokenAddress, tokenId } = params
-
-  return {
-    props: { tokenAddress, tokenId },
-  }
-}
-
-const getStaticPaths: GetStaticPaths = () => {
-
-} */
 
 export { getServerSideProps }
 export default NFTPage

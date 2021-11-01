@@ -1,11 +1,11 @@
 import useSWR from "swr"
 import useRoleToken, { TokenURI } from "./useRoleToken"
 
-const getTokenURI = (
+export const getTokenURI = (
   _: string,
   tokenURI: (tokenId: number) => Promise<TokenURI>,
   tokenId: number
-) => tokenURI(tokenId)
+): Promise<TokenURI> => tokenURI(tokenId)
 
 const useTokenURI = (tokenAddress: string, tokenId: number): TokenURI => {
   const { tokenURI } = useRoleToken(tokenAddress)
