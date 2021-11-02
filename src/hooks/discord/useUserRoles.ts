@@ -1,4 +1,5 @@
 import useSWRImmutable from "swr/immutable"
+import useDiscordId from "./useDiscordId"
 
 const fetchUserRoles = (
   _: string,
@@ -12,13 +13,15 @@ const fetchUserRoles = (
   )
 
 const useUserRoles = (
-  userId: string,
-  serverId: string
+  serverId: string,
+  userId?: string
 ): Array<Record<string, string>> => {
-  const shouldFetch = userId?.length > 0 && serverId?.length > 0
+  const userIdOfConnectedWallet = useDiscordId()
+  const discordId = userId ? userId : userIdOfConnectedWallet
+  const shouldFetch = discordId?.length > 0 && serverId?.length > 0
 
   const { data } = useSWRImmutable(
-    shouldFetch ? ["userRoles", userId, serverId] : null,
+    shouldFetch ? ["userRoles", discordId, serverId] : null,
     fetchUserRoles
   )
 
