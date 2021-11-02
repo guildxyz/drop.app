@@ -1,37 +1,38 @@
 import { FormControl, FormErrorMessage, Input, RadioProps } from "@chakra-ui/react"
 import DropdownRadio from "components/common/DropdownRadio"
 import { ReactElement } from "react"
-import { useFormContext, useFormState } from "react-hook-form"
+import { useFormContext, useFormState, useWatch } from "react-hook-form"
 
 const InputNFT = (props: RadioProps): ReactElement => {
   const { register } = useFormContext()
   const { errors } = useFormState()
+  const assetType = useWatch({ name: "assetType" })
 
   return (
     <DropdownRadio title="NFT" {...props}>
-      <FormControl isInvalid={errors.assetData?.name}>
+      <FormControl isInvalid={errors.assetData?.NFT?.name}>
         <Input
           type="text"
-          {...register("assetData.name", {
-            required: "Please input an NFT name",
+          {...register("assetData.NFT.name", {
+            required: assetType === "NFT" && "Please input an NFT name",
           })}
           placeholder="Name"
         />
-        {errors.assetData?.name?.message && (
-          <FormErrorMessage>{errors.assetData.name.message}</FormErrorMessage>
+        {errors.assetData?.NFT?.name?.message && (
+          <FormErrorMessage>{errors.assetData.NFT.name.message}</FormErrorMessage>
         )}
       </FormControl>
 
-      <FormControl isInvalid={errors.assetData?.symbol}>
+      <FormControl isInvalid={errors.assetData?.NFT?.symbol}>
         <Input
           type="text"
-          {...register("assetData.symbol", {
-            required: "Please input an NFT symbol",
+          {...register("assetData.NFT.symbol", {
+            required: assetType === "NFT" && "Please input an NFT symbol",
           })}
           placeholder="Symbol"
         />
-        {errors.assetData?.symbol && (
-          <FormErrorMessage>{errors.assetData.symbol.message}</FormErrorMessage>
+        {errors.assetData?.NFT?.symbol && (
+          <FormErrorMessage>{errors.assetData.NFT.symbol.message}</FormErrorMessage>
         )}
       </FormControl>
     </DropdownRadio>

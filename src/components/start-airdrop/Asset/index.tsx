@@ -3,28 +3,12 @@ import { ReactElement } from "react"
 import { useController } from "react-hook-form"
 import InputNFT from "./components/InputNFT"
 
-/*
-  {
-    assetType: "NFT"
-    assetData: {
-      nft: {
-        name: string
-        symbol: string
-      },
-      token: ...
-      erc1155
-    }
-  }
-*/
-
 const Asset = (): ReactElement => {
   const { field } = useController({
-    defaultValue: "NFT",
     name: "assetType",
   })
 
   const { getRadioProps, getRootProps } = useRadioGroup({
-    defaultValue: "NFT",
     onChange: field.onChange,
     value: field.value,
   })

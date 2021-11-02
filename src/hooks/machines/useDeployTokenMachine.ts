@@ -5,8 +5,10 @@ import { mutate } from "swr"
 import useFetchMachine, { FetchMachine } from "./useFetchMachine"
 
 type DeployToken = {
-  name: string
-  symbol: string
+  NFT: {
+    name: string
+    symbol: string
+  }
 }
 
 const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
@@ -15,7 +17,7 @@ const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
   const { setValue } = useFormContext()
 
   return useFetchMachine<DeployToken>(async (_context, { data }) => {
-    const { contractId } = await deployTokenContract(data.name, data.symbol)
+    const { contractId } = await deployTokenContract(data.NFT.name, data.NFT.symbol)
     await mutate(["deployedTokens", account])
     setValue("contractId", contractId.toString())
   })

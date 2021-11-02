@@ -11,7 +11,7 @@ import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { GetServerSideProps } from "next"
-import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form"
+import { FormProvider, useForm, useWatch } from "react-hook-form"
 
 type Props = {
   inviteCode?: string
@@ -19,22 +19,23 @@ type Props = {
 
 const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
   const { account } = useWeb3React()
+
   const methods = useForm({
     mode: "all",
     defaultValues: {
       name: "",
       channel: "",
+      assetType: "NFT",
       assetData: {
-        name: "",
-        symbol: "",
+        NFT: {
+          name: "",
+          symbol: "",
+        },
       },
       invite_link: inviteCode?.length > 0 ? `https://discord.gg/${inviteCode}` : "",
       contractId: "",
       serverId: "",
-      images: {},
-      inputHashes: {},
-      roles: [],
-      traits: {},
+      roles: {},
       metaDataKeys: {},
     },
   })
@@ -46,7 +47,6 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
     name: "contractId",
     control: methods.control,
   })
-  const { errors } = useFormState({ control: methods.control })
 
   useWarnIfUnsavedChanges(
     methods.formState?.isDirty && !methods.formState.isSubmitted
@@ -84,7 +84,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
               <SetMetaData />
             </Section>
           )}
-          {!!serverId && errors?.name === undefined && (
+          {serverId?.length > 0 && (
             <Section title="Pick roles">
               <PickRoles />
             </Section>
