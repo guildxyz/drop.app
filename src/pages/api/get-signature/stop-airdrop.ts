@@ -13,18 +13,16 @@ type Body = {
   chainId: number
   serverId: string
   address: string
-  roleIds: string[]
+  roleId: string
+  tokenAddress: string
 }
 
 const REQUIRED_BODY = [
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
   { key: "address", type: "string" },
-  {
-    key: "roleIds",
-    typeCheck: (value) =>
-      Array.isArray(value) && value.every((_) => typeof _ === "string"),
-  },
+  { key: "roleId", type: "string" },
+  { key: "tokenAddress", type: "string" },
 ]
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
@@ -40,28 +38,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    const wrongType = REQUIRED_BODY.filter((bodyItem) =>
-      bodyItem.type
-        ? typeof req.body[bodyItem.key] !== bodyItem.type
-        : !bodyItem.typeCheck(req.body[bodyItem.key])
+    const wrongType = REQUIRED_BODY.filter(
+      ({ key, type }) => typeof req.body[key] !== type
     )
     if (wrongType.length > 0) {
       res.status(400).json({
-        errors: wrongType.map((bodyItem) => ({
-          key: bodyItem.key,
-          message: `Wrong type of key "${bodyItem.key}".${
-            bodyItem.type
-              ? ` Recieved "${typeof req.body[bodyItem.key]}", expected "${
-                  bodyItem.type
-                }". `
-              : ""
-          }`,
+        errors: wrongType.map(({ key, type }) => ({
+          key,
+          message: `Wrong type of key "${key}". Recieved "${typeof req.body[
+            key
+          ]}", expected "${type}".`,
         })),
       })
       return
     }
 
-    const { chainId, serverId, address, roleIds }: Body = req.body
+    const { chainId, serverId, address, roleId, tokenAddress }: Body = req.body
+    // Is there a deployed airdrop contract on the chain
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
         errors: [
@@ -79,8 +72,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         fetchOwnerId("ownerId", serverId),
         fetchDiscordID("discordId", address),
         fetchRoles("", serverId).then((roles) => {
-          if (roleIds.some((role) => !(role in roles))) {
-            throw Error("Some roles are not valid roles of server")
+          if (!(roleId in roles)) {
+            throw Error("Not valid role of server")
           }
         }),
       ])
@@ -93,8 +86,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       }
 
       const payload = defaultAbiCoder.encode(
-        ["address", "string"],
-        [AirdropAddresses[Chains[chainId]], serverId]
+        ["address", "string", "string", "address", "address", "string"],
+        [
+          AirdropAddresses[Chains[chainId]],
+          serverId,
+          roleId,
+          tokenAddress,
+          address,
+          "stop",
+        ]
       )
       const message = keccak256(payload)
       const wallet = new Wallet(process.env.SIGNER_PRIVATE_KEY)
