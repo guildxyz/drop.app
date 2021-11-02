@@ -195,13 +195,13 @@ const useAirdrop = () => {
           roles: Object.entries(roles).map(([roleId, { traits }]) => ({
             roleId,
             tokenImageHash: hashes[roleId],
-            tokenName: assetData.name,
+            NFTName: assetData.name,
             traitTypes: Object.keys(traits ?? {}).map(
               (traitKey) => metaDataKeys[traitKey]
             ),
             values: Object.values(traits ?? {}),
           })),
-          contractId,
+          contractId: +contractId,
           channelId,
         })
         const tx = await contract.newAirdrop(
@@ -211,7 +211,7 @@ const useAirdrop = () => {
           Object.entries(roles).map(([roleId, { traits }]) => ({
             roleId,
             tokenImageHash: hashes[roleId],
-            tokenName: assetData.name,
+            NFTName: assetData.name,
             traitTypes: Object.keys(traits ?? {}).map(
               (traitKey) => metaDataKeys[traitKey]
             ),
