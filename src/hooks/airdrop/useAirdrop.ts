@@ -187,8 +187,6 @@ const useAirdrop = () => {
 
       setUploadedImages(hashes)
 
-      console.log(hashes)
-
       try {
         console.log({
           signature,
@@ -198,10 +196,10 @@ const useAirdrop = () => {
             roleId,
             tokenImageHash: hashes[roleId],
             tokenName: assetData.name,
-            traitTypes: Object.keys(traits).map(
+            traitTypes: Object.keys(traits ?? {}).map(
               (traitKey) => metaDataKeys[traitKey]
             ),
-            values: Object.values(traits),
+            values: Object.values(traits ?? {}),
           })),
           contractId,
           channelId,
@@ -214,10 +212,10 @@ const useAirdrop = () => {
             roleId,
             tokenImageHash: hashes[roleId],
             tokenName: assetData.name,
-            traitTypes: Object.keys(traits).map(
+            traitTypes: Object.keys(traits ?? {}).map(
               (traitKey) => metaDataKeys[traitKey]
             ),
-            values: Object.values(traits),
+            values: Object.values(traits ?? {}),
           })),
           +contractId,
           channelId
