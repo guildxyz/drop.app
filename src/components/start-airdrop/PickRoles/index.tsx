@@ -1,14 +1,8 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  Grid,
-  VStack,
-} from "@chakra-ui/react"
+import { FormControl, FormErrorMessage, Grid, VStack } from "@chakra-ui/react"
 import useRoles from "hooks/discord/useRoles"
-import { Plus } from "phosphor-react"
 import { ReactElement, useState } from "react"
 import { useFormState, useWatch } from "react-hook-form"
+import AddRoleButton from "./components/AddRoleButton"
 import RoleCard from "./components/RoleCard"
 
 const PickRoles = (): ReactElement => {
@@ -26,15 +20,12 @@ const PickRoles = (): ReactElement => {
           {Object.entries(roles ?? {})
             .filter(([id]) => !selectedRoles.includes(id))
             .map(([id, name]) => (
-              <Button
-                leftIcon={<Plus />}
-                colorScheme="purple"
-                variant="outline"
+              <AddRoleButton
                 key={id}
-                onClick={() => setSelectedRoles((prev) => [...prev, id])}
-              >
-                {name}
-              </Button>
+                setSelectedRoles={setSelectedRoles}
+                roleName={name}
+                roleId={id}
+              />
             ))}
         </Grid>
 

@@ -6,6 +6,7 @@ import { Chains } from "connectors"
 import { useCallback, useState } from "react"
 import AIRDROP_ABI from "static/abis/airdrop.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
+import BackendError from "utils/errors/BackendError"
 import TransactionError from "utils/errors/TransactionError"
 import useContract from "../useContract"
 
@@ -113,23 +114,20 @@ const useAirdrop = () => {
     async (
       dropName: string,
       channelId: string,
-      roles: string[],
+      roles: Record<
+        string,
+        {
+          image: FileList
+          ipfsHash: string
+          traits: Record<string, string>
+        }
+      >,
       serverId: string,
-      images: Record<string, File>,
-      inputHashes: Record<string, string>,
       assetType: string,
       contractId: string,
-      traits: Record<string, Record<string, string>>,
       metaDataKeys: Record<string, string>
     ) => {
       if (contractId === "DEPLOY") throw new Error("Invalid token contract")
-
-      const tokenAddress = await contractsByDeployer(account, +contractId)
-      const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
-      const assetData = await Promise.all([
-        tokenContract.name(),
-        tokenContract.symbol(),
-      ]).then(([name, symbol]) => ({ name, symbol }))
 
       const { signature } = await fetch("/api/get-signature/start-airdrop", {
         method: "POST",
@@ -143,47 +141,68 @@ const useAirdrop = () => {
       }).then((response) =>
         response.json().then((body) => {
           if (response.ok) return body
-          throw new Error(JSON.stringify(body.errors))
+          throw new BackendError(JSON.stringify(body.errors))
         })
       )
 
-      const hashes = Object.keys(images).length
-        ? await uploadImages(images, serverId, tokenAddress)
+      const tokenAddress = await contractsByDeployer(account, +contractId)
+      const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, library)
+      const assetData = await Promise.all([
+        tokenContract.name(),
+        tokenContract.symbol(),
+      ]).then(([name, symbol]) => ({ name, symbol }))
+
+      const imagesToUpload = Object.fromEntries(
+        Object.entries(roles)
+          .filter(
+            ([, { ipfsHash, image }]) => ipfsHash.length <= 0 && image.length > 0
+          )
+          .map(
+            ([
+              roleId,
+              {
+                image: [image],
+              },
+            ]) => [roleId, image]
+          )
+      )
+
+      const hashes = Object.keys(imagesToUpload).length
+        ? await uploadImages(imagesToUpload, serverId, tokenAddress)
         : {}
 
-      setUploadedImages({
-        ...hashes,
-        ...Object.fromEntries(
-          roles
-            .filter((id) => !hashes[id]?.length)
-            .map((id) => [
-              id,
-              inputHashes[id] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-            ])
-        ),
-      })
+      // Append inputted ipfs hashes to the uploaded ones
+      Object.entries(roles)
+        .filter(([, { ipfsHash }]) => ipfsHash.length > 0)
+        .forEach(([roleId, { ipfsHash }]) => (hashes[roleId] = ipfsHash))
+
+      // Append the default hash for the rest of the roles
+      Object.entries(roles)
+        .filter(
+          ([, { ipfsHash, image }]) => ipfsHash.length <= 0 && image.length <= 0
+        )
+        .map(
+          ([roleId]) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH)
+        )
+
+      setUploadedImages(hashes)
+
+      console.log(hashes)
 
       try {
         console.log({
           signature,
           dropName,
           serverId,
-          roles: roles.map((roleId) => {
-            const traitKeys = Object.entries(traits[roleId] ?? {}).filter(([key]) =>
-              Object.keys(metaDataKeys).includes(key)
-            )
-            const traitTypes = traitKeys.map(([key]) => metaDataKeys[key])
-            const values = traitKeys.map(([, value]) => value)
-
-            return {
-              roleId,
-              tokenImageHash:
-                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-              tokenName: assetData.name,
-              traitTypes,
-              values,
-            }
-          }),
+          roles: Object.entries(roles).map(([roleId, { traits }]) => ({
+            roleId,
+            tokenImageHash: hashes[roleId],
+            tokenName: assetData.name,
+            traitTypes: Object.keys(traits).map(
+              (traitKey) => metaDataKeys[traitKey]
+            ),
+            values: Object.values(traits),
+          })),
           contractId,
           channelId,
         })
@@ -191,22 +210,15 @@ const useAirdrop = () => {
           signature,
           dropName,
           serverId,
-          roles.map((roleId) => {
-            const traitKeys = Object.entries(traits[roleId] ?? {}).filter(([key]) =>
-              Object.keys(metaDataKeys).includes(key)
-            )
-            const traitTypes = traitKeys.map(([key]) => metaDataKeys[key])
-            const values = traitKeys.map(([, value]) => value)
-
-            return {
-              roleId,
-              tokenImageHash:
-                hashes[roleId] || process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH,
-              tokenName: assetData.name,
-              traitTypes,
-              values,
-            }
-          }),
+          Object.entries(roles).map(([roleId, { traits }]) => ({
+            roleId,
+            tokenImageHash: hashes[roleId],
+            tokenName: assetData.name,
+            traitTypes: Object.keys(traits).map(
+              (traitKey) => metaDataKeys[traitKey]
+            ),
+            values: Object.values(traits),
+          })),
           +contractId,
           channelId
         )

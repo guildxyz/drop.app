@@ -12,11 +12,15 @@ type StartAirdropData = {
     symbol: string
   }
   serverId: string
-  roles: string[]
-  images: Record<string, File>
-  inputHashes: Record<string, string>
+  roles: Record<
+    string,
+    {
+      image: FileList
+      ipfsHash: string
+      traits: Record<string, string>
+    }
+  >
   contractId: string
-  traits: Record<string, Record<string, string>>
   metaDataKeys: Record<string, string>
 }
 
@@ -32,11 +36,8 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
           serverId,
           name,
           channel,
-          inputHashes,
-          images,
           assetType,
           contractId,
-          traits,
           metaDataKeys,
         },
       }: SubmitEvent<StartAirdropData>
@@ -46,11 +47,8 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
         channel,
         roles,
         serverId,
-        images,
-        inputHashes,
         assetType,
         contractId,
-        traits,
         metaDataKeys
       )
   )

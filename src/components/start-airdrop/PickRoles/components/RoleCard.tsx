@@ -18,7 +18,7 @@ import {
 import useRoles from "hooks/discord/useRoles"
 import Image from "next/image"
 import { Info, X } from "phosphor-react"
-import { ReactElement, useRef, useState } from "react"
+import { ReactElement, useState } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import FileUpload from "./FileUpload"
 
@@ -33,7 +33,6 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
   const serverId = useWatch({ name: "serverId" })
   const formRoles = useWatch({ name: "roles" })
   const roles = useRoles(serverId)
-  const fileInput = useRef<HTMLInputElement>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
   const { errors } = useFormState()
 
@@ -48,8 +47,6 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
     }
     return true
   }
-
-  const clickUpload = () => fileInput.current.click()
 
   return (
     <VStack backgroundColor="whiteAlpha.100" borderRadius="lg" padding={5}>
@@ -143,7 +140,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
             {Object.entries(metaDataKeys).map(([id, metaDataKey]) => (
               <InputGroup key={id} size="sm">
                 <InputLeftAddon>{metaDataKey}</InputLeftAddon>
-                <Input {...register(`roles.${roleId}.traits.${metaDataKey}`)} />
+                <Input {...register(`roles.${roleId}.traits.${id}`)} />
               </InputGroup>
             ))}
           </VStack>

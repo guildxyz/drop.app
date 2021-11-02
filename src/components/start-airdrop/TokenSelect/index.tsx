@@ -20,11 +20,10 @@ const TokenSelect = (): ReactElement => {
   useEffect(() => setValue("contractId", ""), [account, setValue])
 
   const { field } = useController({
-    defaultValue: "",
     name: "contractId",
     rules: {
       validate: (value) => {
-        if (value === "DEPLOY") return "You need to complete the deployment"
+        // if (value === "DEPLOY") return "You need to complete the deployment"
         return value.length > 0 || "You must pick a token"
       },
     },
