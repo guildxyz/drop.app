@@ -107,7 +107,7 @@
       { "internalType": "string", "name": "_serverId", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
       { "internalType": "string", "name": "_tokenImageHash", "type": "string" },
-      { "internalType": "string", "name": "_tokenName", "type": "string" },
+      { "internalType": "string", "name": "_NFTName", "type": "string" },
       { "internalType": "string[]", "name": "_traitTypes", "type": "string[]" },
       { "internalType": "string[]", "name": "_values", "type": "string[]" }
     ],

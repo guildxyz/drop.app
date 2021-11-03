@@ -11,7 +11,7 @@ import TransactionError from "utils/errors/TransactionError"
 import useContract from "../useContract"
 
 export enum AirdropAddresses {
-  GOERLI = "0xa16aE8024327d2eBF2211108583FB1193C3EC9fe",
+  GOERLI = "0xb503D6f75F0c9A6110B22E434849257127266e44",
 }
 
 export type Drop = {
@@ -195,13 +195,13 @@ const useAirdrop = () => {
           roles: Object.entries(roles).map(([roleId, { traits }]) => ({
             roleId,
             tokenImageHash: hashes[roleId],
-            tokenName: assetData.name,
+            NFTName: assetData.name,
             traitTypes: Object.keys(traits ?? {}).map(
               (traitKey) => metaDataKeys[traitKey]
             ),
             values: Object.values(traits ?? {}),
           })),
-          contractId,
+          contractId: +contractId,
           channelId,
         })
         const tx = await contract.newAirdrop(
@@ -211,7 +211,7 @@ const useAirdrop = () => {
           Object.entries(roles).map(([roleId, { traits }]) => ({
             roleId,
             tokenImageHash: hashes[roleId],
-            tokenName: assetData.name,
+            NFTName: assetData.name,
             traitTypes: Object.keys(traits ?? {}).map(
               (traitKey) => metaDataKeys[traitKey]
             ),
@@ -227,7 +227,7 @@ const useAirdrop = () => {
         throw new TransactionError("Failed to start airdrop.")
       }
     },
-    [contract, chainId]
+    [contract, chainId, account]
   )
 
   const claim = useCallback(
@@ -258,7 +258,7 @@ const useAirdrop = () => {
         throw new TransactionError("Failed to claim NFT.")
       }
     },
-    [contract, chainId]
+    [contract, chainId, account]
   )
 
   const claims = useCallback(
@@ -300,12 +300,23 @@ const useAirdrop = () => {
     [contract]
   ) */
 
-  /* const stopAirdrop = useCallback(
-    (serverId: string, roleIds: string[]) => async () => {
+  const stopAirdrop = useCallback(
+    (serverId: string, roleId: string, contractId: string) => async () => {
+      const numberOfTokens = await contract.numOfDeployedContracts(account)
+      if (+contractId >= numberOfTokens) throw new Error("Invalid token contract")
+
+      const tokenAddress = await contractsByDeployer(account, +contractId)
+
       const { signature } = await fetch("/api/get-signature/stop-airdrop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chainId, serverId, address: account, roleIds }),
+        body: JSON.stringify({
+          chainId,
+          serverId,
+          address: account,
+          roleId,
+          tokenAddress,
+        }),
       }).then((response) =>
         response.json().then((body) => {
           if (response.ok) return body
@@ -314,15 +325,68 @@ const useAirdrop = () => {
       )
 
       try {
-        const tx = await contract.stopAirdrop(signature, serverId, roleIds)
+        const tx = await contract.stopAirdrop(
+          signature,
+          serverId,
+          roleId,
+          +contractId
+        )
         await tx.wait()
         return tx
       } catch {
         throw new TransactionError("Failed to stop airdrop.")
       }
     },
-    [contract, chainId]
-  ) */
+    [contract, chainId, account]
+  )
+
+  const grant = useCallback(
+    (
+        serverId: string,
+        roleId: string,
+        contractId: string,
+        recieverAddress: string
+      ) =>
+      async () => {
+        const numberOfTokens = await contract.numOfDeployedContracts(account)
+        if (+contractId >= numberOfTokens) throw new Error("Invalid token contract")
+
+        const tokenAddress = await contractsByDeployer(account, +contractId)
+
+        const { signature } = await fetch("/api/get-signature/grant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chainId,
+            serverId,
+            address: account,
+            roleId,
+            tokenAddress,
+            recieverAddress,
+          }),
+        }).then((response) =>
+          response.json().then((body) => {
+            if (response.ok) return body
+            throw new Error(JSON.stringify(body.errors))
+          })
+        )
+
+        try {
+          const tx = await contract.grant(
+            signature,
+            serverId,
+            roleId,
+            recieverAddress,
+            +contractId
+          )
+          await tx.wait()
+          return tx
+        } catch {
+          throw new TransactionError("Failed to grant token.")
+        }
+      },
+    [contract, chainId, account]
+  )
 
   return {
     startAirdrop,
@@ -336,6 +400,8 @@ const useAirdrop = () => {
     deployedTokens,
     deployTokenContract,
     claimables,
+    stopAirdrop,
+    grant,
     uploadedImages,
   }
 }

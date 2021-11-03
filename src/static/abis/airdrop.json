@@ -7,8 +7,6 @@
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  { "inputs": [], "name": "SpaceIsFrozen", "type": "error" },
-  { "inputs": [], "name": "SpaceIsNotFrozen", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
@@ -131,9 +129,27 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": false, "internalType": "bool", "name": "frozen", "type": "bool" }
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
     ],
-    "name": "SpaceFrozenState",
+    "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Unpaused",
     "type": "event"
   },
   {
@@ -150,7 +166,7 @@
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
-      { "internalType": "address", "name": "tokenAddress", "type": "address" }
+      { "internalType": "address", "name": "_tokenAddress", "type": "address" }
     ],
     "name": "claim",
     "outputs": [],
@@ -221,20 +237,6 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "bool", "name": "_frozen", "type": "bool" }],
-    "name": "freezeSpace",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "frozen",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "string", "name": "_dropName", "type": "string" }],
     "name": "getDataOfDrop",
     "outputs": [
@@ -267,7 +269,7 @@
         "components": [
           { "internalType": "string", "name": "roleId", "type": "string" },
           { "internalType": "string", "name": "tokenImageHash", "type": "string" },
-          { "internalType": "string", "name": "tokenName", "type": "string" },
+          { "internalType": "string", "name": "NFTName", "type": "string" },
           { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
           { "internalType": "string[]", "name": "values", "type": "string[]" }
         ],
@@ -306,6 +308,20 @@
   },
   {
     "inputs": [],
+    "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "paused",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -314,6 +330,19 @@
   {
     "inputs": [{ "internalType": "string", "name": "_newUrl", "type": "string" }],
     "name": "setExternalUrl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tokenFactoryAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setTokenFactory",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -331,8 +360,22 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "tokenFactory",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
     "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

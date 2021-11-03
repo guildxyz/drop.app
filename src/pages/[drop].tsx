@@ -14,8 +14,20 @@ import shortenHex from "utils/shortenHex"
 
 const DropPage = (props: Drop): ReactElement => {
   const drop = useDrop(props.name, props)
-  const { name, id, icon } = useServerData(props.serverId)
+  const { name, id, icon } = useServerData(drop.serverId)
   const isAuthenticated = useIsAuthenticated()
+
+  /* const { stopAirdrop } = useAirdrop()
+  useEffect(() => {
+    console.log({
+      serverId: drop.serverId,
+      roleId: drop.roleIds[0],
+      tokenAddress: drop.,
+    })
+    stopAirdrop(drop.serverId, drop.roleIds[0], drop.tokenAddress)()
+      .then(() => console.log("stopped"))
+      .catch((e) => console.log(e))
+  }, []) */
 
   return (
     <Layout title={drop.name}>
