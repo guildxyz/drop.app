@@ -1,8 +1,10 @@
 import { Circle, Grid, HStack, Text } from "@chakra-ui/react"
+import { BigNumber } from "@ethersproject/bignumber"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
+import airdropContracts from "contracts"
 import { Drop } from "hooks/airdrop/useAirdrop"
 import useDrop from "hooks/airdrop/useDrop"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
@@ -74,33 +76,40 @@ const DropPage = (props: Drop): ReactElement => {
 }
 
 const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { drop } = params
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/drop/${drop}`)
+  const { drop: id } = params
+  try {
+    const name = await airdropContracts.GOERLI.dropnamesById(id)
+    const {
+      0: serverId,
+      1: roleIds,
+      2: tokenAddress,
+    } = await airdropContracts.GOERLI.getDataOfDrop(name)
 
-  if (!response.ok)
+    return {
+      props: {
+        serverId,
+        roleIds,
+        tokenAddress,
+        name,
+        id,
+      },
+      revalidate: 10_000,
+    }
+  } catch {
     return {
       notFound: true,
     }
-
-  const dropData = await response.json()
-
-  return {
-    props: {
-      serverId: dropData[0],
-      roleIds: dropData[1],
-      tokenAddress: dropData[2],
-      name: dropData.name,
-      id: dropData.id,
-    },
-    revalidate: 10_000,
   }
 }
 
 const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/drop/allIds`)
-  const dropIds = await response.json()
+  const dropsCount = await airdropContracts.GOERLI.numOfDrops().then(
+    (_: BigNumber) => +_
+  )
+  const ids = [...Array(dropsCount)].map((_, i) => i.toString())
+
   return {
-    paths: dropIds.map((id: string) => ({ params: { drop: id } })),
+    paths: ids.map((id: string) => ({ params: { drop: id } })),
     fallback: "blocking",
   }
 }
