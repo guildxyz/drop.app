@@ -1,7 +1,8 @@
 import { Text } from "@chakra-ui/react"
 import { Contract } from "@ethersproject/contracts"
-import { InfuraProvider } from "@ethersproject/providers"
+import { JsonRpcProvider } from "@ethersproject/providers"
 import Layout from "components/common/Layout"
+import { RPC, supportedChains } from "connectors"
 import { TokenURI } from "hooks/roletoken/useRoleToken"
 import { GetServerSideProps } from "next"
 import { ReactElement } from "react"
@@ -18,12 +19,15 @@ const NFTPage = ({ tokenURI }: Props): ReactElement => (
 )
 
 const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { tokenAddress, tokenId } = params
   try {
+    const { tokenAddress, tokenId, network: networkParam } = params
+    const network = (networkParam as string).toUpperCase()
+    if (!supportedChains.includes(network)) throw new Error() // gets caught, returns 404
+
     const tokenContract = new Contract(
       tokenAddress as string,
       ROLE_TOKEN_ABI,
-      new InfuraProvider("goerli", process.env.INFURA_KEY)
+      new JsonRpcProvider(RPC[network].rpcUrls[0])
     )
     const uri = await tokenContract.tokenURI(tokenId)
     const header = "data:application/json;base64,"
