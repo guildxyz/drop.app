@@ -11,6 +11,7 @@ import {
 import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
+import { Chains } from "connectors"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
 import { GetServerSideProps } from "next"
@@ -23,7 +24,7 @@ type Props = {
 }
 
 const Page = ({ serverId }: Props): JSX.Element => {
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const [searchInput, setSeacrhInput] = useState<string>(
     serverId?.length > 0 ? `server:${serverId}` : ""
   )
@@ -85,7 +86,11 @@ const Page = ({ serverId }: Props): JSX.Element => {
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
             {filteredYourDrops.map(({ name, id }) => (
-              <Link key={id} href={`/${id}`} passHref>
+              <Link
+                key={id}
+                href={`/${Chains[chainId].toLowerCase()}/${id}`}
+                passHref
+              >
                 <Center
                   backgroundColor="primary.700"
                   borderRadius="lg"
@@ -121,7 +126,11 @@ const Page = ({ serverId }: Props): JSX.Element => {
           <Section title="All drops">
             <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
               {filteredAllDrops.map(({ id, name }) => (
-                <Link key={id} href={`/${id}`} passHref>
+                <Link
+                  key={id}
+                  href={`/${Chains[chainId].toLowerCase()}/${id}`}
+                  passHref
+                >
                   <Center
                     backgroundColor="primary.700"
                     borderRadius="lg"

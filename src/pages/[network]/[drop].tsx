@@ -4,6 +4,7 @@ import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
+import { supportedChains } from "connectors"
 import airdropContracts from "contracts"
 import { Drop } from "hooks/airdrop/useAirdrop"
 import useDrop from "hooks/airdrop/useDrop"
@@ -76,14 +77,24 @@ const DropPage = (props: Drop): ReactElement => {
 }
 
 const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { drop: id } = params
+  const { drop: id, network: networkParam } = params
+  const network = (networkParam as string).toUpperCase()
+
+  if (!supportedChains.includes(network))
+    return {
+      notFound: true,
+    }
+
   try {
-    const name = await airdropContracts.GOERLI.dropnamesById(id)
+    const name = await airdropContracts[network].dropnamesById(id)
+
+    if (name?.length <= 0) throw new Error() // Gets caught, returns 404
+
     const {
       0: serverId,
       1: roleIds,
       2: tokenAddress,
-    } = await airdropContracts.GOERLI.getDataOfDrop(name)
+    } = await airdropContracts[network].getDataOfDrop(name)
 
     return {
       props: {
@@ -103,13 +114,25 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 const getStaticPaths: GetStaticPaths = async () => {
-  const dropsCount = await airdropContracts.GOERLI.numOfDrops().then(
-    (_: BigNumber) => +_
+  const paths = await Promise.all(
+    supportedChains.map((network) =>
+      airdropContracts[network].numOfDrops().then((_: BigNumber) => +_)
+    )
+  ).then((counts) =>
+    counts.reduce((acc, count, index) => {
+      ;[...Array(count)]
+        .map((_, i) => i.toString())
+        .forEach((id) =>
+          acc.push({
+            params: { drop: id, network: supportedChains[index].toLowerCase() },
+          })
+        )
+      return acc
+    }, [])
   )
-  const ids = [...Array(dropsCount)].map((_, i) => i.toString())
 
   return {
-    paths: ids.map((id: string) => ({ params: { drop: id } })),
+    paths,
     fallback: "blocking",
   }
 }
