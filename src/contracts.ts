@@ -1,7 +1,10 @@
 import { Contract } from "@ethersproject/contracts"
 import { InfuraProvider } from "@ethersproject/providers"
-import { AirdropAddresses } from "hooks/airdrop/useAirdrop"
 import AIRDROP_ABI from "static/abis/airdrop.json"
+
+enum AirdropAddresses {
+  GOERLI = "0xb503D6f75F0c9A6110B22E434849257127266e44",
+}
 
 const airdropContracts = {
   GOERLI: new Contract(
@@ -11,4 +14,5 @@ const airdropContracts = {
   ),
 }
 
+export { AirdropAddresses }
 export default airdropContracts

@@ -1,5 +1,6 @@
+import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
-import useAirdrop from "hooks/airdrop/useAirdrop"
+import deployTokenContract from "contract_interactions/deployTokenContract"
 import { useFormContext } from "react-hook-form"
 import { mutate } from "swr"
 import useFetchMachine, { FetchMachine } from "./useFetchMachine"
@@ -12,12 +13,17 @@ type DeployToken = {
 }
 
 const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
-  const { account } = useWeb3React()
-  const { deployTokenContract } = useAirdrop()
+  const { chainId, account, library } = useWeb3React<Web3Provider>()
   const { setValue } = useFormContext()
 
   return useFetchMachine<DeployToken>(async (_context, { data }) => {
-    const { contractId } = await deployTokenContract(data.NFT.name, data.NFT.symbol)
+    const { contractId } = await deployTokenContract(
+      chainId,
+      account,
+      library.getSigner(account).connectUnchecked(),
+      data.NFT.name,
+      data.NFT.symbol
+    )
     await mutate(["deployedTokens", account])
     setValue("contractId", contractId.toString())
   })

@@ -17,6 +17,7 @@
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@ethersproject/abi": "^5.4.1",
+    "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/bignumber": "^5.4.2",
     "@ethersproject/bytes": "^5.4.0",
     "@ethersproject/contracts": "^5.4.1",
