@@ -24,7 +24,7 @@ const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
       data.NFT.name,
       data.NFT.symbol
     )
-    await mutate(["deployedTokens", account])
+    await mutate(["deployedTokens", chainId, account])
     setValue("contractId", contractId.toString())
   })
 }
