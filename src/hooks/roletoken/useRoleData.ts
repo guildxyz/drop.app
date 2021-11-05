@@ -23,7 +23,8 @@ const useRoleData = (
 ): RoleData => {
   const { chainId } = useWeb3React()
 
-  const shouldFetch = serverId?.length > 0 && roleId?.length > 0
+  const shouldFetch =
+    serverId?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
 
   const { data } = useSWR(
     shouldFetch ? ["roleData", chainId, tokenAddress, serverId, roleId] : null,
