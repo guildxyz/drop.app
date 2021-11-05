@@ -14,5 +14,14 @@ const airdropContracts = {
   ),
 }
 
-export { AirdropAddresses }
+const tokenContractGetters = {
+  GOERLI: (tokenAddress: string): Contract =>
+    new Contract(
+      tokenAddress,
+      AIRDROP_ABI,
+      new InfuraProvider("goerli", process.env.INFURA_KEY)
+    ),
+}
+
+export { AirdropAddresses, tokenContractGetters }
 export default airdropContracts
