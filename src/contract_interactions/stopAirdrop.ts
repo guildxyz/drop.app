@@ -12,6 +12,7 @@ const stopAirdrop = async (
   account: string,
   signer: JsonRpcSigner,
   serverId: string,
+  urlName: string,
   roleId: string,
   contractId: number
 ): Promise<TransactionReceipt> => {
@@ -29,14 +30,7 @@ const stopAirdrop = async (
   )
 
   try {
-    const tx = await airdropStopAirdrop(
-      chainId,
-      signer,
-      signature,
-      serverId,
-      roleId,
-      contractId
-    )
+    const tx = await airdropStopAirdrop(chainId, signer, signature, urlName, roleId)
     const receipt = await tx.wait()
     return receipt
   } catch {

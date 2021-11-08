@@ -8,6 +8,7 @@ const startAirdrop = (
   chainId: number,
   signer: JsonRpcSigner,
   signature: string,
+  urlName: string,
   dropName: string,
   serverId: string,
   roles: Role[],
@@ -16,6 +17,6 @@ const startAirdrop = (
 ): Promise<TransactionResponse> =>
   airdropContracts[Chains[chainId]]
     .connect(signer)
-    .newAirdrop(signature, dropName, serverId, roles, contractId, channelId)
+    .newAirdrop(signature, urlName, dropName, serverId, roles, contractId, channelId)
 
 export default startAirdrop

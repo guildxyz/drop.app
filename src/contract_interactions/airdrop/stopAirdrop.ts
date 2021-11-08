@@ -7,12 +7,11 @@ const stopAirdrop = (
   chainId: number,
   signer: JsonRpcSigner,
   signature: string,
-  serverId: string,
-  roleId: string,
-  contractId: number
+  urlName: string,
+  roleId: string
 ): Promise<TransactionResponse> =>
   airdropContracts[Chains[chainId]]
     .connect(signer)
-    .stopAirdrop(signature, serverId, roleId, contractId)
+    .stopAirdrop(signature, urlName, roleId)
 
 export default stopAirdrop

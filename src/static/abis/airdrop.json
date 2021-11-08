@@ -94,7 +94,7 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "dropname",
+        "name": "dropUrl",
         "type": "string"
       },
       {
@@ -223,13 +223,6 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "dropnamesById",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "externalUrl",
     "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
@@ -237,12 +230,15 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "string", "name": "_dropName", "type": "string" }],
+    "inputs": [{ "internalType": "string", "name": "_dropUrl", "type": "string" }],
     "name": "getDataOfDrop",
     "outputs": [
       { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string[]", "name": "", "type": "string[]" },
-      { "internalType": "address", "name": "", "type": "address" }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -263,6 +259,7 @@
   {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_dropUrl", "type": "string" },
       { "internalType": "string", "name": "_dropName", "type": "string" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
       {
@@ -273,7 +270,7 @@
           { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
           { "internalType": "string[]", "name": "values", "type": "string[]" }
         ],
-        "internalType": "struct NFTAirdrop.Role[]",
+        "internalType": "struct RoleNFTAirdrop.Role[]",
         "name": "_roles",
         "type": "tuple[]"
       },
@@ -350,9 +347,8 @@
   {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
-      { "internalType": "string", "name": "_serverId", "type": "string" },
-      { "internalType": "string", "name": "_roleId", "type": "string" },
-      { "internalType": "uint256", "name": "_contractId", "type": "uint256" }
+      { "internalType": "string", "name": "_dropUrl", "type": "string" },
+      { "internalType": "string", "name": "_roleId", "type": "string" }
     ],
     "name": "stopAirdrop",
     "outputs": [],
@@ -374,10 +370,27 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "address", "name": "_to", "type": "address" },
+      { "internalType": "uint256", "name": "_id", "type": "uint256" }
+    ],
+    "name": "transferTokenOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "urlById",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

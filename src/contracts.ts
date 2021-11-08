@@ -4,7 +4,7 @@ import AIRDROP_ABI from "static/abis/airdrop.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 
 enum AirdropAddresses {
-  GOERLI = "0xb503D6f75F0c9A6110B22E434849257127266e44",
+  GOERLI = "0x254EF5F30A7260dC9132CFbD4cF9663Ef106b10A",
 }
 
 const airdropContracts = {
