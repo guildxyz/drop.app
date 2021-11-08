@@ -10,7 +10,7 @@ type Props = {
 const Chakra = ({ cookies, children }: PropsWithChildren<Props>): ReactElement => {
   // const colorModeManager =
   //   typeof cookies === "string" ? cookieStorageManager(cookies) : localStorageManager
-  const localCookies = cookies || "chakra-ui-color-mode=dark"
+  const localCookies = cookies || "chakra-ui-color-mode=light"
   const colorModeManager = cookieStorageManager(localCookies)
 
   return (

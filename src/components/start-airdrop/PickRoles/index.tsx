@@ -37,15 +37,17 @@ const PickRoles = (): ReactElement => {
             ))}
         </Grid>
 
-        <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
-          {Object.keys(formRoles ?? {}).map((roleId) => (
-            <RoleCard
-              key={roleId}
-              roleId={roleId}
-              unselectRole={() => unselectRole(roleId)}
-            />
-          ))}
-        </Grid>
+        {Object.keys(formRoles ?? {}).length > 0 && (
+          <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
+            {Object.keys(formRoles ?? {}).map((roleId) => (
+              <RoleCard
+                key={roleId}
+                roleId={roleId}
+                unselectRole={() => unselectRole(roleId)}
+              />
+            ))}
+          </Grid>
+        )}
 
         {errors.roles?.message && (
           <FormErrorMessage>{errors.roles.message}</FormErrorMessage>
