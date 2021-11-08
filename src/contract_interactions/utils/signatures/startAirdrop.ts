@@ -4,7 +4,7 @@ const startAirdropSignature = (
   serverId: string,
   account: string,
   chainId: number,
-  dropName: string
+  urlName: string
 ): Promise<string> =>
   fetch("/api/get-signature/start-airdrop", {
     method: "POST",
@@ -13,7 +13,7 @@ const startAirdropSignature = (
       serverId,
       address: account,
       chainId,
-      name: dropName,
+      url: urlName,
     }),
   }).then((response) =>
     response.json().then((body) => {
