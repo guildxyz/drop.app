@@ -80,6 +80,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
 
       <Box width="full">
         <FileUpload
+          accept="image/*"
           register={register(`roles.${roleId}.image`, {
             validate: validateFiles,
             onChange: ({
