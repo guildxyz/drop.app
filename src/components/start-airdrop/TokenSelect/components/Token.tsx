@@ -27,11 +27,11 @@ const Token = ({
         cursor="pointer"
         borderWidth="1px"
         borderRadius="md"
-        boxShadow="md"
+        backgroundColor="primary.100"
         _checked={{
-          bg: "purple.600",
+          bg: "purple.400",
           color: "white",
-          borderColor: "purple.600",
+          borderColor: "purple.400",
         }}
         px={5}
         py={3}

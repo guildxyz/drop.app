@@ -87,11 +87,16 @@ const Page = ({ serverId }: Props): JSX.Element => {
             {filteredYourDrops.map(({ name, id }) => (
               <Link key={id} href={`/${id}`} passHref>
                 <Center
-                  backgroundColor="primary.700"
+                  backgroundColor="primary.100"
+                  borderWidth="1px"
                   borderRadius="lg"
                   padding={10}
-                  transition="background-color .2s linear"
-                  _hover={{ cursor: "pointer", backgroundColor: "purple.500" }}
+                  transition="background-color .2s linear, border-color .2s linear"
+                  _hover={{
+                    cursor: "pointer",
+                    backgroundColor: "purple.300",
+                    borderColor: "purple.400",
+                  }}
                 >
                   <Text fontSize="xl">{name}</Text>
                 </Center>
@@ -123,11 +128,16 @@ const Page = ({ serverId }: Props): JSX.Element => {
               {filteredAllDrops.map(({ id, name }) => (
                 <Link key={id} href={`/${id}`} passHref>
                   <Center
-                    backgroundColor="primary.700"
+                    backgroundColor="primary.100"
+                    borderWidth="1px"
                     borderRadius="lg"
                     padding={10}
-                    transition="background-color .2s linear"
-                    _hover={{ cursor: "pointer", backgroundColor: "purple.500" }}
+                    transition="background-color .2s linear, border-color .2s linear"
+                    _hover={{
+                      cursor: "pointer",
+                      backgroundColor: "purple.300",
+                      borderColor: "purple.400",
+                    }}
                   >
                     <Text fontSize="xl">{name}</Text>
                   </Center>

@@ -53,9 +53,9 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
         key={roleId}
         alignItems="left"
         padding={5}
-        shadow="lg"
         borderRadius={10}
-        backgroundColor="gray.700"
+        backgroundColor="primary.100"
+        borderWidth="1px"
       >
         <Text>{roleName}</Text>
         <Box

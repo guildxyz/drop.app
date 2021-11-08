@@ -88,7 +88,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
   }, [isActive, unselectRole])
 
   return (
-    <VStack backgroundColor="whiteAlpha.100" borderRadius="lg" padding={5}>
+    <VStack backgroundColor="primary.200" borderRadius="lg" padding={5}>
       <HStack width="full" justifyContent="space-between">
         <Text fontSize="xl" fontWeight="bold">
           {roles[roleId]}
