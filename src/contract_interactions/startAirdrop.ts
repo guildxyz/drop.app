@@ -73,6 +73,7 @@ const startAirdrop = async (
       chainId,
       signer,
       signature,
+      urlName,
       name,
       serverId,
       roles.map(([roleId, { traits }]) => ({
