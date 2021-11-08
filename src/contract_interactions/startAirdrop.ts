@@ -23,13 +23,12 @@ const startAirdrop = async (
     metaDataKeys,
     channel,
   } = data
-  console.log(urlName)
 
   const roles = Object.entries(rolesObject)
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
   const [signature, tokenAddress] = await Promise.all([
-    startAirdropSignature(serverId, account, chainId, name),
+    startAirdropSignature(serverId, account, chainId, urlName),
     contractsByDeployer(chainId, account, +contractId),
   ])
 
