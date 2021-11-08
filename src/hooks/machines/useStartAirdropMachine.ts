@@ -15,28 +15,21 @@ export type StartAirdropData = {
       image: FileList
       ipfsHash: string
       traits: Record<string, string>
+      traitKeyIds: Record<string, string>
     }
   >
   contractId: string
-  metaDataKeys: Record<string, string>
 }
 
 const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
 
   return useFetchMachine<StartAirdropData>(
+    "Airdrop started",
     async (
       _context,
       {
-        data: {
-          roles,
-          serverId,
-          name,
-          channel,
-          assetType,
-          contractId,
-          metaDataKeys,
-        },
+        data: { roles, serverId, name, channel, assetType, contractId },
       }: SubmitEvent<StartAirdropData>
     ) =>
       startAirdrop(chainId, account, library.getSigner(account).connectUnchecked(), {
@@ -46,7 +39,6 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
         serverId,
         assetType,
         contractId,
-        metaDataKeys,
       })
   )
 }

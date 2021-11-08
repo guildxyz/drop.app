@@ -14,6 +14,7 @@ const useClaimMachine = (): FetchMachine<ClaimData> => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
 
   return useFetchMachine<ClaimData>(
+    "Claimed",
     async (
       _context,
       { data: { serverId, roleId, tokenAddress } }: SubmitEvent<ClaimData>
