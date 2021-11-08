@@ -1,5 +1,5 @@
 import { Contract } from "@ethersproject/contracts"
-import { JsonRpcProvider } from "@ethersproject/providers"
+import { InfuraProvider, JsonRpcProvider } from "@ethersproject/providers"
 import { RPC, supportedChains } from "connectors"
 import AIRDROP_ABI from "static/abis/airdrop.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
@@ -9,9 +9,14 @@ enum AirdropAddresses {
   POLYGON = "0x18Bb4142B25d39d07b0dd1aAF317D6A963AFdAA8",
 }
 
-const providers = Object.fromEntries(
-  supportedChains.map((chain) => [chain, new JsonRpcProvider(RPC[chain].rpcUrls[0])])
-)
+const providers = {
+  GOERLI: new InfuraProvider("goerli", process.env.INFURA_KEY),
+  POLYGON: new JsonRpcProvider(RPC.POLYGON.rpcUrls[0]),
+}
+
+// const providers = Object.fromEntries(
+//   supportedChains.map((chain) => [chain, new JsonRpcProvider(RPC[chain].rpcUrls[0])])
+// )
 
 const airdropContracts = Object.fromEntries(
   supportedChains.map((chain) => [
