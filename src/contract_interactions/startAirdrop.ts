@@ -14,14 +14,7 @@ const startAirdrop = async (
   data: StartAirdropData,
   setUploadedImages?: (hashes: Record<string, string>) => void
 ): Promise<TransactionReceipt> => {
-  const {
-    contractId,
-    serverId,
-    name,
-    roles: rolesObject,
-    metaDataKeys,
-    channel,
-  } = data
+  const { contractId, serverId, name, roles: rolesObject, channel } = data
   const roles = Object.entries(rolesObject)
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
@@ -72,12 +65,12 @@ const startAirdrop = async (
       signature,
       name,
       serverId,
-      roles.map(([roleId, { traits }]) => ({
+      roles.map(([roleId, { traits, traitKeyIds }]) => ({
         roleId,
         tokenImageHash: hashes[roleId],
         NFTName: assetData.name,
         traitTypes: Object.keys(traits ?? {}).map(
-          (traitKey) => metaDataKeys[traitKey]
+          (traitKey) => traitKeyIds[traitKey]
         ),
         values: Object.values(traits ?? {}),
       })),
