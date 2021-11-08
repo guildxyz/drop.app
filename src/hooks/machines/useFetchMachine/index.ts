@@ -16,6 +16,7 @@ export type FetchMachine<SubmitData> = {
 }
 
 const useFetchMachine = <SubmitData>(
+  successText: string,
   fetcher: (context: Context, event: SubmitEvent<SubmitData>) => Promise<any>
 ): FetchMachine<SubmitData> => {
   const toast = useToast()
@@ -49,7 +50,7 @@ const useFetchMachine = <SubmitData>(
         successToast: () =>
           toast({
             title: "Success",
-            description: "Airdrop started",
+            description: successText,
             status: "success",
           }),
       },

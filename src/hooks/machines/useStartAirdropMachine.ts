@@ -25,6 +25,7 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
 
   return useFetchMachine<StartAirdropData>(
+    "Airdrop started",
     async (
       _context,
       {

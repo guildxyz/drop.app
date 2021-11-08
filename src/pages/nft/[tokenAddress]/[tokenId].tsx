@@ -17,9 +17,9 @@ const NFTPage = ({ tokenURI }: Props): ReactElement => (
 
 const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
-    const { tokenAddress, tokenId, network: networkParam } = params
+    const { tokenAddress, tokenId } = params
     const tokenURI = await getTokenURI(
-      Chains[(networkParam as string).toUpperCase()],
+      Chains[process.env.NEXT_PUBLIC_CHAIN],
       tokenAddress as string,
       +(tokenId as string)
     )

@@ -3,7 +3,7 @@ import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
-import { Chains, supportedChains } from "connectors"
+import { Chains } from "connectors"
 import airdropContracts from "contracts"
 import getDropIds from "contract_interactions/getDropIds"
 import { Drop } from "contract_interactions/types"
@@ -65,16 +65,12 @@ const DropPage = (props: Drop): ReactElement => {
 }
 
 const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { drop: id, network: networkParam } = params
-  const network = (networkParam as string).toUpperCase()
-
-  if (!supportedChains.includes(network))
-    return {
-      notFound: true,
-    }
+  const { drop: id } = params
 
   try {
-    const name = await airdropContracts[network].dropnamesById(id)
+    const name = await airdropContracts[process.env.NEXT_PUBLIC_CHAIN].dropnamesById(
+      id
+    )
 
     if (name?.length <= 0) throw new Error() // Gets caught, returns 404
 
@@ -82,7 +78,7 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
       0: serverId,
       1: roleIds,
       2: tokenAddress,
-    } = await airdropContracts[network].getDataOfDrop(name)
+    } = await airdropContracts[process.env.NEXT_PUBLIC_CHAIN].getDataOfDrop(name)
 
     return {
       props: {
@@ -102,24 +98,11 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 const getStaticPaths: GetStaticPaths = async () => {
-  const paths = await Promise.all(
-    supportedChains.map((network) => getDropIds(Chains[network]))
-  ).then((idsList) =>
-    idsList.reduce<Array<{ params: { drop: string; network: string } }>>(
-      (acc, ids, index) => {
-        ids.forEach((id) =>
-          acc.push({
-            params: {
-              drop: id.toString(),
-              network: supportedChains[index].toLowerCase(),
-            },
-          })
-        )
-        return acc
-      },
-      []
-    )
-  )
+  const ids = await getDropIds(Chains[process.env.NEXT_PUBLIC_CHAIN])
+
+  const paths = ids.map((id) => ({
+    params: { drop: id.toString() },
+  }))
 
   return {
     paths,
