@@ -66,10 +66,6 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
         <VStack as="form" spacing={10}>
-          <Section title="Choose a name for your DROP">
-            <NameInput />
-          </Section>
-
           <Section title="Choose a server">
             <ServerSelect />
           </Section>
@@ -95,6 +91,9 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
             </Section>
           )}
 
+          <Section title="Choose a name for your DROP">
+            <NameInput />
+          </Section>
           <SubmitButton />
         </VStack>
       </Layout>
