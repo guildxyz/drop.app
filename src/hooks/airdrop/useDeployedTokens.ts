@@ -1,14 +1,16 @@
 import { useWeb3React } from "@web3-react/core"
+import deployedTokens from "contract_interactions/deployedTokens"
 import useSWR from "swr"
-import useAirdrop from "./useAirdrop"
+
+const getDeployedTokens = (_: string, chainId: number, address: string) =>
+  deployedTokens(chainId, address)
 
 const useDeployedTokens = (): string[] => {
-  const { deployedTokens } = useAirdrop()
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const shouldFetch = account?.length > 0
   const { data } = useSWR(
-    shouldFetch ? ["deployedTokens", account] : null,
-    (_: string, address: string) => deployedTokens(address),
+    shouldFetch ? ["deployedTokens", chainId, account] : null,
+    getDeployedTokens,
     { revalidateIfStale: true }
   )
 

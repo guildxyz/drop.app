@@ -1,5 +1,6 @@
+import { useWeb3React } from "@web3-react/core"
+import getDataOfRole from "contract_interactions/roletoken/getDataOfRole"
 import useSWR from "swr"
-import useRoleToken from "./useRoleToken"
 
 export type RoleData = {
   imageHash: string
@@ -8,23 +9,25 @@ export type RoleData = {
 }
 
 const getRoleData = (
-  _: string,
+  _: "roleData",
+  chainId: number,
+  tokenAddress: string,
   serverId: string,
-  roleId: string,
-  getDataOfRole: (serverId: string, roleId: string) => Promise<RoleData>
-) => getDataOfRole(serverId, roleId)
+  roleId: string
+) => getDataOfRole(chainId, tokenAddress, serverId, roleId)
 
 const useRoleData = (
   tokenAddress: string,
   serverId: string,
   roleId: string
 ): RoleData => {
-  const { getDataOfRole } = useRoleToken(tokenAddress)
+  const { chainId } = useWeb3React()
 
-  const shouldFetch = !!getDataOfRole && serverId?.length > 0 && roleId?.length > 0
+  const shouldFetch =
+    serverId?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
 
   const { data } = useSWR(
-    shouldFetch ? ["roleData", serverId, roleId, getDataOfRole] : null,
+    shouldFetch ? ["roleData", chainId, tokenAddress, serverId, roleId] : null,
     getRoleData
   )
 

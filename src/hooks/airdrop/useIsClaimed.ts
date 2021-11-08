@@ -1,37 +1,32 @@
 import { useWeb3React } from "@web3-react/core"
+import { claims } from "contract_interactions/airdrop"
 import useSWR from "swr"
-import useAirdrop from "./useAirdrop"
 
 const getClaims = (
   _: string,
+  chainId: number,
   address: string,
   serverId: string,
   roleId: string,
-  tokenAddress: string,
-  claims: (
-    address: string,
-    serverId: string,
-    roleId: string,
-    tokenAddress: string
-  ) => Promise<{ claimed: boolean; approved: boolean }>
-) => claims(address, serverId, roleId, tokenAddress).then(({ claimed }) => claimed)
+  tokenAddress: string
+) =>
+  claims(chainId, address, serverId, roleId, tokenAddress).then(
+    ({ claimed }) => claimed
+  )
 
 const useIsClaimed = (
   serverId: string,
   roleId: string,
   tokenAddress: string
 ): boolean => {
-  const { account } = useWeb3React()
-  const { claims } = useAirdrop()
+  const { account, chainId } = useWeb3React()
+
   const shouldFetch =
-    !!claims &&
-    serverId?.length > 0 &&
-    roleId?.length > 0 &&
-    tokenAddress?.length > 0
+    serverId?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
 
   const { data } = useSWR(
     shouldFetch
-      ? ["isClaimed", account, serverId, roleId, tokenAddress, claims]
+      ? ["isClaimed", chainId, account, serverId, roleId, tokenAddress]
       : null,
     getClaims
   )

@@ -12,7 +12,7 @@ import {
   Tooltip,
   VStack,
 } from "@chakra-ui/react"
-import { Drop } from "hooks/airdrop/useAirdrop"
+import { Drop } from "contract_interactions/types"
 import useIsClaimed from "hooks/airdrop/useIsClaimed"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useRoleName from "hooks/discord/useRoleName"

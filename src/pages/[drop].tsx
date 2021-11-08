@@ -1,11 +1,12 @@
 import { Circle, Grid, HStack, Text } from "@chakra-ui/react"
-import { BigNumber } from "@ethersproject/bignumber"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
+import { Chains } from "connectors"
 import airdropContracts from "contracts"
-import { Drop } from "hooks/airdrop/useAirdrop"
+import getDropIds from "contract_interactions/getDropIds"
+import { Drop } from "contract_interactions/types"
 import useDrop from "hooks/airdrop/useDrop"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useServerData from "hooks/discord/useServerData"
@@ -103,13 +104,10 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 const getStaticPaths: GetStaticPaths = async () => {
-  const dropsCount = await airdropContracts.GOERLI.numOfDrops().then(
-    (_: BigNumber) => +_
-  )
-  const ids = [...Array(dropsCount)].map((_, i) => i.toString())
+  const ids = await getDropIds(Chains.GOERLI)
 
   return {
-    paths: ids.map((id: string) => ({ params: { drop: id } })),
+    paths: ids.map((id: number) => ({ params: { drop: id.toString() } })),
     fallback: "blocking",
   }
 }

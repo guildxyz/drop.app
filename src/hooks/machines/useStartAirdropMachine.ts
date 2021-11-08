@@ -1,16 +1,13 @@
-import useAirdrop from "hooks/airdrop/useAirdrop"
+import type { Web3Provider } from "@ethersproject/providers"
+import { useWeb3React } from "@web3-react/core"
+import startAirdrop from "contract_interactions/startAirdrop"
 import useFetchMachine, { FetchMachine } from "./useFetchMachine"
 import { SubmitEvent } from "./useFetchMachine/machine"
 
-type StartAirdropData = {
+export type StartAirdropData = {
   name: string
   channel: string
   assetType: "NFT" | "TOKEN" | "ERC1155"
-  // TODO: Make a union type for the 3 assets (when they are supported)
-  assetData: {
-    name: string
-    symbol: string
-  }
   serverId: string
   roles: Record<
     string,
@@ -25,7 +22,7 @@ type StartAirdropData = {
 }
 
 const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
-  const { startAirdrop } = useAirdrop()
+  const { chainId, account, library } = useWeb3React<Web3Provider>()
 
   return useFetchMachine<StartAirdropData>(
     async (
@@ -42,15 +39,15 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
         },
       }: SubmitEvent<StartAirdropData>
     ) =>
-      startAirdrop(
+      startAirdrop(chainId, account, library.getSigner(account).connectUnchecked(), {
         name,
         channel,
         roles,
         serverId,
         assetType,
         contractId,
-        metaDataKeys
-      )
+        metaDataKeys,
+      })
   )
 }
 
