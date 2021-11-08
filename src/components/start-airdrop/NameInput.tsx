@@ -1,16 +1,17 @@
 import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
-import useAirdrop from "hooks/airdrop/useAirdrop"
+import { useWeb3React } from "@web3-react/core"
+import { getDataOfDrop } from "contract_interactions/airdrop"
 import { ReactElement } from "react"
 import { useFormContext } from "react-hook-form"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 const NameInput = (): ReactElement => {
+  const { chainId } = useWeb3React()
   const {
     register,
     formState: { errors },
   } = useFormContext()
-  const { getDataOfDrop } = useAirdrop()
 
   return (
     <FormControl isInvalid={!!errors?.name}>
@@ -21,7 +22,7 @@ const NameInput = (): ReactElement => {
         {...register("name", {
           required: "This field is required",
           validate: async (value) =>
-            getDataOfDrop(value).then(
+            getDataOfDrop(chainId, value).then(
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
             ),

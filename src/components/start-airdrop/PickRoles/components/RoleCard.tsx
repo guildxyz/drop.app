@@ -18,7 +18,7 @@ import {
 import useRoles from "hooks/discord/useRoles"
 import Image from "next/image"
 import { Info, X } from "phosphor-react"
-import { ReactElement, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import FileUpload from "./FileUpload"
 
@@ -28,7 +28,7 @@ type Props = {
 }
 
 const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
-  const { register } = useFormContext()
+  const { register, unregister } = useFormContext()
   const metaDataKeys = useWatch({ name: "metaDataKeys" })
   const serverId = useWatch({ name: "serverId" })
   const formRoles = useWatch({ name: "roles" })
@@ -47,6 +47,8 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
     }
     return true
   }
+
+  useEffect(() => () => unregister(`roles.${roleId}`), [])
 
   return (
     <VStack backgroundColor="whiteAlpha.100" borderRadius="lg" padding={5}>

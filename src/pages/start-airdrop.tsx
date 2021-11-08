@@ -69,24 +69,29 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
           <Section title="Choose a name for your DROP">
             <NameInput />
           </Section>
+
           <Section title="Choose a server">
             <ServerSelect />
           </Section>
+
+          {serverId?.length > 0 && (
+            <>
+              <Section title="Set metadata">
+                <SetMetaData />
+              </Section>
+              <Section title="Pick roles">
+                <PickRoles />
+              </Section>
+            </>
+          )}
+
           <Section title="Choose an existing token, or deploy a new one">
             <TokenSelect />
           </Section>
-          {contractId === "" ? null : contractId === "DEPLOY" ? (
+
+          {contractId === "DEPLOY" && (
             <Section title="Choose a type of asset to deploy">
               <Asset />
-            </Section>
-          ) : (
-            <Section title="Set metadata">
-              <SetMetaData />
-            </Section>
-          )}
-          {serverId?.length > 0 && (
-            <Section title="Pick roles">
-              <PickRoles />
             </Section>
           )}
 

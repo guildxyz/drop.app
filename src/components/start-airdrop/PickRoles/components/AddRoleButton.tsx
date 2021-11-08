@@ -21,7 +21,9 @@ const AddRoleButton = ({
   const tokenAddress = useRoleTokenAddress(contractId)
   const isActive = useIsActive(serverId, roleId, tokenAddress)
 
-  if (isActive === undefined || !!isActive) return null
+  // If we only want to display the inactive roles event when the address hasn't been selected
+  // if (isActive === undefined || !!isActive) return null
+  if (isActive !== undefined && !!isActive) return null
 
   return (
     <Button

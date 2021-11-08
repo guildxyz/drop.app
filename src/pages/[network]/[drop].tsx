@@ -1,12 +1,12 @@
 import { Circle, Grid, HStack, Text } from "@chakra-ui/react"
-import { BigNumber } from "@ethersproject/bignumber"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
-import { supportedChains } from "connectors"
+import { Chains, supportedChains } from "connectors"
 import airdropContracts from "contracts"
-import { Drop } from "hooks/airdrop/useAirdrop"
+import getDropIds from "contract_interactions/getDropIds"
+import { Drop } from "contract_interactions/types"
 import useDrop from "hooks/airdrop/useDrop"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useServerData from "hooks/discord/useServerData"
@@ -19,18 +19,6 @@ const DropPage = (props: Drop): ReactElement => {
   const drop = useDrop(props.name, props)
   const { name, id, icon } = useServerData(drop.serverId)
   const isAuthenticated = useIsAuthenticated()
-
-  /* const { stopAirdrop } = useAirdrop()
-  useEffect(() => {
-    console.log({
-      serverId: drop.serverId,
-      roleId: drop.roleIds[0],
-      tokenAddress: drop.,
-    })
-    stopAirdrop(drop.serverId, drop.roleIds[0], drop.tokenAddress)()
-      .then(() => console.log("stopped"))
-      .catch((e) => console.log(e))
-  }, []) */
 
   return (
     <Layout title={drop.name}>
@@ -115,20 +103,22 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 
 const getStaticPaths: GetStaticPaths = async () => {
   const paths = await Promise.all(
-    supportedChains.map((network) =>
-      airdropContracts[network].numOfDrops().then((_: BigNumber) => +_)
-    )
-  ).then((counts) =>
-    counts.reduce((acc, count, index) => {
-      ;[...Array(count)]
-        .map((_, i) => i.toString())
-        .forEach((id) =>
+    supportedChains.map((network) => getDropIds(Chains[network]))
+  ).then((idsList) =>
+    idsList.reduce<Array<{ params: { drop: string; network: string } }>>(
+      (acc, ids, index) => {
+        ids.forEach((id) =>
           acc.push({
-            params: { drop: id, network: supportedChains[index].toLowerCase() },
+            params: {
+              drop: id.toString(),
+              network: supportedChains[index].toLowerCase(),
+            },
           })
         )
-      return acc
-    }, [])
+        return acc
+      },
+      []
+    )
   )
 
   return {
