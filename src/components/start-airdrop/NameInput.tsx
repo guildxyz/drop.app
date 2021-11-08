@@ -1,8 +1,9 @@
 import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { getDataOfDrop } from "contract_interactions/airdrop"
-import { ReactElement } from "react"
-import { useFormContext } from "react-hook-form"
+import { ReactElement, useEffect } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
+import slugify from "utils/slugify"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
@@ -10,8 +11,16 @@ const NameInput = (): ReactElement => {
   const { chainId } = useWeb3React()
   const {
     register,
+    control,
+    setValue,
     formState: { errors },
   } = useFormContext()
+
+  const guildName = useWatch({ control, name: "name" })
+
+  useEffect(() => {
+    if (guildName) setValue("urlName", slugify(guildName.toString()))
+  }, [guildName])
 
   return (
     <FormControl isInvalid={!!errors?.name}>

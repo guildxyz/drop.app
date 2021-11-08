@@ -18,10 +18,13 @@ const startAirdrop = async (
     contractId,
     serverId,
     name,
+    urlName,
     roles: rolesObject,
     metaDataKeys,
     channel,
   } = data
+  console.log(urlName)
+
   const roles = Object.entries(rolesObject)
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
