@@ -29,9 +29,9 @@ const DropdownRadio = ({
           borderRadius="md"
           boxShadow="md"
           _checked={{
-            bg: "purple.600",
+            bg: "purple.400",
             color: "white",
-            borderColor: "purple.600",
+            borderColor: "purple.400",
           }}
           px={5}
           py={3}

@@ -16,17 +16,20 @@ const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
   const { setValue } = useFormContext()
 
-  return useFetchMachine<DeployToken>(async (_context, { data }) => {
-    const { contractId } = await deployTokenContract(
-      chainId,
-      account,
-      library.getSigner(account).connectUnchecked(),
-      data.NFT.name,
-      data.NFT.symbol
-    )
-    await mutate(["deployedTokens", chainId, account])
-    setValue("contractId", contractId.toString())
-  })
+  return useFetchMachine<DeployToken>(
+    "Token deployed",
+    async (_context, { data }) => {
+      const { contractId } = await deployTokenContract(
+        chainId,
+        account,
+        library.getSigner(account).connectUnchecked(),
+        data.NFT.name,
+        data.NFT.symbol
+      )
+      await mutate(["deployedTokens", chainId, account])
+      setValue("contractId", contractId.toString())
+    }
+  )
 }
 
 export default useDeployTokenMachine

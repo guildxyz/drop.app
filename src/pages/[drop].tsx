@@ -20,18 +20,6 @@ const DropPage = (props: Drop): ReactElement => {
   const { name, id, icon } = useServerData(drop.serverId)
   const isAuthenticated = useIsAuthenticated()
 
-  /* const { stopAirdrop } = useAirdrop()
-  useEffect(() => {
-    console.log({
-      serverId: drop.serverId,
-      roleId: drop.roleIds[0],
-      tokenAddress: drop.,
-    })
-    stopAirdrop(drop.serverId, drop.roleIds[0], drop.tokenAddress)()
-      .then(() => console.log("stopped"))
-      .catch((e) => console.log(e))
-  }, []) */
-
   return (
     <Layout title={drop.name}>
       <HStack justifyContent="space-between">
@@ -78,13 +66,19 @@ const DropPage = (props: Drop): ReactElement => {
 
 const getStaticProps: GetStaticProps = async ({ params }) => {
   const { drop: id } = params
+
   try {
-    const name = await airdropContracts.GOERLI.dropnamesById(id)
+    const name = await airdropContracts[process.env.NEXT_PUBLIC_CHAIN].dropnamesById(
+      id
+    )
+
+    if (name?.length <= 0) throw new Error() // Gets caught, returns 404
+
     const {
       0: serverId,
       1: roleIds,
       2: tokenAddress,
-    } = await airdropContracts.GOERLI.getDataOfDrop(name)
+    } = await airdropContracts[process.env.NEXT_PUBLIC_CHAIN].getDataOfDrop(name)
 
     return {
       props: {
@@ -104,10 +98,14 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 const getStaticPaths: GetStaticPaths = async () => {
-  const ids = await getDropIds(Chains.GOERLI)
+  const ids = await getDropIds(Chains[process.env.NEXT_PUBLIC_CHAIN])
+
+  const paths = ids.map((id) => ({
+    params: { drop: id.toString() },
+  }))
 
   return {
-    paths: ids.map((id: number) => ({ params: { drop: id.toString() } })),
+    paths,
     fallback: "blocking",
   }
 }

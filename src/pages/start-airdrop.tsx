@@ -6,7 +6,6 @@ import Asset from "components/start-airdrop/Asset"
 import NameInput from "components/start-airdrop/NameInput"
 import PickRoles from "components/start-airdrop/PickRoles"
 import ServerSelect from "components/start-airdrop/ServerSelect"
-import SetMetaData from "components/start-airdrop/SetMetaData"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
@@ -37,7 +36,6 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
       contractId: "",
       serverId: "",
       roles: {},
-      metaDataKeys: {},
     },
   })
   const serverId = useWatch({
@@ -67,19 +65,15 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
         <VStack as="form" spacing={10}>
-          <Section title="Choose a name for your DROP">
-            <NameInput />
-          </Section>
-
           <Section title="Choose a server">
             <ServerSelect />
           </Section>
 
           {serverId?.length > 0 && (
             <>
-              <Section title="Set metadata">
+              {/* <Section title="Set metadata">
                 <SetMetaData />
-              </Section>
+          </Section> */}
               <Section title="Pick roles">
                 <PickRoles />
               </Section>
@@ -96,6 +90,9 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
             </Section>
           )}
 
+          <Section title="Choose a name for your DROP">
+            <NameInput />
+          </Section>
           <SubmitButton />
         </VStack>
       </Layout>

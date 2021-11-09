@@ -2,20 +2,16 @@ import { Button } from "@chakra-ui/react"
 import useIsActive from "hooks/airdrop/useIsActive"
 import useRoleTokenAddress from "hooks/airdrop/useRoleTokenAddress"
 import { Plus } from "phosphor-react"
-import { Dispatch, ReactElement, SetStateAction } from "react"
+import { ReactElement } from "react"
 import { useWatch } from "react-hook-form"
 
 type Props = {
   roleId: string
   roleName: string
-  setSelectedRoles: Dispatch<SetStateAction<string[]>>
+  setSelected: () => void
 }
 
-const AddRoleButton = ({
-  roleId,
-  roleName,
-  setSelectedRoles,
-}: Props): ReactElement => {
+const AddRoleButton = ({ roleId, roleName, setSelected }: Props): ReactElement => {
   const contractId = useWatch({ name: "contractId" })
   const serverId = useWatch({ name: "serverId" })
   const tokenAddress = useRoleTokenAddress(contractId)
@@ -31,7 +27,7 @@ const AddRoleButton = ({
       colorScheme="purple"
       variant="outline"
       key={roleId}
-      onClick={() => setSelectedRoles((prev) => [...prev, roleId])}
+      onClick={setSelected}
     >
       {roleName}
     </Button>
