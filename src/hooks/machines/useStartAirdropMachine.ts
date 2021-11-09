@@ -6,6 +6,7 @@ import { SubmitEvent } from "./useFetchMachine/machine"
 
 export type StartAirdropData = {
   name: string
+  urlName: string
   channel: string
   assetType: "NFT" | "TOKEN" | "ERC1155"
   serverId: string
@@ -29,11 +30,12 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
     async (
       _context,
       {
-        data: { roles, serverId, name, channel, assetType, contractId },
+        data: { roles, serverId, name, channel, assetType, contractId, urlName },
       }: SubmitEvent<StartAirdropData>
     ) =>
       startAirdrop(chainId, account, library.getSigner(account).connectUnchecked(), {
         name,
+        urlName,
         channel,
         roles,
         serverId,

@@ -1,36 +1,31 @@
-import {
-  Alert,
-  AlertIcon,
-  Button,
-  Center,
-  Grid,
-  Input,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
-import { useWeb3React } from "@web3-react/core"
+import { Button, Center, Grid, Input, Text, VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
+import { Chains } from "connectors"
+import getDrops from "contract_interactions/getDrops"
+import { Drop } from "contract_interactions/types"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
-import { GetServerSideProps } from "next"
+import { GetStaticProps } from "next"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { Plus } from "phosphor-react"
 import { useMemo, useState } from "react"
 
 type Props = {
-  serverId?: string
+  drops: Drop[]
 }
 
-const Page = ({ serverId }: Props): JSX.Element => {
-  const { account } = useWeb3React()
+const Page = ({ drops: initialDrops }: Props): JSX.Element => {
+  const router = useRouter()
+  const serverId = router.query.serverId as string
   const [searchInput, setSeacrhInput] = useState<string>(
     serverId?.length > 0 ? `server:${serverId}` : ""
   )
 
   const serversOfUser = useServersOfUser()
 
-  const drops = useDrops()
+  const drops = useDrops(initialDrops)
 
   const [yourDrops, allDrops] = useMemo(
     () =>
@@ -62,16 +57,6 @@ const Page = ({ serverId }: Props): JSX.Element => {
     [yourDrops, allDrops, searchInput]
   )
 
-  if (!account)
-    return (
-      <Layout title="Drop to your community">
-        <Alert status="error">
-          <AlertIcon />
-          Please connect your wallet to continue
-        </Alert>
-      </Layout>
-    )
-
   return (
     <Layout title="Drop app">
       <VStack alignItems="left" spacing={10}>
@@ -84,8 +69,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
         />
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-            {filteredYourDrops.map(({ name, id }) => (
-              <Link key={id} href={`/${id}`} passHref>
+            {filteredYourDrops.map(({ dropName, id, urlName }) => (
+              <Link key={id} href={`/${urlName}`} passHref>
                 <Center
                   backgroundColor="primary.100"
                   borderWidth="1px"
@@ -98,7 +83,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
                     borderColor: "purple.400",
                   }}
                 >
-                  <Text fontSize="xl">{name}</Text>
+                  <Text fontSize="xl">{dropName}</Text>
                 </Center>
               </Link>
             ))}
@@ -125,8 +110,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
         {filteredAllDrops?.length > 0 && (
           <Section title="All drops">
             <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-              {filteredAllDrops.map(({ id, name }) => (
-                <Link key={id} href={`/${id}`} passHref>
+              {filteredAllDrops.map(({ id, dropName, urlName }) => (
+                <Link key={id} href={`/${urlName}`} passHref>
                   <Center
                     backgroundColor="primary.100"
                     borderWidth="1px"
@@ -139,7 +124,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
                       borderColor: "purple.400",
                     }}
                   >
-                    <Text fontSize="xl">{name}</Text>
+                    <Text fontSize="xl">{dropName}</Text>
                   </Center>
                 </Link>
               ))}
@@ -151,11 +136,11 @@ const Page = ({ serverId }: Props): JSX.Element => {
   )
 }
 
-const getServerSideProps: GetServerSideProps = async ({ query }) => ({
-  props: {
-    serverId: query.serverId ? (query.serverId as string) : null,
-  },
-})
+const getStaticProps: GetStaticProps = async () => {
+  const drops = await getDrops(Chains[process.env.NEXT_PUBLIC_CHAIN])
+  console.log(drops)
+  return { props: { drops } }
+}
 
-export { getServerSideProps }
+export { getStaticProps }
 export default Page

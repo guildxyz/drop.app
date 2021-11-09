@@ -1,8 +1,12 @@
 export type Drop = {
+  urlName: string
+  dropName: string
   serverId: string
   roleIds: string[]
   tokenAddress: string
   name: string
+  contractId: number
+  numOfActive: number
   id?: number
 }
 

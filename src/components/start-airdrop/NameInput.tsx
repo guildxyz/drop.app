@@ -5,6 +5,7 @@ import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
 import useTokenName from "hooks/roletoken/useTokenName"
 import { ReactElement, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import slugify from "utils/slugify"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
@@ -34,10 +35,12 @@ const NameInput = (): ReactElement => {
         {...register("name", {
           required: "This field is required",
           validate: async (value) =>
-            getDataOfDrop(chainId, value).then(
+            getDataOfDrop(chainId, slugify(value.toString())).then(
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
             ),
+          onChange: ({ target: { value } }) =>
+            setValue("urlName", slugify(value.toString())),
         })}
       />
       {errors?.name?.message && (

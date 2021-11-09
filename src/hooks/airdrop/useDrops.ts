@@ -6,10 +6,10 @@ import useSWR from "swr"
 const fetchDrops = async (_: string, chainId: number): Promise<Drop[]> =>
   getDrops(chainId)
 
-const useDrops = (): Drop[] => {
+const useDrops = (fallbackData: Drop[]): Drop[] => {
   const { chainId } = useWeb3React()
 
-  const { data } = useSWR(["drops", chainId], fetchDrops)
+  const { data } = useSWR(["drops", chainId], fetchDrops, { fallbackData })
 
   return data
 }
