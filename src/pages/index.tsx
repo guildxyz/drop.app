@@ -64,7 +64,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
 
   if (!account)
     return (
-      <Layout title="Drop to your community">
+      <Layout title="Drop to your community" imageUrl="/logo.png">
         <Alert status="error">
           <AlertIcon />
           Please connect your wallet to continue
@@ -73,7 +73,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
     )
 
   return (
-    <Layout title="Drop app">
+    <Layout title="Drop app" imageUrl="/logo.png">
       <VStack alignItems="left" spacing={10}>
         <Input
           value={searchInput}

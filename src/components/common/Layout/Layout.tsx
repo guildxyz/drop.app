@@ -39,8 +39,7 @@ const Layout = ({
   const router = useRouter()
 
   const exactImageSize = useBreakpointValue({
-    base: "2.5rem",
-    md: "3rem",
+    base: "3rem",
     lg: "3.5rem",
   })
 
@@ -106,7 +105,7 @@ const Layout = ({
                   htmlWidth={exactImageSize}
                   htmlHeight={exactImageSize}
                   mt={{ base: 1, lg: 2 }}
-                  boxSize={{ base: 8, lg: 10 }}
+                  boxSize={{ base: 12, lg: 14 }}
                 />
               )}
               <Heading
