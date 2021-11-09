@@ -1,4 +1,11 @@
-import { Alert, AlertIcon, Button, Grid, Input, VStack } from "@chakra-ui/react"
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Input,
+  SimpleGrid,
+  VStack,
+} from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
@@ -75,7 +82,10 @@ const Page = ({ serverId }: Props): JSX.Element => {
           placeholder="Search drops"
         />
         <Section title="Your drops">
-          <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+          <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 3 }}
+            spacing={{ base: 5, md: 6 }}
+          >
             {filteredYourDrops.map(({ name, id }) => (
               <DropCard key={id} id={id} name={name} />
             ))}
@@ -97,15 +107,18 @@ const Page = ({ serverId }: Props): JSX.Element => {
                 New drop
               </Button>
             </Link>
-          </Grid>
+          </SimpleGrid>
         </Section>
         {filteredAllDrops?.length > 0 && (
           <Section title="All drops">
-            <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+            <SimpleGrid
+              columns={{ base: 1, md: 2, lg: 3 }}
+              spacing={{ base: 5, md: 6 }}
+            >
               {filteredAllDrops.map(({ id, name }) => (
                 <DropCard key={id} id={id} name={name} />
               ))}
-            </Grid>
+            </SimpleGrid>
           </Section>
         )}
       </VStack>
