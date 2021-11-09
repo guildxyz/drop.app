@@ -18,6 +18,8 @@ const NameInput = (): ReactElement => {
   const contractId = useWatch({ name: "contractId" })
   const tokenName = useTokenName(deployedTokens?.[contractId])
 
+  useEffect(() => setValue("urlName", slugify(name)), [name, setValue])
+
   useEffect(() => {
     if ((name?.length <= 0 || !!errors.name) && tokenName?.length > 0) {
       setValue("name", tokenName)
@@ -35,12 +37,10 @@ const NameInput = (): ReactElement => {
         {...register("name", {
           required: "This field is required",
           validate: async (value) =>
-            getDataOfDrop(chainId, slugify(value.toString())).then(
+            getDataOfDrop(chainId, slugify(value)).then(
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
             ),
-          onChange: ({ target: { value } }) =>
-            setValue("urlName", slugify(value.toString())),
         })}
       />
       {errors?.name?.message && (

@@ -29,19 +29,17 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
 
   const [yourDrops, allDrops] = useMemo(
     () =>
-      drops
-        ? drops.reduce(
-            (acc, airdrop) => {
-              if (serversOfUser?.includes(airdrop.serverId)) {
-                acc[0].push(airdrop)
-              } else {
-                acc[1].push(airdrop)
-              }
-              return acc
-            },
-            [[], []]
-          )
-        : [[], []],
+      drops.reduce(
+        (acc, airdrop) => {
+          if (serversOfUser?.includes(airdrop.serverId)) {
+            acc[0].push(airdrop)
+          } else {
+            acc[1].push(airdrop)
+          }
+          return acc
+        },
+        [[], []]
+      ),
     [drops, serversOfUser]
   )
 
@@ -138,7 +136,6 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
 
 const getStaticProps: GetStaticProps = async () => {
   const drops = await getDrops(Chains[process.env.NEXT_PUBLIC_CHAIN])
-  console.log(drops)
   return { props: { drops } }
 }
 
