@@ -1,16 +1,8 @@
-import {
-  Alert,
-  AlertIcon,
-  Button,
-  Center,
-  Grid,
-  Input,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
+import { Alert, AlertIcon, Button, Grid, Input, VStack } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
+import DropCard from "components/index/DropCard"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
 import { GetServerSideProps } from "next"
@@ -85,22 +77,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
             {filteredYourDrops.map(({ name, id }) => (
-              <Link key={id} href={`/${id}`} passHref>
-                <Center
-                  backgroundColor="primary.100"
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  padding={10}
-                  transition="background-color .2s linear, border-color .2s linear"
-                  _hover={{
-                    cursor: "pointer",
-                    backgroundColor: "purple.300",
-                    borderColor: "purple.400",
-                  }}
-                >
-                  <Text fontSize="xl">{name}</Text>
-                </Center>
-              </Link>
+              <DropCard key={id} id={id} name={name} />
             ))}
             <Link href="/start-airdrop" passHref>
               <Button
@@ -126,22 +103,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
           <Section title="All drops">
             <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
               {filteredAllDrops.map(({ id, name }) => (
-                <Link key={id} href={`/${id}`} passHref>
-                  <Center
-                    backgroundColor="primary.100"
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    padding={10}
-                    transition="background-color .2s linear, border-color .2s linear"
-                    _hover={{
-                      cursor: "pointer",
-                      backgroundColor: "purple.300",
-                      borderColor: "purple.400",
-                    }}
-                  >
-                    <Text fontSize="xl">{name}</Text>
-                  </Center>
-                </Link>
+                <DropCard key={id} id={id} name={name} />
               ))}
             </Grid>
           </Section>
