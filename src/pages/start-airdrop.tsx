@@ -23,6 +23,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
     mode: "all",
     defaultValues: {
       name: "",
+      urlName: "",
       channel: "",
       assetType: "NFT",
       assetData: {

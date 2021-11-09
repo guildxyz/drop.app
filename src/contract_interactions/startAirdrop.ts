@@ -14,12 +14,12 @@ const startAirdrop = async (
   data: StartAirdropData,
   setUploadedImages?: (hashes: Record<string, string>) => void
 ): Promise<TransactionReceipt> => {
-  const { contractId, serverId, name, roles: rolesObject, channel } = data
+  const { contractId, serverId, name, roles: rolesObject, channel, urlName } = data
   const roles = Object.entries(rolesObject)
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
   const [signature, tokenAddress] = await Promise.all([
-    startAirdropSignature(serverId, account, chainId, name),
+    startAirdropSignature(serverId, account, chainId, urlName),
     contractsByDeployer(chainId, account, +contractId),
   ])
 
@@ -63,6 +63,7 @@ const startAirdrop = async (
       chainId,
       signer,
       signature,
+      urlName,
       name,
       serverId,
       roles.map(([roleId, { traits, traitKeyIds }]) => ({

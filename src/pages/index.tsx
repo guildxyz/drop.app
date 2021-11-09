@@ -1,52 +1,46 @@
-import {
-  Alert,
-  AlertIcon,
-  Button,
-  Img,
-  Input,
-  SimpleGrid,
-  VStack,
-} from "@chakra-ui/react"
-import { useWeb3React } from "@web3-react/core"
+import { Button, Img, Input, SimpleGrid, VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import DropCard from "components/index/DropCard"
+import { Chains } from "connectors"
+import getDrops from "contract_interactions/getDrops"
+import { Drop } from "contract_interactions/types"
 import { motion } from "framer-motion"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
-import { GetServerSideProps } from "next"
+import { GetStaticProps } from "next"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { useMemo, useState } from "react"
 
 type Props = {
-  serverId?: string
+  drops: Drop[]
 }
 
-const Page = ({ serverId }: Props): JSX.Element => {
-  const { account } = useWeb3React()
+const Page = ({ drops: initialDrops }: Props): JSX.Element => {
+  const router = useRouter()
+  const serverId = router.query.serverId as string
   const [searchInput, setSeacrhInput] = useState<string>(
     serverId?.length > 0 ? `server:${serverId}` : ""
   )
 
   const serversOfUser = useServersOfUser()
 
-  const drops = useDrops()
+  const drops = useDrops(initialDrops)
 
   const [yourDrops, allDrops] = useMemo(
     () =>
-      drops
-        ? drops.reduce(
-            (acc, airdrop) => {
-              if (serversOfUser?.includes(airdrop.serverId)) {
-                acc[0].push(airdrop)
-              } else {
-                acc[1].push(airdrop)
-              }
-              return acc
-            },
-            [[], []]
-          )
-        : [[], []],
+      drops.reduce(
+        (acc, airdrop) => {
+          if (serversOfUser?.includes(airdrop.serverId)) {
+            acc[0].push(airdrop)
+          } else {
+            acc[1].push(airdrop)
+          }
+          return acc
+        },
+        [[], []]
+      ),
     [drops, serversOfUser]
   )
 
@@ -61,16 +55,6 @@ const Page = ({ serverId }: Props): JSX.Element => {
       ),
     [yourDrops, allDrops, searchInput]
   )
-
-  if (!account)
-    return (
-      <Layout title="Drop to your community" imageUrl="/logo.png">
-        <Alert status="error">
-          <AlertIcon />
-          Please connect your wallet to continue
-        </Alert>
-      </Layout>
-    )
 
   return (
     <Layout title="Drop app" imageUrl="/logo.png">
@@ -124,11 +108,10 @@ const Page = ({ serverId }: Props): JSX.Element => {
   )
 }
 
-const getServerSideProps: GetServerSideProps = async ({ query }) => ({
-  props: {
-    serverId: query.serverId ? (query.serverId as string) : null,
-  },
-})
+const getStaticProps: GetStaticProps = async () => {
+  const drops = await getDrops(Chains[process.env.NEXT_PUBLIC_CHAIN])
+  return { props: { drops } }
+}
 
-export { getServerSideProps }
+export { getStaticProps }
 export default Page
