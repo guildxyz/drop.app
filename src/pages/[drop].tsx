@@ -5,7 +5,7 @@ import AuthenticateButton from "components/start-airdrop/SubmitButton/components
 import ClaimCard from "components/[drop]/ClaimCard"
 import { Chains } from "connectors"
 import airdropContracts from "contracts"
-import getDropIds from "contract_interactions/getDropIds"
+import getDropUrlNames from "contract_interactions/getDropUrlNames"
 import { Drop } from "contract_interactions/types"
 import useDrop from "hooks/airdrop/useDrop"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
@@ -16,12 +16,12 @@ import { ReactElement } from "react"
 import shortenHex from "utils/shortenHex"
 
 const DropPage = (props: Drop): ReactElement => {
-  const drop = useDrop(props.name, props)
+  const drop = useDrop(props.urlName, props)
   const { name, id, icon } = useServerData(drop.serverId)
   const isAuthenticated = useIsAuthenticated()
 
   return (
-    <Layout title={drop.name}>
+    <Layout title={drop.dropName}>
       <HStack justifyContent="space-between">
         <HStack spacing={20}>
           <HStack spacing={5}>
@@ -65,28 +65,24 @@ const DropPage = (props: Drop): ReactElement => {
 }
 
 const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { drop: id } = params
+  const { drop: urlName } = params
 
   try {
-    const name = await airdropContracts[process.env.NEXT_PUBLIC_CHAIN].dropnamesById(
-      id
-    )
+    const dropData = await airdropContracts[
+      process.env.NEXT_PUBLIC_CHAIN
+    ].getDataOfDrop(urlName)
 
-    if (name?.length <= 0) throw new Error() // Gets caught, returns 404
+    if (!dropData) throw Error()
 
-    const {
-      0: serverId,
-      1: roleIds,
-      2: tokenAddress,
-    } = await airdropContracts[process.env.NEXT_PUBLIC_CHAIN].getDataOfDrop(name)
+    const { 0: dropName, 1: serverId, 2: roleIds, 3: tokenAddress } = dropData
 
     return {
       props: {
         serverId,
         roleIds,
         tokenAddress,
-        name,
-        id,
+        urlName,
+        dropName,
       },
       revalidate: 10_000,
     }
@@ -98,10 +94,10 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 const getStaticPaths: GetStaticPaths = async () => {
-  const ids = await getDropIds(Chains[process.env.NEXT_PUBLIC_CHAIN])
+  const urlNames = await getDropUrlNames(Chains[process.env.NEXT_PUBLIC_CHAIN])
 
-  const paths = ids.map((id) => ({
-    params: { drop: id.toString() },
+  const paths = urlNames.map((drop) => ({
+    params: { drop },
   }))
 
   return {

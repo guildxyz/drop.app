@@ -26,12 +26,6 @@ const NameInput = (): ReactElement => {
     // Including "name" would set the name back to tokenName in some cases
   }, [tokenName, contractId, setValue, trigger, errors])
 
-  const guildName = useWatch({ name: "name" })
-
-  useEffect(() => {
-    if (guildName) setValue("urlName", slugify(guildName.toString()))
-  }, [guildName])
-
   return (
     <FormControl isInvalid={!!errors?.name}>
       <Input
@@ -41,10 +35,11 @@ const NameInput = (): ReactElement => {
         {...register("name", {
           required: "This field is required",
           validate: async (value) =>
-            getDataOfDrop(chainId, value).then(
+            getDataOfDrop(chainId, slugify(value.toString())).then(
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
             ),
+          onChange: (value) => setValue("urlName", slugify(value.toString())),
         })}
       />
       {errors?.name?.message && (

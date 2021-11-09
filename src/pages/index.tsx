@@ -84,8 +84,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
         />
         <Section title="Your drops">
           <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-            {filteredYourDrops.map(({ name, id }) => (
-              <Link key={id} href={`/${id}`} passHref>
+            {filteredYourDrops.map(({ dropName, id, urlName }) => (
+              <Link key={id} href={`/${urlName}`} passHref>
                 <Center
                   backgroundColor="primary.100"
                   borderWidth="1px"
@@ -98,7 +98,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
                     borderColor: "purple.400",
                   }}
                 >
-                  <Text fontSize="xl">{name}</Text>
+                  <Text fontSize="xl">{dropName}</Text>
                 </Center>
               </Link>
             ))}
@@ -125,8 +125,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
         {filteredAllDrops?.length > 0 && (
           <Section title="All drops">
             <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-              {filteredAllDrops.map(({ id, name }) => (
-                <Link key={id} href={`/${id}`} passHref>
+              {filteredAllDrops.map(({ id, dropName, urlName }) => (
+                <Link key={id} href={`/${urlName}`} passHref>
                   <Center
                     backgroundColor="primary.100"
                     borderWidth="1px"
@@ -139,7 +139,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
                       borderColor: "purple.400",
                     }}
                   >
-                    <Text fontSize="xl">{name}</Text>
+                    <Text fontSize="xl">{dropName}</Text>
                   </Center>
                 </Link>
               ))}

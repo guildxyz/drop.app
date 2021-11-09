@@ -1,4 +1,5 @@
 export type Drop = {
+  urlName: string
   dropName: string
   serverId: string
   roleIds: string[]

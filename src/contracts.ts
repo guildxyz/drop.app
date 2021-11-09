@@ -6,7 +6,7 @@ import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 
 enum AirdropAddresses {
   GOERLI = "0x254EF5F30A7260dC9132CFbD4cF9663Ef106b10A",
-  POLYGON = "0x18Bb4142B25d39d07b0dd1aAF317D6A963AFdAA8",
+  POLYGON = "0x18Bb4142B25d39d07b0dd1aAF317D6A963AFdAA8", // TODO: Update this to new contract
 }
 
 const providers = {
