@@ -15,7 +15,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
       <Link
-        href={`/${drop?.id}`}
+        href={`/${drop?.urlName}`}
         borderRadius="2xl"
         w="full"
         _hover={{ textDecor: "none" }}
@@ -58,7 +58,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               maxW="full"
               isTruncated
             >
-              {drop?.name}
+              {drop?.dropName}
             </Text>
 
             {/* <GridItem colSpan={2}>
