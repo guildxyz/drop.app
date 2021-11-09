@@ -11,8 +11,8 @@ const getDataOfDrop = (chainId: number, urlName: string): Promise<Drop> =>
         serverId,
         roleIds,
         tokenAddress,
-        contractId,
-        numOfActive,
+        contractId: +contractId,
+        numOfActive: +numOfActive,
         urlName,
       })
     )
