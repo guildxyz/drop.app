@@ -2,6 +2,7 @@ import {
   Alert,
   AlertIcon,
   Button,
+  Img,
   Input,
   SimpleGrid,
   VStack,
@@ -95,13 +96,7 @@ const Page = ({ serverId }: Props): JSX.Element => {
                 minHeight={20}
                 colorScheme="purple"
                 variant="outline"
-                leftIcon={
-                  <Plus
-                    size={20}
-                    weight="light"
-                    color="var(--chakra-colors-purple-300)"
-                  />
-                }
+                leftIcon={<Img src="/new.png" boxSize={8} />}
                 aria-label="Start a new airdrop"
               >
                 New drop
