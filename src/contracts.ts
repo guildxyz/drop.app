@@ -17,7 +17,7 @@ const multicallConfigs = {
 
 enum AirdropAddresses {
   GOERLI = "0x254EF5F30A7260dC9132CFbD4cF9663Ef106b10A",
-  POLYGON = "0x18Bb4142B25d39d07b0dd1aAF317D6A963AFdAA8", // TODO: Update this to new contract
+  POLYGON = "0x2223C242858d63E471ac1169254040BE90766AC0",
 }
 
 const providers = {
