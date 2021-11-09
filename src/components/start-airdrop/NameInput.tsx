@@ -39,7 +39,8 @@ const NameInput = (): ReactElement => {
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
             ),
-          onChange: (value) => setValue("urlName", slugify(value.toString())),
+          onChange: ({ target: { value } }) =>
+            setValue("urlName", slugify(value.toString())),
         })}
       />
       {errors?.name?.message && (
