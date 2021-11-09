@@ -19,7 +19,8 @@ const getRoleData = (
 const useRoleData = (
   tokenAddress: string,
   serverId: string,
-  roleId: string
+  roleId: string,
+  fallbackData?: RoleData
 ): RoleData => {
   const { chainId } = useWeb3React()
 
@@ -28,7 +29,8 @@ const useRoleData = (
 
   const { data } = useSWR(
     shouldFetch ? ["roleData", chainId, tokenAddress, serverId, roleId] : null,
-    getRoleData
+    getRoleData,
+    { fallbackData }
   )
 
   return data

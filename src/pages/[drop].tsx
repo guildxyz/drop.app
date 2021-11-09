@@ -4,10 +4,11 @@ import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
 import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import getDropRolesData, {
+  DropWithRoles,
+} from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
-import { Drop } from "contract_interactions/types"
-import useDrop from "hooks/airdrop/useDrop"
+import useDropWithRoles from "hooks/airdrop/useDropWithRoles"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useServerData from "hooks/discord/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
@@ -15,13 +16,19 @@ import Image from "next/image"
 import { ReactElement } from "react"
 import shortenHex from "utils/shortenHex"
 
-const DropPage = (props: Drop): ReactElement => {
-  const drop = useDrop(props.urlName, props)
-  const { name, id, icon } = useServerData(drop.serverId)
+type Props = {
+  drop: DropWithRoles
+  urlName: string
+}
+
+const DropPage = ({ urlName, drop: initialDropWithRoles }: Props): ReactElement => {
+  const { roles, ...drop } = useDropWithRoles(urlName, initialDropWithRoles)
+  const { tokenAddress, dropName, serverId } = drop
+  const { name: serverName, id, icon } = useServerData(serverId)
   const isAuthenticated = useIsAuthenticated()
 
   return (
-    <Layout title={drop.dropName}>
+    <Layout title={dropName}>
       <HStack justifyContent="space-between">
         <HStack spacing={20}>
           <HStack spacing={5}>
@@ -29,13 +36,13 @@ const DropPage = (props: Drop): ReactElement => {
               <Circle overflow="hidden">
                 <Image
                   src={`https://cdn.discordapp.com/icons/${id}/${icon}`}
-                  alt={`Icon of ${name} sever`}
+                  alt={`Icon of ${serverName} sever`}
                   width={40}
                   height={40}
                 />
               </Circle>
             )}
-            <Text>{name}</Text>
+            <Text>{serverName}</Text>
           </HStack>
 
           <HStack>
@@ -43,23 +50,27 @@ const DropPage = (props: Drop): ReactElement => {
             <Link
               target="_blank"
               colorScheme="purple"
-              href={`https://goerli.etherscan.io/address/${drop.tokenAddress}`}
+              href={`https://goerli.etherscan.io/address/${tokenAddress}`}
             >
-              {shortenHex(drop.tokenAddress)}
+              {shortenHex(tokenAddress)}
             </Link>
           </HStack>
         </HStack>
 
-        {!isAuthenticated && <AuthenticateButton size="sm" />}
+        {isAuthenticated === false && <AuthenticateButton size="sm" />}
       </HStack>
 
-      {drop.roleIds && (
-        <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-          {drop.roleIds.map((roleId) => (
-            <ClaimCard roleId={roleId} key={roleId} drop={drop} />
-          ))}
-        </Grid>
-      )}
+      <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+        {Object.entries(roles).map(([roleId, role]) => (
+          <ClaimCard
+            roleId={roleId}
+            role={role}
+            key={roleId}
+            tokenAddress={tokenAddress}
+            serverId={serverId}
+          />
+        ))}
+      </Grid>
     </Layout>
   )
 }
@@ -68,22 +79,15 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
   const { drop: urlName } = params
 
   try {
-    const dropData = await airdropContracts[
-      process.env.NEXT_PUBLIC_CHAIN
-    ].getDataOfDrop(urlName)
+    const drop = await getDropRolesData(
+      Chains[process.env.NEXT_PUBLIC_CHAIN],
+      urlName as string
+    )
 
-    if (!dropData) throw Error()
-
-    const { 0: dropName, 1: serverId, 2: roleIds, 3: tokenAddress } = dropData
+    if (!drop) throw Error()
 
     return {
-      props: {
-        serverId,
-        roleIds,
-        tokenAddress,
-        urlName,
-        dropName,
-      },
+      props: { urlName, drop },
       revalidate: 10_000,
     }
   } catch {
@@ -96,9 +100,11 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 const getStaticPaths: GetStaticPaths = async () => {
   const urlNames = await getDropUrlNames(Chains[process.env.NEXT_PUBLIC_CHAIN])
 
-  const paths = urlNames.map((drop) => ({
-    params: { drop },
-  }))
+  const paths = urlNames
+    .filter((urlName) => urlName.length > 0)
+    .map((drop) => ({
+      params: { drop },
+    }))
 
   return {
     paths,

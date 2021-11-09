@@ -12,7 +12,8 @@ import {
   Tooltip,
   VStack,
 } from "@chakra-ui/react"
-import { Drop } from "contract_interactions/types"
+import { useWeb3React } from "@web3-react/core"
+import { RoleData } from "contract_interactions/types"
 import useIsClaimed from "hooks/airdrop/useIsClaimed"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useRoleName from "hooks/discord/useRoleName"
@@ -26,13 +27,20 @@ import { ReactElement, useMemo } from "react"
 
 type Props = {
   roleId: string
-  drop: Drop
+  role: RoleData
+  tokenAddress: string
+  serverId: string
 }
 
-const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
-  const { tokenAddress, serverId } = drop
+const ClaimCard = ({
+  roleId,
+  role,
+  tokenAddress,
+  serverId,
+}: Props): ReactElement => {
+  const { account } = useWeb3React()
   const userServers = useServersOfUser()
-  const roleData = useRoleData(tokenAddress, serverId, roleId)
+  const roleData = useRoleData(tokenAddress, serverId, roleId, role)
   const { isLoading, isSuccess, onSubmit } = useClaimMachine()
   const isClaimed = useIsClaimed(serverId, roleId, tokenAddress)
   const roleName = useRoleName(serverId, roleId)
@@ -41,11 +49,12 @@ const ClaimCard = ({ roleId, drop }: Props): ReactElement => {
   const isAuthenticated = useIsAuthenticated()
 
   const [buttonText, tooltipLabel] = useMemo(() => {
+    if (!account) return ["Claim", "Connect your wallet to claim"]
     if (!isAuthenticated) return ["Claim", "You are not authenticated"]
     if (isClaimed || isSuccess) return ["Claimed", null]
     if (!canClaim) return ["No Permission", `You don't have the role '${roleName}'`]
     return ["Claim", null]
-  }, [isClaimed, isSuccess, canClaim, roleName, isAuthenticated])
+  }, [isClaimed, isSuccess, canClaim, roleName, isAuthenticated, account])
 
   return (
     <Skeleton isLoaded={!!roleData}>
