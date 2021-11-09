@@ -11,6 +11,7 @@ import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import DropCard from "components/index/DropCard"
+import { motion } from "framer-motion"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
 import { GetServerSideProps } from "next"
@@ -89,18 +90,21 @@ const Page = ({ serverId }: Props): JSX.Element => {
             {filteredYourDrops.map((drop) => (
               <DropCard key={drop.id} drop={drop} />
             ))}
-            <Link href="/start-airdrop" passHref>
-              <Button
-                height="full"
-                minHeight={20}
-                colorScheme="purple"
-                variant="outline"
-                leftIcon={<Img src="/new.png" boxSize={8} />}
-                aria-label="Start a new airdrop"
-              >
-                New drop
-              </Button>
-            </Link>
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Link href="/start-airdrop" passHref>
+                <Button
+                  width="full"
+                  height="full"
+                  minHeight={20}
+                  colorScheme="purple"
+                  variant="outline"
+                  leftIcon={<Img src="/new.png" boxSize={8} />}
+                  aria-label="Start a new airdrop"
+                >
+                  New drop
+                </Button>
+              </Link>
+            </motion.div>
           </SimpleGrid>
         </Section>
         {filteredAllDrops?.length > 0 && (
