@@ -15,7 +15,6 @@ import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
 import { GetServerSideProps } from "next"
 import Link from "next/link"
-import { Plus } from "phosphor-react"
 import { useMemo, useState } from "react"
 
 type Props = {
@@ -87,8 +86,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
             columns={{ base: 1, md: 2, lg: 3 }}
             spacing={{ base: 5, md: 6 }}
           >
-            {filteredYourDrops.map(({ name, id }) => (
-              <DropCard key={id} id={id} name={name} />
+            {filteredYourDrops.map((drop) => (
+              <DropCard key={drop.id} drop={drop} />
             ))}
             <Link href="/start-airdrop" passHref>
               <Button
@@ -110,8 +109,8 @@ const Page = ({ serverId }: Props): JSX.Element => {
               columns={{ base: 1, md: 2, lg: 3 }}
               spacing={{ base: 5, md: 6 }}
             >
-              {filteredAllDrops.map(({ id, name }) => (
-                <DropCard key={id} id={id} name={name} />
+              {filteredAllDrops.map((drop) => (
+                <DropCard key={drop.id} drop={drop} />
               ))}
             </SimpleGrid>
           </Section>
