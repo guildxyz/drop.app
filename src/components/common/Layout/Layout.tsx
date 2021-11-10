@@ -56,12 +56,7 @@ const Layout = ({
         )}
       </Head>
       <Box
-        bgColor={
-          colorMode === "light" ? "gray.100" : "var(--chakra-colors-gray-800)"
-        }
-        bgGradient={`linear(${
-          colorMode === "light" ? "white" : "var(--chakra-colors-gray-800)"
-        } 0px, var(--chakra-colors-primary-100) 700px)`}
+        bgColor="#FAF9F6" // Maybe we should make a swatch for it in colors.ts?
         bgBlendMode={colorMode === "light" ? "normal" : "color"}
         minHeight="100vh"
       >
