@@ -24,11 +24,6 @@ const DropCard = ({ drop }: Props): JSX.Element => {
     }))
   }, [dropData])
 
-  const coverTopOffset = useMemo(() => {
-    if (imageGrid.length === 1) return "-25%"
-    return 0
-  }, [imageGrid])
-
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
       <Link
@@ -48,14 +43,10 @@ const DropCard = ({ drop }: Props): JSX.Element => {
           >
             <SimpleGrid
               position="absolute"
-              top={coverTopOffset}
+              top={0}
               left={0}
               width="full"
-              gridTemplateColumns={
-                imageGrid.length <= 3
-                  ? `repeat(${imageGrid.length}, 1fr)`
-                  : "repeat(6, 1fr)"
-              }
+              gridTemplateColumns={`repeat(${imageGrid.length}, 1fr)`}
               gap={0}
             >
               {imageGrid.map((role, i) => (
