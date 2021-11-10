@@ -9,16 +9,15 @@ const Page = (): JSX.Element => (
       <meta property="og:title" content="Drop app" />
     </Head>
 
-    <Box
-      bgColor="gray.100"
-      bgGradient={`linear(white 0px, var(--chakra-colors-gray-100) 700px)`}
-      minHeight="100vh"
-    >
+    <Box bgColor="#FAF9F6" minHeight="100vh">
       <Flex alignItems="center" justifyContent="center" h="80vh">
         <VStack spacing={8}>
           <motion.div
+            style={{
+              transform: "rotate(-15deg)",
+            }}
             whileHover={{
-              transform: "rotate(360deg)",
+              transform: "rotate(15deg)",
             }}
           >
             <Img boxSize={28} src="/logo.png" />
