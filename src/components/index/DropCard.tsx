@@ -18,23 +18,16 @@ const DropCard = ({ drop }: Props): JSX.Element => {
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
     if (!dropData?.roles || Object.entries(dropData.roles).length === 0) return []
 
-    const roles = Object.values(dropData.roles).map((roleData) => ({
+    return Object.values(dropData.roles).map((roleData) => ({
       imageHash: roleData.imageHash,
       tokenName: roleData.tokenName,
     }))
-
-    // In this case we'll display the 1-3 images next to each other
-    if (roles.length <= 3) return roles
-
-    // Otherwise we'll generate a grid, which contains 6 cols, and repeat the images if needed
-    let repeatingRoles = [...roles]
-
-    while (repeatingRoles.length < 18) {
-      repeatingRoles = repeatingRoles.concat(repeatingRoles)
-    }
-
-    return repeatingRoles
   }, [dropData])
+
+  const coverTopOffset = useMemo(() => {
+    if (imageGrid.length === 1) return "-25%"
+    return 0
+  }, [imageGrid])
 
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
@@ -55,7 +48,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
           >
             <SimpleGrid
               position="absolute"
-              top={imageGrid.length <= 3 ? "-25%" : 0}
+              top={coverTopOffset}
               left={0}
               width="full"
               gridTemplateColumns={
@@ -66,12 +59,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               gap={0}
             >
               {imageGrid.map((role, i) => (
-                <Flex
-                  key={i}
-                  width="full"
-                  height={imageGrid.length <= 3 ? "auto" : 14}
-                  bgColor=""
-                >
+                <Flex key={i} width="full" height={imageGrid.length <= 3 ? 28 : 14}>
                   <Img
                     src={`https://ipfs.fleek.co/ipfs/${role.imageHash}`}
                     alt={`Image of ${role.tokenName} role`}
