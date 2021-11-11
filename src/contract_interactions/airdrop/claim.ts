@@ -9,10 +9,11 @@ const claim = (
   signature: string,
   serverId: string,
   roleId: string,
-  tokenAddress: string
+  tokenAddress: string,
+  userIdHash: string
 ): Promise<TransactionResponse> =>
   airdropContracts[Chains[chainId]]
     .connect(signer)
-    .claim(signature, serverId, roleId, tokenAddress)
+    .claim(signature, serverId, roleId, userIdHash, tokenAddress)
 
 export default claim

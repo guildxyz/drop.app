@@ -10,14 +10,16 @@ const claim = async (
   signer: JsonRpcSigner,
   roleId: string,
   serverId: string,
-  tokenAddress: string
+  tokenAddress: string,
+  userIdHash: string
 ): Promise<TransactionReceipt> => {
   const signature = await claimSignature(
     chainId,
     roleId,
     serverId,
     account,
-    tokenAddress
+    tokenAddress,
+    userIdHash
   )
 
   try {
@@ -27,7 +29,8 @@ const claim = async (
       signature,
       serverId,
       roleId,
-      tokenAddress
+      tokenAddress,
+      userIdHash
     )
     const receipt = await tx.wait()
     return receipt

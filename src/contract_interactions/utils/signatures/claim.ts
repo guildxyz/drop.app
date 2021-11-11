@@ -5,7 +5,8 @@ const claimSignature = (
   roleId: string,
   serverId: string,
   account: string,
-  tokenAddress: string
+  tokenAddress: string,
+  userIdHash: string
 ): Promise<string> =>
   fetch("/api/get-signature/claim", {
     method: "POST",
@@ -16,6 +17,7 @@ const claimSignature = (
       serverId,
       address: account,
       tokenAddress,
+      userIdHash,
     }),
   }).then((response) =>
     response.json().then((body) => {
