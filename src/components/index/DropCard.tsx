@@ -3,7 +3,6 @@ import Card from "components/common/Card"
 import Link from "components/common/Link"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
-import useDropWithRoles from "hooks/airdrop/useDropWithRoles"
 import useServerData from "hooks/discord/useServerData"
 import { useMemo } from "react"
 
@@ -12,22 +11,22 @@ type Props = {
 }
 
 const DropCard = ({ drop }: Props): JSX.Element => {
-  const dropData = useDropWithRoles(drop.urlName, drop)
-  const { id, icon } = useServerData(dropData.serverId)
+  // const dropData = useDropWithRoles(drop.urlName, drop)
+  const { id, icon } = useServerData(drop.serverId)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
-    if (!dropData?.roles || Object.entries(dropData.roles).length === 0) return []
+    if (!drop?.roles || Object.entries(drop.roles).length === 0) return []
 
-    return Object.values(dropData.roles).map((roleData) => ({
+    return Object.values(drop.roles).map((roleData) => ({
       imageHash: roleData.imageHash,
       tokenName: roleData.tokenName,
     }))
-  }, [dropData])
+  }, [drop])
 
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
       <Link
-        href={`/${dropData.urlName}`}
+        href={`/${drop.urlName}`}
         borderRadius="2xl"
         w="full"
         _hover={{ textDecor: "none" }}
@@ -96,7 +95,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               maxW="full"
               isTruncated
             >
-              {dropData.dropName}
+              {drop.dropName}
             </Text>
 
             {/* <GridItem colSpan={2}>
