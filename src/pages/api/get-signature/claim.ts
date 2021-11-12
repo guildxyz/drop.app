@@ -4,6 +4,7 @@ import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
+import hashId from "contract_interactions/utils/hashId"
 import { fetchDiscordID } from "hooks/discord/useDiscordId"
 import { fetchRoles } from "hooks/discord/useRoles"
 import { fetchUserRoles } from "hooks/discord/useUserRoles"
@@ -76,6 +77,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       })
 
       await Promise.all([
+        hashId(discordId, address).then((hashed) => {
+          if (hashed !== userIdHash) {
+            throw Error("Unauthenticated.")
+          }
+        }),
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
             throw Error("Not a valid role of server.")

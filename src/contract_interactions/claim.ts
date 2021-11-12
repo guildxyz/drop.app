@@ -1,7 +1,7 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider"
 import { JsonRpcSigner } from "@ethersproject/providers"
-import TransactionError from "utils/errors/TransactionError"
 import { claim as airdropClaim } from "./airdrop"
+import hashId from "./utils/hashId"
 import claimSignature from "./utils/signatures/claim"
 
 const claim = async (
@@ -11,18 +11,20 @@ const claim = async (
   roleId: string,
   serverId: string,
   tokenAddress: string,
-  userIdHash: string
+  userId: string
 ): Promise<TransactionReceipt> => {
-  const signature = await claimSignature(
-    chainId,
-    roleId,
-    serverId,
-    account,
-    tokenAddress,
-    userIdHash
-  )
-
   try {
+    const userIdHash = await hashId(userId, account)
+
+    const signature = await claimSignature(
+      chainId,
+      roleId,
+      serverId,
+      account,
+      tokenAddress,
+      userId
+    )
+
     const tx = await airdropClaim(
       chainId,
       signer,
@@ -36,7 +38,7 @@ const claim = async (
     return receipt
   } catch (error) {
     console.error(error)
-    throw new TransactionError("Failed to claim NFT.")
+    throw error
   }
 }
 
