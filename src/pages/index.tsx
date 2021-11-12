@@ -80,7 +80,7 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
                   width="full"
                   height="full"
                   minHeight={20}
-                  colorScheme="purple"
+                  colorScheme="red"
                   variant="outline"
                   leftIcon={<Img src="/new.png" boxSize={8} />}
                   aria-label="Start a new airdrop"
