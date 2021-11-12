@@ -154,6 +154,18 @@
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "approvals",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "_newBotAddress", "type": "address" }
     ],
     "name": "changeBot",
@@ -166,6 +178,7 @@
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
       { "internalType": "string", "name": "_serverId", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
+      { "internalType": "string", "name": "_userId", "type": "string" },
       { "internalType": "address", "name": "_tokenAddress", "type": "address" }
     ],
     "name": "claim",
@@ -189,16 +202,13 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "address", "name": "", "type": "address" }
     ],
     "name": "claims",
-    "outputs": [
-      { "internalType": "bool", "name": "claimed", "type": "bool" },
-      { "internalType": "bool", "name": "approved", "type": "bool" }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -270,7 +280,7 @@
           { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
           { "internalType": "string[]", "name": "values", "type": "string[]" }
         ],
-        "internalType": "struct RoleNFTAirdrop.Role[]",
+        "internalType": "struct RoleNFTAirdrop.Data[]",
         "name": "_roles",
         "type": "tuple[]"
       },

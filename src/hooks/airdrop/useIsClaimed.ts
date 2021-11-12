@@ -6,29 +6,30 @@ import useSWR from "swr"
 const getClaims = (
   _: string,
   chainId: number,
+  account: string,
   discordId: string,
   serverId: string,
   roleId: string,
   tokenAddress: string
-) =>
-  claims(chainId, discordId, serverId, roleId, tokenAddress).then(
-    ({ claimed }) => claimed
-  )
+) => claims(chainId, account, discordId, serverId, roleId, tokenAddress)
 
 const useIsClaimed = (
   serverId: string,
   roleId: string,
   tokenAddress: string
 ): boolean => {
-  const { chainId } = useWeb3React()
+  const { chainId, account } = useWeb3React()
   const discordId = useDiscordId()
 
   const shouldFetch =
-    serverId?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
+    serverId?.length > 0 &&
+    roleId?.length > 0 &&
+    tokenAddress?.length > 0 &&
+    discordId?.length > 0
 
   const { data } = useSWR(
     shouldFetch
-      ? ["isClaimed", chainId, discordId, serverId, roleId, tokenAddress]
+      ? ["isClaimed", chainId, account, discordId, serverId, roleId, tokenAddress]
       : null,
     getClaims
   )

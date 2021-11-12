@@ -1,7 +1,7 @@
 import isAuthenticated from "contract_interactions/utils/isAuthenticated"
-import { createHmac } from "crypto"
 import { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
+import hash from "utils/api/hash"
 
 type Body = {
   userId: string
@@ -27,9 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         return
       }
 
-      const hashed = createHmac("sha256", process.env.SECRET)
-        .update(userId)
-        .digest("base64")
+      const hashed = hash(userId)
       res.status(200).json({ hashed })
     } catch (error) {
       res

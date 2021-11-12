@@ -22,7 +22,7 @@ const claim = async (
       serverId,
       account,
       tokenAddress,
-      userId
+      userIdHash
     )
 
     const tx = await airdropClaim(

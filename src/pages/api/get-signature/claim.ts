@@ -4,11 +4,11 @@ import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import hashId from "contract_interactions/utils/hashId"
 import { fetchDiscordID } from "hooks/discord/useDiscordId"
 import { fetchRoles } from "hooks/discord/useRoles"
 import { fetchUserRoles } from "hooks/discord/useUserRoles"
 import type { NextApiRequest, NextApiResponse } from "next"
+import hash from "utils/api/hash"
 
 type Body = {
   chainId: number
@@ -76,12 +76,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         throw Error("Failed to fetch discord id of user")
       })
 
+      if (hash(discordId) !== userIdHash) {
+        res.status(400).json({ errors: [{ message: "Not authenticated" }] })
+        return
+      }
+
       await Promise.all([
-        hashId(discordId, address).then((hashed) => {
-          if (hashed !== userIdHash) {
-            throw Error("Unauthenticated.")
-          }
-        }),
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
             throw Error("Not a valid role of server.")
