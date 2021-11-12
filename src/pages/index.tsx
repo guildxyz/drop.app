@@ -3,8 +3,8 @@ import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import DropCard from "components/index/DropCard"
 import { Chains } from "connectors"
+import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import getDrops from "contract_interactions/getDrops"
-import { Drop } from "contract_interactions/types"
 import { motion } from "framer-motion"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
@@ -14,7 +14,7 @@ import { useRouter } from "next/router"
 import { useMemo, useState } from "react"
 
 type Props = {
-  drops: Drop[]
+  drops: DropWithRoles[]
 }
 
 const Page = ({ drops: initialDrops }: Props): JSX.Element => {
