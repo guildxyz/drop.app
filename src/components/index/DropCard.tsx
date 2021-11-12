@@ -72,14 +72,18 @@ const DropCard = ({ drop }: Props): JSX.Element => {
           >
             <Box
               boxSize={20}
-              bgColor="gray.200"
+              bgColor="gray.300"
               rounded="full"
               borderWidth={4}
               borderColor="white"
               overflow="hidden"
             >
               <Img
-                src={`https://cdn.discordapp.com/icons/${id}/${icon}`}
+                src={
+                  icon
+                    ? `https://cdn.discordapp.com/icons/${id}/${icon}`
+                    : "/svg/discord-logo.svg"
+                }
                 objectFit="cover"
               />
             </Box>
