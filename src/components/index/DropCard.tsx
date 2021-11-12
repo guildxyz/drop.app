@@ -1,19 +1,19 @@
 import { Box, Flex, Img, SimpleGrid, Text } from "@chakra-ui/react"
 import Card from "components/common/Card"
 import Link from "components/common/Link"
-import { Drop } from "contract_interactions/types"
+import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
 import useDropWithRoles from "hooks/airdrop/useDropWithRoles"
 import useServerData from "hooks/discord/useServerData"
 import { useMemo } from "react"
 
 type Props = {
-  drop: Drop
+  drop: DropWithRoles
 }
 
 const DropCard = ({ drop }: Props): JSX.Element => {
-  const { id, icon } = useServerData(drop?.serverId)
-  const dropData = useDropWithRoles(drop?.urlName)
+  const { id, icon } = useServerData(drop.serverId)
+  const dropData = useDropWithRoles(drop.urlName, drop)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
     if (!dropData?.roles || Object.entries(dropData.roles).length === 0) return []
@@ -27,7 +27,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
       <Link
-        href={`/${drop?.urlName}`}
+        href={`/${drop.urlName}`}
         borderRadius="2xl"
         w="full"
         _hover={{ textDecor: "none" }}
@@ -96,7 +96,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               maxW="full"
               isTruncated
             >
-              {drop?.dropName}
+              {drop.dropName}
             </Text>
 
             {/* <GridItem colSpan={2}>
