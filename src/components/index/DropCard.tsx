@@ -12,8 +12,8 @@ type Props = {
 }
 
 const DropCard = ({ drop }: Props): JSX.Element => {
-  const { id, icon } = useServerData(drop.serverId)
   const dropData = useDropWithRoles(drop.urlName, drop)
+  const { id, icon } = useServerData(dropData.serverId)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
     if (!dropData?.roles || Object.entries(dropData.roles).length === 0) return []
@@ -27,7 +27,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
       <Link
-        href={`/${drop.urlName}`}
+        href={`/${dropData.urlName}`}
         borderRadius="2xl"
         w="full"
         _hover={{ textDecor: "none" }}
@@ -96,7 +96,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               maxW="full"
               isTruncated
             >
-              {drop.dropName}
+              {dropData.dropName}
             </Text>
 
             {/* <GridItem colSpan={2}>
