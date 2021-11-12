@@ -47,10 +47,10 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
   const [filteredYourDrops, filteredAllDrops] = useMemo(
     () =>
       [yourDrops, allDrops].map((_) =>
-        _.filter(({ name, serverId: server }) => {
+        _.filter(({ dropName, serverId: server }) => {
           if (/^server:[0-9]{18}$/.test(searchInput.trim()))
             return server === searchInput.trim().slice(7)
-          return new RegExp(searchInput).test(name)
+          return new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
         })
       ),
     [yourDrops, allDrops, searchInput]
