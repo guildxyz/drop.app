@@ -1,19 +1,20 @@
-import { Button, Center, Grid, Input, Text, VStack } from "@chakra-ui/react"
+import { Button, Img, Input, VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
-import Section from "components/common/Section"
+import CategorySection from "components/index/CategorySection"
+import DropCard from "components/index/DropCard"
 import { Chains } from "connectors"
+import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import getDrops from "contract_interactions/getDrops"
-import { Drop } from "contract_interactions/types"
+import { motion } from "framer-motion"
 import useDrops from "hooks/airdrop/useDrops"
 import useServersOfUser from "hooks/discord/useServersOfUser"
 import { GetStaticProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { Plus } from "phosphor-react"
 import { useMemo, useState } from "react"
 
 type Props = {
-  drops: Drop[]
+  drops: DropWithRoles[]
 }
 
 const Page = ({ drops: initialDrops }: Props): JSX.Element => {
@@ -46,17 +47,17 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
   const [filteredYourDrops, filteredAllDrops] = useMemo(
     () =>
       [yourDrops, allDrops].map((_) =>
-        _.filter(({ name, serverId: server }) => {
+        _.filter(({ dropName, serverId: server }) => {
           if (/^server:[0-9]{18}$/.test(searchInput.trim()))
             return server === searchInput.trim().slice(7)
-          return new RegExp(searchInput).test(name)
+          return new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
         })
       ),
     [yourDrops, allDrops, searchInput]
   )
 
   return (
-    <Layout title="Drop app">
+    <Layout title="Drop app" imageUrl="/logo.png">
       <VStack alignItems="left" spacing={10}>
         <Input
           value={searchInput}
@@ -65,70 +66,59 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
           type="text"
           placeholder="Search drops"
         />
-        <Section title="Your drops">
-          <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-            {filteredYourDrops.map(({ dropName, id, urlName }) => (
-              <Link key={id} href={`/${urlName}`} passHref>
-                <Center
-                  backgroundColor="primary.100"
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  padding={10}
-                  transition="background-color .2s linear, border-color .2s linear"
-                  _hover={{
-                    cursor: "pointer",
-                    backgroundColor: "purple.300",
-                    borderColor: "purple.400",
-                  }}
+        <CategorySection
+          title="Your drops"
+          fallbackText={`No results for ${searchInput}`}
+        >
+          {filteredYourDrops?.length ? (
+            filteredYourDrops
+              .map((drop) => <DropCard key={drop.id} drop={drop} />)
+              .concat(
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  <Link href="/start-airdrop" passHref>
+                    <Button
+                      width="full"
+                      height="full"
+                      minHeight={20}
+                      colorScheme="red"
+                      variant="outline"
+                      leftIcon={<Img src="/new.png" boxSize={8} />}
+                      aria-label="Start a new airdrop"
+                    >
+                      New drop
+                    </Button>
+                  </Link>
+                </motion.div>
+              )
+          ) : (
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Link href="/start-airdrop" passHref>
+                <Button
+                  width="full"
+                  height="full"
+                  minHeight={20}
+                  colorScheme="red"
+                  variant="outline"
+                  leftIcon={<Img src="/new.png" boxSize={8} />}
+                  aria-label="Start a new airdrop"
                 >
-                  <Text fontSize="xl">{dropName}</Text>
-                </Center>
+                  New drop
+                </Button>
               </Link>
-            ))}
-            <Link href="/start-airdrop" passHref>
-              <Button
-                height="full"
-                minHeight={20}
-                colorScheme="purple"
-                variant="outline"
-                leftIcon={
-                  <Plus
-                    size={20}
-                    weight="light"
-                    color="var(--chakra-colors-purple-300)"
-                  />
-                }
-                aria-label="Start a new airdrop"
-              >
-                New drop
-              </Button>
-            </Link>
-          </Grid>
-        </Section>
-        {filteredAllDrops?.length > 0 && (
-          <Section title="All drops">
-            <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-              {filteredAllDrops.map(({ id, dropName, urlName }) => (
-                <Link key={id} href={`/${urlName}`} passHref>
-                  <Center
-                    backgroundColor="primary.100"
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    padding={10}
-                    transition="background-color .2s linear, border-color .2s linear"
-                    _hover={{
-                      cursor: "pointer",
-                      backgroundColor: "purple.300",
-                      borderColor: "purple.400",
-                    }}
-                  >
-                    <Text fontSize="xl">{dropName}</Text>
-                  </Center>
-                </Link>
-              ))}
-            </Grid>
-          </Section>
-        )}
+            </motion.div>
+          )}
+        </CategorySection>
+        <CategorySection
+          title="All drops"
+          fallbackText={
+            drops?.length
+              ? `No results for ${searchInput}`
+              : "Can't fetch drops right now. Check back later!"
+          }
+        >
+          {filteredAllDrops.length &&
+            filteredAllDrops?.map((drop) => <DropCard key={drop.id} drop={drop} />)}
+        </CategorySection>
       </VStack>
     </Layout>
   )

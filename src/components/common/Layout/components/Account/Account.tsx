@@ -1,12 +1,12 @@
 import { HStack, Text, useDisclosure } from "@chakra-ui/react"
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core"
-import GuildAvatar from "components/common/GuildAvatar"
 import { Web3Connection } from "components/_app/Web3ConnectionManager"
 import { LinkBreak, SignIn } from "phosphor-react"
 import { useContext } from "react"
 import shortenHex from "utils/shortenHex"
 import AccountButton from "./components/AccountButton"
 import AccountModal from "./components/AccountModal"
+import Identicon from "./components/Identicon"
 import useENSName from "./hooks/useENSName"
 
 const Account = (): JSX.Element => {
@@ -53,7 +53,7 @@ const Account = (): JSX.Element => {
           <Text as="span" fontSize="md" fontWeight="semibold">
             {ENSName || `${shortenHex(account, 3)}`}
           </Text>
-          <GuildAvatar address={account} size={4} />
+          <Identicon address={account} size={28} />
         </HStack>
       </AccountButton>
 
