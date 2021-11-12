@@ -1,6 +1,6 @@
-import { Button, Img, Input, SimpleGrid, VStack } from "@chakra-ui/react"
+import { Button, Img, Input, VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
-import Section from "components/common/Section"
+import CategorySection from "components/index/CategorySection"
 import DropCard from "components/index/DropCard"
 import { Chains } from "connectors"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
@@ -66,14 +66,31 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
           type="text"
           placeholder="Search drops"
         />
-        <Section title="Your drops">
-          <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 3 }}
-            spacing={{ base: 5, md: 6 }}
-          >
-            {filteredYourDrops.map((drop) => (
-              <DropCard key={drop.id} drop={drop} />
-            ))}
+        <CategorySection
+          title="Your drops"
+          fallbackText={`No results for ${searchInput}`}
+        >
+          {filteredYourDrops?.length ? (
+            filteredYourDrops
+              .map((drop) => <DropCard key={drop.id} drop={drop} />)
+              .concat(
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  <Link href="/start-airdrop" passHref>
+                    <Button
+                      width="full"
+                      height="full"
+                      minHeight={20}
+                      colorScheme="red"
+                      variant="outline"
+                      leftIcon={<Img src="/new.png" boxSize={8} />}
+                      aria-label="Start a new airdrop"
+                    >
+                      New drop
+                    </Button>
+                  </Link>
+                </motion.div>
+              )
+          ) : (
             <motion.div whileTap={{ scale: 0.95 }}>
               <Link href="/start-airdrop" passHref>
                 <Button
@@ -89,20 +106,19 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
                 </Button>
               </Link>
             </motion.div>
-          </SimpleGrid>
-        </Section>
-        {filteredAllDrops?.length > 0 && (
-          <Section title="All drops">
-            <SimpleGrid
-              columns={{ base: 1, md: 2, lg: 3 }}
-              spacing={{ base: 5, md: 6 }}
-            >
-              {filteredAllDrops.map((drop) => (
-                <DropCard key={drop.id} drop={drop} />
-              ))}
-            </SimpleGrid>
-          </Section>
-        )}
+          )}
+        </CategorySection>
+        <CategorySection
+          title="All drops"
+          fallbackText={
+            drops?.length
+              ? `No results for ${searchInput}`
+              : "Can't fetch drops right now. Check back later!"
+          }
+        >
+          {filteredAllDrops.length &&
+            filteredAllDrops?.map((drop) => <DropCard key={drop.id} drop={drop} />)}
+        </CategorySection>
       </VStack>
     </Layout>
   )
