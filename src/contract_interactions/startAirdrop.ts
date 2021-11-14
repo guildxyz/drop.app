@@ -1,5 +1,9 @@
 import { Contract } from "@ethersproject/contracts"
-import { JsonRpcSigner, TransactionReceipt } from "@ethersproject/providers"
+import {
+  JsonRpcSigner,
+  Provider,
+  TransactionReceipt,
+} from "@ethersproject/providers"
 import { StartAirdropData } from "hooks/machines/useStartAirdropMachine"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 import TransactionError from "utils/errors/TransactionError"
@@ -12,6 +16,7 @@ const startAirdrop = async (
   account: string,
   signer: JsonRpcSigner,
   data: StartAirdropData,
+  provider?: Provider,
   setUploadedImages?: (hashes: Record<string, string>) => void
 ): Promise<TransactionReceipt> => {
   const { contractId, serverId, name, roles: rolesObject, channel, urlName } = data
@@ -20,7 +25,7 @@ const startAirdrop = async (
 
   const [signature, tokenAddress] = await Promise.all([
     startAirdropSignature(serverId, account, chainId, urlName),
-    contractsByDeployer(chainId, account, +contractId),
+    contractsByDeployer(chainId, account, +contractId, provider),
   ])
 
   const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, signer)
@@ -76,7 +81,8 @@ const startAirdrop = async (
         values: Object.values(traits ?? {}),
       })),
       +contractId,
-      channel
+      channel,
+      provider
     )
     const receipt = await tx.wait()
     return receipt

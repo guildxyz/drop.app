@@ -24,9 +24,10 @@ const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
         account,
         library.getSigner(account).connectUnchecked(),
         data.NFT.name,
-        data.NFT.symbol
+        data.NFT.symbol,
+        library
       )
-      await mutate(["deployedTokens", chainId, account])
+      await mutate(["deployedTokens", chainId, account, library])
       setValue("contractId", contractId.toString())
     }
   )

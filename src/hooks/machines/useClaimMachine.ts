@@ -25,7 +25,8 @@ const useClaimMachine = (): FetchMachine<ClaimData> => {
         library.getSigner(account).connectUnchecked(),
         roleId,
         serverId,
-        tokenAddress
+        tokenAddress,
+        library
       )
   )
 }

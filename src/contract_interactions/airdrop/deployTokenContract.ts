@@ -1,15 +1,15 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider"
-import { JsonRpcSigner } from "@ethersproject/providers"
-import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import { JsonRpcSigner, Provider } from "@ethersproject/providers"
+import { getAirdropContract } from "contracts"
 
 const deployTokenContract = async (
   chainId: number,
   signer: JsonRpcSigner,
   tokenName: string,
-  tokenSymbol: string
+  tokenSymbol: string,
+  provider?: Provider
 ): Promise<TransactionResponse> =>
-  airdropContracts[Chains[chainId]]
+  getAirdropContract(chainId, provider)
     .connect(signer)
     .deployTokenContract(tokenName, tokenSymbol)
 

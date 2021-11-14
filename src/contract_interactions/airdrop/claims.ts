@@ -1,5 +1,5 @@
-import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import { Provider } from "@ethersproject/providers"
+import { getAirdropContract } from "contracts"
 import TransactionError from "utils/errors/TransactionError"
 
 const claims = (
@@ -7,9 +7,10 @@ const claims = (
   address: string,
   serverId: string,
   roleId: string,
-  tokenAddress: string
+  tokenAddress: string,
+  provider?: Provider
 ): Promise<{ claimed: boolean; approved: boolean }> =>
-  airdropContracts[Chains[chainId]]
+  getAirdropContract(chainId, provider)
     .claims(address, serverId, roleId, tokenAddress)
     .then(([claimed, approved]) => ({ claimed, approved }))
     .catch(() => {

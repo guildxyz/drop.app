@@ -1,14 +1,18 @@
+import { Provider } from "@ethersproject/providers"
 import { numOfDrops, urlById } from "./airdrop"
 import getDropRolesData, { DropWithRoles } from "./getDropRolesData"
 
-const getDrops = async (chainId: number): Promise<DropWithRoles[]> => {
-  const dropsCount = await numOfDrops(chainId).then((_) => +_)
+const getDrops = async (
+  chainId: number,
+  provider?: Provider
+): Promise<DropWithRoles[]> => {
+  const dropsCount = await numOfDrops(chainId, provider).then((_) => +_)
   const dropUrls = await Promise.all(
-    [...Array(dropsCount)].map((_, i) => urlById(chainId, i))
+    [...Array(dropsCount)].map((_, i) => urlById(chainId, i, provider))
   )
   const drops = await Promise.all(
     dropUrls.map((url, id) =>
-      getDropRolesData(chainId, url).then((drop) => ({
+      getDropRolesData(chainId, url, provider).then((drop) => ({
         ...drop,
         id,
       }))

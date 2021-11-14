@@ -1,7 +1,10 @@
-import { Chains } from "connectors"
-import { tokenContractGetters } from "contracts"
+import { Provider } from "@ethersproject/providers"
+import { getTokenContract } from "contracts"
 
-const getName = (chainId: number, tokenAddress: string): Promise<string> =>
-  tokenContractGetters[Chains[chainId]](tokenAddress).name()
+const getName = (
+  chainId: number,
+  tokenAddress: string,
+  provider?: Provider
+): Promise<string> => getTokenContract(chainId, tokenAddress, provider).name()
 
 export default getName

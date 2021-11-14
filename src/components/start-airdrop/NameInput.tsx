@@ -1,4 +1,5 @@
 import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
+import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { getDataOfDrop } from "contract_interactions/airdrop"
 import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
@@ -10,7 +11,7 @@ import slugify from "utils/slugify"
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 const NameInput = (): ReactElement => {
-  const { chainId } = useWeb3React()
+  const { chainId, library } = useWeb3React<Web3Provider>()
   const { setValue, register, trigger } = useFormContext()
   const { errors } = useFormState()
   const name = useWatch({ name: "name" })
@@ -37,7 +38,7 @@ const NameInput = (): ReactElement => {
         {...register("name", {
           required: "This field is required",
           validate: async (value) =>
-            getDataOfDrop(chainId, slugify(value)).then(
+            getDataOfDrop(chainId, slugify(value), library).then(
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
             ),
