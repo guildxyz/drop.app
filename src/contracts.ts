@@ -36,7 +36,7 @@ const airdropContracts = Object.fromEntries(
   ])
 )
 
-const getAirdropContract = (chainId: number, provider: Provider) =>
+const getAirdropContract = (chainId: number, provider: Provider): Contract =>
   new Contract(
     AirdropAddresses[Chains[chainId]],
     AIRDROP_ABI,
