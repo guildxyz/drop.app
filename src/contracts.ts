@@ -1,6 +1,6 @@
 import { Contract } from "@ethersproject/contracts"
-import { InfuraProvider, JsonRpcProvider } from "@ethersproject/providers"
-import { RPC, supportedChains } from "connectors"
+import { InfuraProvider, JsonRpcProvider, Provider } from "@ethersproject/providers"
+import { Chains, RPC, supportedChains } from "connectors"
 import AIRDROP_ABI from "static/abis/airdrop.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 
@@ -20,29 +20,35 @@ enum AirdropAddresses {
   POLYGON = "0x2223C242858d63E471ac1169254040BE90766AC0",
 }
 
-const providers = {
-  GOERLI: new InfuraProvider("goerli", process.env.INFURA_KEY),
+const defaultProviders = {
+  GOERLI: new InfuraProvider("goerli"),
   POLYGON: new JsonRpcProvider(RPC.POLYGON.rpcUrls[0]),
 }
-
-// const providers = Object.fromEntries(
-//   supportedChains.map((chain) => [chain, new JsonRpcProvider(RPC[chain].rpcUrls[0])])
-// )
 
 const airdropContracts = Object.fromEntries(
   supportedChains.map((chain) => [
     chain,
-    new Contract(AirdropAddresses[chain], AIRDROP_ABI, providers[chain]),
+    new Contract(AirdropAddresses[chain], AIRDROP_ABI, defaultProviders[chain]),
   ])
 )
 
-const tokenContractGetters = Object.fromEntries(
-  supportedChains.map((chain) => [
-    chain,
-    (tokenAddress: string): Contract =>
-      new Contract(tokenAddress, ROLE_TOKEN_ABI, providers[chain]),
-  ])
-)
+const getAirdropContract = (chainId: number, provider: Provider): Contract =>
+  new Contract(
+    AirdropAddresses[Chains[chainId]],
+    AIRDROP_ABI,
+    provider ?? defaultProviders[Chains[chainId]]
+  )
 
-export { AirdropAddresses, tokenContractGetters, multicallConfigs }
+const getTokenContract = (
+  chainId: number,
+  tokenAddress: string,
+  provider?: Provider
+): Contract =>
+  new Contract(
+    tokenAddress,
+    ROLE_TOKEN_ABI,
+    provider ?? defaultProviders[Chains[chainId]]
+  )
+
+export { AirdropAddresses, multicallConfigs, getTokenContract, getAirdropContract }
 export default airdropContracts

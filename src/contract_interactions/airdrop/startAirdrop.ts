@@ -1,7 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider"
-import { JsonRpcSigner } from "@ethersproject/providers"
-import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import { JsonRpcSigner, Provider } from "@ethersproject/providers"
+import { getAirdropContract } from "contracts"
 import { Role } from "contract_interactions/types"
 
 const startAirdrop = (
@@ -13,9 +12,10 @@ const startAirdrop = (
   serverId: string,
   roles: Role[],
   contractId: number,
-  channelId: string
+  channelId: string,
+  provider?: Provider
 ): Promise<TransactionResponse> =>
-  airdropContracts[Chains[chainId]]
+  getAirdropContract(chainId, provider)
     .connect(signer)
     .newAirdrop(signature, urlName, dropName, serverId, roles, contractId, channelId)
 

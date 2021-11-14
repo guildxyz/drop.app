@@ -1,3 +1,4 @@
+import { Provider, Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import getDropRolesData, {
   DropWithRoles,
@@ -7,19 +8,24 @@ import useSWR from "swr"
 const getDropWithRoles = async (
   _: string,
   chainId: number,
-  urlName: string
-): Promise<DropWithRoles> => getDropRolesData(chainId, urlName)
+  urlName: string,
+  provider: Provider
+): Promise<DropWithRoles> => getDropRolesData(chainId, urlName, provider)
 
 const useDropWithRoles = (
   urlName: string,
   fallbackData?: DropWithRoles
 ): DropWithRoles => {
-  const { chainId } = useWeb3React()
+  const { chainId, library } = useWeb3React<Web3Provider>()
 
-  const { data } = useSWR(["dropsWithRoles", chainId, urlName], getDropWithRoles, {
-    fallbackData,
-    revalidateOnMount: true,
-  })
+  const { data } = useSWR(
+    ["dropsWithRoles", chainId, urlName, library],
+    getDropWithRoles,
+    {
+      fallbackData,
+      revalidateOnMount: true,
+    }
+  )
 
   return data
 }

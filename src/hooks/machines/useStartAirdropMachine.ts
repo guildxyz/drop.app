@@ -33,15 +33,21 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
         data: { roles, serverId, name, channel, assetType, contractId, urlName },
       }: SubmitEvent<StartAirdropData>
     ) =>
-      startAirdrop(chainId, account, library.getSigner(account).connectUnchecked(), {
-        name,
-        urlName,
-        channel,
-        roles,
-        serverId,
-        assetType,
-        contractId,
-      })
+      startAirdrop(
+        chainId,
+        account,
+        library.getSigner(account).connectUnchecked(),
+        {
+          name,
+          urlName,
+          channel,
+          roles,
+          serverId,
+          assetType,
+          contractId,
+        },
+        library
+      )
   )
 }
 

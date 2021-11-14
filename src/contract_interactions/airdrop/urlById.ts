@@ -1,7 +1,10 @@
-import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import { Provider } from "@ethersproject/providers"
+import { getAirdropContract } from "contracts"
 
-const urlById = (chainId: number, id: number): Promise<string> =>
-  airdropContracts[Chains[chainId]].urlById(id)
+const urlById = (
+  chainId: number,
+  id: number,
+  provider?: Provider
+): Promise<string> => getAirdropContract(chainId, provider).urlById(id)
 
 export default urlById

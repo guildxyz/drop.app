@@ -1,14 +1,15 @@
-import { Chains } from "connectors"
-import { tokenContractGetters } from "contracts"
+import { Provider } from "@ethersproject/providers"
+import { getTokenContract } from "contracts"
 import { RoleData } from "contract_interactions/types"
 
 const getDataOfRole = (
   chainId: number,
   tokenAddress: string,
   serverId: string,
-  roleId: string
+  roleId: string,
+  provider?: Provider
 ): Promise<RoleData> =>
-  tokenContractGetters[Chains[chainId]](tokenAddress)
+  getTokenContract(chainId, tokenAddress, provider)
     .getDataOfRole(serverId, roleId)
     .then(([imageHash, tokenName, traits]) => ({
       imageHash,

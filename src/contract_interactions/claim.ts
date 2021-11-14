@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider"
-import { JsonRpcSigner } from "@ethersproject/providers"
+import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import TransactionError from "utils/errors/TransactionError"
 import { claim as airdropClaim } from "./airdrop"
 import claimSignature from "./utils/signatures/claim"
@@ -10,7 +10,8 @@ const claim = async (
   signer: JsonRpcSigner,
   roleId: string,
   serverId: string,
-  tokenAddress: string
+  tokenAddress: string,
+  provider?: Provider
 ): Promise<TransactionReceipt> => {
   const signature = await claimSignature(
     chainId,
@@ -27,7 +28,8 @@ const claim = async (
       signature,
       serverId,
       roleId,
-      tokenAddress
+      tokenAddress,
+      provider
     )
     const receipt = await tx.wait()
     return receipt

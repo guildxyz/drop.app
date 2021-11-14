@@ -1,5 +1,5 @@
-import { Chains } from "connectors"
-import { tokenContractGetters } from "contracts"
+import { Provider } from "@ethersproject/providers"
+import { getTokenContract } from "contracts"
 
 type TokenAttribute = {
   trait_type: string
@@ -17,9 +17,10 @@ export type TokenURI = {
 const getTokenURI = async (
   chainId: number,
   tokenAddress: string,
-  tokenId: number
+  tokenId: number,
+  provider?: Provider
 ): Promise<TokenURI> => {
-  const uri = await tokenContractGetters[Chains[chainId]](tokenAddress).tokenURI(
+  const uri = await getTokenContract(chainId, tokenAddress, provider).tokenURI(
     tokenId
   )
   const header = "data:application/json;base64,"

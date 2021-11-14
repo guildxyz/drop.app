@@ -1,7 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider"
-import { JsonRpcSigner } from "@ethersproject/providers"
-import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import { JsonRpcSigner, Provider } from "@ethersproject/providers"
+import { getAirdropContract } from "contracts"
 
 const grant = (
   chainId: number,
@@ -10,9 +9,10 @@ const grant = (
   serverId: string,
   roleId: string,
   recieverAddress: string,
-  contractId: number
+  contractId: number,
+  provider?: Provider
 ): Promise<TransactionResponse> =>
-  airdropContracts[Chains[chainId]]
+  getAirdropContract(chainId, provider)
     .connect(signer)
     .grant(signature, serverId, roleId, recieverAddress, contractId)
 

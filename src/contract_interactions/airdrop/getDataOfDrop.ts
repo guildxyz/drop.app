@@ -1,9 +1,13 @@
-import { Chains } from "connectors"
-import airdropContracts from "contracts"
+import { Provider } from "@ethersproject/providers"
+import { getAirdropContract } from "contracts"
 import { Drop } from "contract_interactions/types"
 
-const getDataOfDrop = (chainId: number, urlName: string): Promise<Drop> =>
-  airdropContracts[Chains[chainId]]
+const getDataOfDrop = (
+  chainId: number,
+  urlName: string,
+  provider?: Provider
+): Promise<Drop> =>
+  getAirdropContract(chainId, provider)
     .getDataOfDrop(urlName)
     .then(
       ([dropName, serverId, roleIds, tokenAddress, contractId, numOfActive]) => ({

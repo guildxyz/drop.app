@@ -1,4 +1,8 @@
-import { JsonRpcSigner, TransactionReceipt } from "@ethersproject/providers"
+import {
+  JsonRpcSigner,
+  Provider,
+  TransactionReceipt,
+} from "@ethersproject/providers"
 import TransactionError from "utils/errors/TransactionError"
 import {
   contractsByDeployer,
@@ -14,12 +18,18 @@ const grant = async (
   serverId: string,
   roleId: string,
   contractId: number,
-  recieverAddress: string
+  recieverAddress: string,
+  provider?: Provider
 ): Promise<TransactionReceipt> => {
-  const numberOfTokens = await numOfDeployedContracts(chainId, account)
+  const numberOfTokens = await numOfDeployedContracts(chainId, account, provider)
   if (contractId >= numberOfTokens) throw new Error("Invalid token contract")
 
-  const tokenAddress = await contractsByDeployer(chainId, account, contractId)
+  const tokenAddress = await contractsByDeployer(
+    chainId,
+    account,
+    contractId,
+    provider
+  )
 
   const signature = await grantSignature(
     chainId,
@@ -38,7 +48,8 @@ const grant = async (
       serverId,
       roleId,
       recieverAddress,
-      contractId
+      contractId,
+      provider
     )
     const receipt = await tx.wait()
     return receipt

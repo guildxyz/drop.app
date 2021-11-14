@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, VStack } from "@chakra-ui/react"
+import { VStack } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
@@ -50,16 +50,6 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
   useWarnIfUnsavedChanges(
     methods.formState?.isDirty && !methods.formState.isSubmitted
   )
-
-  if (!account)
-    return (
-      <Layout title="Drop to your community">
-        <Alert status="error">
-          <AlertIcon />
-          Please connect your wallet to continue
-        </Alert>
-      </Layout>
-    )
 
   return (
     <FormProvider {...methods}>
