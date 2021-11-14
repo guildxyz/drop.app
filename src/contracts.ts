@@ -21,13 +21,9 @@ enum AirdropAddresses {
 }
 
 const defaultProviders = {
-  GOERLI: new InfuraProvider("goerli", process.env.INFURA_KEY),
+  GOERLI: new InfuraProvider("goerli"),
   POLYGON: new JsonRpcProvider(RPC.POLYGON.rpcUrls[0]),
 }
-
-// const providers = Object.fromEntries(
-//   supportedChains.map((chain) => [chain, new JsonRpcProvider(RPC[chain].rpcUrls[0])])
-// )
 
 const airdropContracts = Object.fromEntries(
   supportedChains.map((chain) => [
@@ -54,11 +50,5 @@ const getTokenContract = (
     provider ?? defaultProviders[Chains[chainId]]
   )
 
-export {
-  defaultProviders,
-  AirdropAddresses,
-  multicallConfigs,
-  getTokenContract,
-  getAirdropContract,
-}
+export { AirdropAddresses, multicallConfigs, getTokenContract, getAirdropContract }
 export default airdropContracts
