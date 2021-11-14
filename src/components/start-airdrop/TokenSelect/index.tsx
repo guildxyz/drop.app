@@ -8,7 +8,12 @@ import {
 import { useWeb3React } from "@web3-react/core"
 import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
 import { ReactElement, useEffect } from "react"
-import { useController, useFormContext, useFormState } from "react-hook-form"
+import {
+  useController,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from "react-hook-form"
 import Token from "./components/Token"
 
 const TokenSelect = (): ReactElement => {
@@ -16,8 +21,11 @@ const TokenSelect = (): ReactElement => {
   const { setValue } = useFormContext()
   const { account } = useWeb3React()
   const { errors } = useFormState()
+  const contractId = useWatch({ name: "contractId" })
 
-  useEffect(() => setValue("contractId", ""), [account, setValue])
+  useEffect(() => {
+    if (contractId !== "DEPLOY") setValue("contractId", "")
+  }, [account, setValue])
 
   const { field } = useController({
     name: "contractId",

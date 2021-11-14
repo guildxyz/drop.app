@@ -27,7 +27,8 @@ const SubmitButton = (): ReactElement => {
 
   const contractId = useWatch({ name: "contractId" })
 
-  if (!triedEager || isAuthenticated === undefined) return <LoadingButton />
+  if (!triedEager || (!!account && isAuthenticated === undefined))
+    return <LoadingButton />
 
   if (!account) return <ConnectWalletButton />
 
