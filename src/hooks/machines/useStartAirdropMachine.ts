@@ -36,7 +36,7 @@ const useStartAirdropMachine = (): FetchMachine<StartAirdropData> => {
       startAirdrop(
         chainId,
         account,
-        library.getSigner(account).connectUnchecked(),
+        library.getSigner(account),
         {
           name,
           urlName,

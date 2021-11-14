@@ -22,7 +22,7 @@ const useDeployTokenMachine = (): FetchMachine<DeployToken> => {
       const { contractId } = await deployTokenContract(
         chainId,
         account,
-        library.getSigner(account).connectUnchecked(),
+        library.getSigner(account),
         data.NFT.name,
         data.NFT.symbol,
         library

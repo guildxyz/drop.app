@@ -22,7 +22,7 @@ const useClaimMachine = (): FetchMachine<ClaimData> => {
       claim(
         chainId,
         account,
-        library.getSigner(account).connectUnchecked(),
+        library.getSigner(account),
         roleId,
         serverId,
         tokenAddress,

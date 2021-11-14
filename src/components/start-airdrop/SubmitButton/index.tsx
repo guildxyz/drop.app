@@ -1,19 +1,22 @@
 import { useWeb3React } from "@web3-react/core"
 import CtaButton from "components/common/CtaButton"
+import { Web3Connection } from "components/_app/Web3ConnectionManager"
 import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
 import useStartAirdropMachine from "hooks/machines/useStartAirdropMachine"
 import usePersonalSign from "hooks/usePersonalSign"
-import { ReactElement, useMemo } from "react"
+import { ReactElement, useContext, useMemo } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import AuthenticateButton from "./components/AuthenticateButton"
 import ConnectWalletButton from "./components/ConnectWalletButton"
 import DeployTokenButton from "./components/DeployTokenButton"
+import LoadingButton from "./components/LoadingButton"
 
 const SubmitButton = (): ReactElement => {
   const { account } = useWeb3React()
   const isAuthenticated = useIsAuthenticated()
   const { isSigning, callbackWithSign } = usePersonalSign(true)
   const { onSubmit, isLoading, isSuccess } = useStartAirdropMachine()
+  const { triedEager } = useContext(Web3Connection)
 
   const { handleSubmit } = useFormContext()
 
@@ -23,6 +26,8 @@ const SubmitButton = (): ReactElement => {
   }, [isSigning, isLoading])
 
   const contractId = useWatch({ name: "contractId" })
+
+  if (!triedEager || isAuthenticated === undefined) return <LoadingButton />
 
   if (!account) return <ConnectWalletButton />
 
