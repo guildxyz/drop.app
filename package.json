@@ -59,7 +59,9 @@
     "lint-staged": "^11.2.3",
     "prettier": "^2.4.1",
     "prettier-plugin-jsdoc": "^0.3.24",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "nth-check": ">=2.0.1",
+    "color-string": ">=1.5.5"
   },
   "lint-staged": {
     "*.@(js|jsx|ts|tsx)": "npm run lint-fix",
