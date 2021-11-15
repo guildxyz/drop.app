@@ -3,7 +3,7 @@ import { ReactElement } from "react"
 
 const LoadingButton = (): ReactElement => (
   <CtaButton
-    colorScheme="purple"
+    colorScheme="yellow"
     flexShrink={0}
     size="lg"
     isLoading

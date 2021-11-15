@@ -25,13 +25,12 @@ const Token = ({
       <HStack
         {...checkbox}
         cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        backgroundColor="primary.100"
+        borderRadius="xl"
+        backgroundColor="gray.200"
         _checked={{
-          bg: "purple.400",
+          bg: "yellow.500",
           color: "white",
-          borderColor: "purple.400",
+          borderColor: "yellow.500",
         }}
         px={5}
         py={3}

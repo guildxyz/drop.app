@@ -1,4 +1,4 @@
-import { Box, RadioProps, useRadio, VStack } from "@chakra-ui/react"
+import { Box, Button, RadioProps, useRadio, VStack } from "@chakra-ui/react"
 import { PropsWithChildren, ReactElement } from "react"
 
 type Props = {
@@ -20,24 +20,19 @@ const DropdownRadio = ({
 
   return (
     <VStack>
-      <Box width="full" as="label">
+      <Box mb={1} width="full" as="label">
         <input {...input} />
-        <Box
+        <Button
           {...checkbox}
-          cursor="pointer"
-          borderWidth="1px"
-          borderRadius="md"
-          boxShadow="md"
+          w="full"
           _checked={{
-            bg: "purple.400",
+            bg: "yellow.500",
             color: "white",
-            borderColor: "purple.400",
+            borderColor: "yellow.500",
           }}
-          px={5}
-          py={3}
         >
           {title}
-        </Box>
+        </Button>
       </Box>
       {isChecked && children}
     </VStack>

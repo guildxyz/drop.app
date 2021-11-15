@@ -49,7 +49,7 @@ const DropPage = ({ urlName, drop: initialDropWithRoles }: Props): ReactElement 
             <Text>Contract address:</Text>
             <Link
               target="_blank"
-              colorScheme="purple"
+              colorScheme="yellow"
               href={`https://goerli.etherscan.io/address/${tokenAddress}`}
             >
               {shortenHex(tokenAddress)}

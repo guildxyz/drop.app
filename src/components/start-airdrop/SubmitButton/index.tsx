@@ -38,7 +38,7 @@ const SubmitButton = (): ReactElement => {
 
   return (
     <CtaButton
-      colorScheme="purple"
+      colorScheme="yellow"
       disabled={!isAuthenticated || isSuccess}
       flexShrink={0}
       size="lg"

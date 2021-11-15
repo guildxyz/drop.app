@@ -17,8 +17,12 @@ const Asset = (): ReactElement => {
     <Grid gridTemplateColumns="1fr" gap={10}>
       <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} {...getRootProps()}>
         <InputNFT {...getRadioProps({ value: "NFT" })} />
-        <Button disabled>Token</Button>
-        <Button disabled>ERC 1155</Button>
+        <Button colorScheme="darkerGray" disabled>
+          Token
+        </Button>
+        <Button colorScheme="darkerGray" disabled>
+          ERC 1155
+        </Button>
       </Grid>
     </Grid>
   )

@@ -110,7 +110,7 @@ const ClaimCard = ({
                 !userServers?.includes(serverId)
               }
               w="full"
-              colorScheme="purple"
+              colorScheme="yellow"
               onClick={() => onSubmit({ roleId, serverId, tokenAddress })}
             >
               {buttonText}

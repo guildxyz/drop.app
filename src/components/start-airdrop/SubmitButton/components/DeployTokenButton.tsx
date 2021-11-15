@@ -20,7 +20,7 @@ const DeployTokenButton = (): ReactElement => {
 
   return (
     <CtaButton
-      colorScheme="purple"
+      colorScheme="yellow"
       disabled={isSuccess}
       flexShrink={0}
       size="lg"

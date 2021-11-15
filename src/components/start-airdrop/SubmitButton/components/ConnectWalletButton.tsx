@@ -10,7 +10,7 @@ const ConnectWalletButton = (props: Record<string, string>): ReactElement => {
 
   return (
     <CtaButton
-      colorScheme="purple"
+      colorScheme="yellow"
       disabled={!!account}
       flexShrink={0}
       size="lg"

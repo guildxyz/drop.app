@@ -24,7 +24,7 @@ const AddRoleButton = ({ roleId, roleName, setSelected }: Props): ReactElement =
   return (
     <Button
       leftIcon={<Plus />}
-      colorScheme="purple"
+      colorScheme="yellow"
       variant="outline"
       key={roleId}
       onClick={setSelected}

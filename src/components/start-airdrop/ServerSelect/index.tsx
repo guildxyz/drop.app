@@ -67,6 +67,7 @@ const ServerSelect = (): ReactElement => {
         <FormLabel>2. Add bot to server</FormLabel>
         {!isBotAdded ? (
           <Button
+            colorScheme="darkerGray"
             h="10"
             w="full"
             {...(shouldAddBot
