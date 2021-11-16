@@ -3,7 +3,7 @@ import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
-import { Chains } from "connectors"
+import { Chains, RPC } from "connectors"
 import getDropRolesData, {
   DropWithRoles,
 } from "contract_interactions/getDropRolesData"
@@ -50,7 +50,9 @@ const DropPage = ({ urlName, drop: initialDropWithRoles }: Props): ReactElement 
             <Link
               target="_blank"
               colorScheme="yellow"
-              href={`https://goerli.etherscan.io/address/${tokenAddress}`}
+              href={`${
+                RPC[process.env.NEXT_PUBLIC_CHAIN].blockExplorerUrls[0]
+              }address/${tokenAddress}`}
             >
               {shortenHex(tokenAddress)}
             </Link>
