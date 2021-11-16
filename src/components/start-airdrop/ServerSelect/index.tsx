@@ -7,6 +7,7 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react"
+import { useRouter } from "next/router"
 import { Check } from "phosphor-react"
 import { ReactElement, useEffect, useMemo } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
@@ -15,15 +16,16 @@ import useChannels from "./hooks/useChannels"
 const INVITE_REGEX = /^https:\/\/discord.gg\/([a-z0-9]+)$/i
 
 const ServerSelect = (): ReactElement => {
+  const { isReady } = useRouter()
   const { register, setValue } = useFormContext()
 
-  const inviteLink = useWatch<{ invite_link: string }>({
-    name: "invite_link",
+  const inviteLink = useWatch<{ inviteLink: string }>({
+    name: "inviteLink",
   })
   const { errors } = useFormState()
 
   const [{ serverId, channels }, loading] = useChannels(
-    errors.invite_link?.message?.length > 0 ? "" : inviteLink
+    errors.inviteLink?.message?.length > 0 ? "" : inviteLink
   )
 
   useEffect(() => setValue("serverId", serverId), [setValue, serverId])
@@ -40,10 +42,11 @@ const ServerSelect = (): ReactElement => {
 
   return (
     <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-      <FormControl isInvalid={errors.invite_link}>
+      <FormControl isInvalid={errors.inviteLink}>
         <FormLabel>1. Paste invite link</FormLabel>
         <Input
-          {...register("invite_link", {
+          {...register("inviteLink", {
+            disabled: !isReady,
             required: "This field is required.",
             validate: async (value) => {
               if (!INVITE_REGEX.test(value)) return "Not a valid invite"
@@ -59,7 +62,7 @@ const ServerSelect = (): ReactElement => {
           })}
         />
         <FormErrorMessage>
-          {errors.invite_link?.message ?? "Invalid invite"}
+          {errors.inviteLink?.message ?? "Invalid invite"}
         </FormErrorMessage>
       </FormControl>
 

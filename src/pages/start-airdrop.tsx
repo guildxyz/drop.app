@@ -1,5 +1,4 @@
 import { VStack } from "@chakra-ui/react"
-import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import Asset from "components/start-airdrop/Asset"
@@ -9,15 +8,12 @@ import ServerSelect from "components/start-airdrop/ServerSelect"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import TokenSelect from "components/start-airdrop/TokenSelect"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
-import { GetServerSideProps } from "next"
+import { useRouter } from "next/router"
+import { useEffect } from "react"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
 
-type Props = {
-  inviteCode?: string
-}
-
-const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
-  const { account } = useWeb3React()
+const StartAirdropPage = (): JSX.Element => {
+  const { query } = useRouter()
 
   const methods = useForm({
     mode: "all",
@@ -32,7 +28,7 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
           symbol: "",
         },
       },
-      invite_link: inviteCode?.length > 0 ? `https://discord.gg/${inviteCode}` : "",
+      inviteLink: "",
       contractId: "",
       serverId: "",
       roles: {},
@@ -51,6 +47,12 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
     methods.formState?.isDirty && !methods.formState.isSubmitted
   )
 
+  useEffect(() => {
+    if (query.inviteCode) {
+      methods.setValue("inviteLink", `https://discord.gg/${query.inviteCode}`)
+    }
+  }, [query, methods])
+
   return (
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
@@ -60,14 +62,9 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
           </Section>
 
           {serverId?.length > 0 && (
-            <>
-              {/* <Section title="Set metadata">
-                <SetMetaData />
-          </Section> */}
-              <Section title="Pick roles">
-                <PickRoles />
-              </Section>
-            </>
+            <Section title="Pick roles">
+              <PickRoles />
+            </Section>
           )}
 
           <Section title="Choose an existing token, or deploy a new one">
@@ -90,14 +87,4 @@ const StartAirdropPage = ({ inviteCode }: Props): JSX.Element => {
   )
 }
 
-const getServerSideProps: GetServerSideProps = async ({ query }) => ({
-  props: {
-    inviteCode:
-      !!query.inviteCode && (query.inviteCode as string).match(/[a-z0-9]{8}/i)
-        ? (query.inviteCode as string)
-        : null,
-  },
-})
-
-export { getServerSideProps }
 export default StartAirdropPage
