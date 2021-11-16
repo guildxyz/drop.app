@@ -16,6 +16,7 @@ const StartAirdropPage = (): JSX.Element => {
   const { query } = useRouter()
 
   const methods = useForm({
+    shouldFocusError: true,
     mode: "all",
     defaultValues: {
       name: "",

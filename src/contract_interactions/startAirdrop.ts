@@ -64,8 +64,17 @@ const startAirdrop = async (
         roleId,
         tokenImageHash: hashes[roleId],
         NFTName,
-        traitTypes: traits.map(({ key }) => key),
-        values: traits.map(({ value }) => value),
+        ...traits
+          .filter(({ key, value }) => key.length > 0 && value.length > 0)
+          .reduce(
+            (_acc, { key, value }) => {
+              const acc = _acc
+              acc.traitTypes.push(key)
+              acc.values.push(value)
+              return acc
+            },
+            { traitTypes: [], values: [] }
+          ),
       })),
       +contractId,
       channel,

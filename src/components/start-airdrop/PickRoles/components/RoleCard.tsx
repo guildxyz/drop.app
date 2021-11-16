@@ -53,9 +53,6 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
   const contractId = useWatch({ name: "contractId" })
   const tokenAddress = useRoleTokenAddress(contractId)
   const isActive = useIsActive(serverId, roleId, tokenAddress)
-  const traits = useWatch({ name: `roles.${roleId}.traits` })
-
-  useEffect(() => console.log(traits), [traits])
 
   const {
     fields: traitFields,
