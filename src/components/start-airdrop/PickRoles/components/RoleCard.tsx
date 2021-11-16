@@ -3,14 +3,13 @@ import {
   Box,
   Button,
   Center,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
   HStack,
   IconButton,
   Input,
-  InputGroup,
-  InputLeftAddon,
   Text,
   VStack,
 } from "@chakra-ui/react"
@@ -18,9 +17,14 @@ import useIsActive from "hooks/airdrop/useIsActive"
 import useRoleTokenAddress from "hooks/airdrop/useRoleTokenAddress"
 import useRoles from "hooks/discord/useRoles"
 import Image from "next/image"
-import { Plus, X } from "phosphor-react"
+import { Minus, Plus, X } from "phosphor-react"
 import { ReactElement, useEffect, useState } from "react"
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import {
+  useFieldArray,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from "react-hook-form"
 import FileUpload from "./FileUpload"
 
 type Props = {
@@ -41,45 +45,35 @@ const validateFiles = (value: FileList) => {
 }
 
 const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
-  const { register, setValue } = useFormContext()
+  const { register } = useFormContext()
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
   const [imagePreview, setImagePreview] = useState<string>("")
   const { errors } = useFormState()
-  const [traitKey, setTraitKey] = useState<string>("")
-  const traitKeyIds = useWatch({
-    name: `roles.${roleId}.traitKeyIds`,
-    defaultValue: {},
-  })
-  const traits = useWatch({
-    name: `roles.${roleId}.traits`,
-    defaultValue: {},
-  })
   const contractId = useWatch({ name: "contractId" })
   const tokenAddress = useRoleTokenAddress(contractId)
   const isActive = useIsActive(serverId, roleId, tokenAddress)
+  const traits = useWatch({ name: `roles.${roleId}.traits` })
+
+  useEffect(() => console.log(traits), [traits])
+
+  const {
+    fields: traitFields,
+    append,
+    remove,
+  } = useFieldArray({
+    name: `roles.${roleId}.traits`,
+  })
+
+  const addTrait = () =>
+    append({
+      key: "",
+      value: "",
+    })
 
   useEffect(() => {
-    setValue(`roles.${roleId}.traits`, {})
+    if (traitFields.length <= 0) addTrait()
   }, [])
-
-  const addTrait = (event) => {
-    event.preventDefault()
-    const newId = Math.max(0, ...Object.keys(traitKeyIds).map((id) => +id)) + 1
-    const newKeyIds = traitKeyIds
-    newKeyIds[newId] = traitKey
-    setValue(`roles.${roleId}.traitKeyIds`, newKeyIds)
-    setTraitKey("")
-  }
-
-  const removeTrait = (id: string) => {
-    const newKeyIds = traitKeyIds
-    delete newKeyIds[id]
-    setValue(`roles.${roleId}.traitKeyIds`, newKeyIds)
-    const newTraits = traits
-    delete traits[id]
-    setValue(`roles.${roleId}.traits`, newTraits)
-  }
 
   useEffect(() => {
     if (isActive !== undefined && !!isActive) unselectRole()
@@ -146,41 +140,46 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
 
       <FormControl>
         <FormLabel>Set traits</FormLabel>
-        <VStack spacing={2}>
-          {Object.entries(traitKeyIds ?? {}).map(([id, key]) => (
-            <HStack key={id}>
-              <InputGroup size="sm">
-                <InputLeftAddon>{key}</InputLeftAddon>
-                <Input {...register(`roles.${roleId}.traits.${id}`)} />
-              </InputGroup>
+
+        <VStack>
+          {traitFields.map((field, index) => (
+            <HStack key={field.id}>
+              <HStack spacing={0}>
+                <Input
+                  borderRightWidth={0}
+                  borderRightRadius={0}
+                  size="sm"
+                  placeholder="key"
+                  {...register(`roles.${roleId}.traits.${index}.key`)}
+                />
+
+                <Divider orientation="vertical" />
+
+                <Input
+                  borderLeftWidth={0}
+                  borderLeftRadius={0}
+                  size="sm"
+                  placeholder="value"
+                  {...register(`roles.${roleId}.traits.${index}.value`)}
+                />
+              </HStack>
 
               <IconButton
-                size="sm"
-                icon={<X />}
+                onClick={() => remove(index)}
+                size="xs"
+                icon={<Minus />}
                 aria-label="Remove trait"
-                onClick={() => removeTrait(id)}
               />
             </HStack>
           ))}
 
-          <form onSubmit={addTrait} onSubmitCapture={addTrait}>
-            <HStack>
-              <Input
-                size="sm"
-                value={traitKey}
-                onChange={({ target: { value } }) => setTraitKey(value)}
-                placeholder="key"
-              />
-              <IconButton
-                as="label"
-                htmlFor={`${roleId}_trait_key_submit`}
-                size="sm"
-                icon={<Plus />}
-                aria-label="Add trait"
-              />
-              <Input id={`${roleId}_trait_key_submit`} type="submit" hidden />
-            </HStack>
-          </form>
+          <IconButton
+            onClick={addTrait}
+            width="full"
+            size="xs"
+            icon={<Plus />}
+            aria-label="Add a new trait"
+          />
         </VStack>
       </FormControl>
     </VStack>

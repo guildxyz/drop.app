@@ -60,14 +60,12 @@ const startAirdrop = async (
       urlName,
       name,
       serverId,
-      roles.map(([roleId, { traits, traitKeyIds, NFTName }]) => ({
+      roles.map(([roleId, { traits, NFTName }]) => ({
         roleId,
         tokenImageHash: hashes[roleId],
         NFTName,
-        traitTypes: Object.keys(traits ?? {}).map(
-          (traitKey) => traitKeyIds[traitKey]
-        ),
-        values: Object.values(traits ?? {}),
+        traitTypes: traits.map(({ key }) => key),
+        values: traits.map(({ value }) => value),
       })),
       +contractId,
       channel,

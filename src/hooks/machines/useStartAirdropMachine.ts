@@ -14,8 +14,10 @@ export type StartAirdropData = {
     string,
     {
       image: FileList
-      traits: Record<string, string>
-      traitKeyIds: Record<string, string>
+      traits: Array<{
+        key: string
+        value: string
+      }>
       NFTName: string
     }
   >
