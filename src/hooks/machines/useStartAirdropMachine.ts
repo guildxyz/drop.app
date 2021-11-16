@@ -14,7 +14,6 @@ export type StartAirdropData = {
     string,
     {
       image: FileList
-      ipfsHash: string
       traits: Record<string, string>
       traitKeyIds: Record<string, string>
       NFTName: string

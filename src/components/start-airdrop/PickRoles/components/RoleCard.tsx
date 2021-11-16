@@ -12,14 +12,13 @@ import {
   InputGroup,
   InputLeftAddon,
   Text,
-  Tooltip,
   VStack,
 } from "@chakra-ui/react"
 import useIsActive from "hooks/airdrop/useIsActive"
 import useRoleTokenAddress from "hooks/airdrop/useRoleTokenAddress"
 import useRoles from "hooks/discord/useRoles"
 import Image from "next/image"
-import { Info, Plus, X } from "phosphor-react"
+import { Plus, X } from "phosphor-react"
 import { ReactElement, useEffect, useState } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import FileUpload from "./FileUpload"
@@ -44,7 +43,6 @@ const validateFiles = (value: FileList) => {
 const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
   const { register, setValue } = useFormContext()
   const serverId = useWatch({ name: "serverId" })
-  const formRoles = useWatch({ name: "roles" })
   const roles = useRoles(serverId)
   const [imagePreview, setImagePreview] = useState<string>("")
   const { errors } = useFormState()
@@ -129,16 +127,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
             },
           })}
         >
-          <Button
-            size="sm"
-            leftIcon={
-              <Tooltip label="The provided hash is used over the uploaded image">
-                <Info />
-              </Tooltip>
-            }
-          >
-            Upload image
-          </Button>
+          <Button size="sm">Upload image</Button>
         </FileUpload>
       </Box>
 
@@ -152,37 +141,6 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
         />
         {errors.roles?.[roleId]?.NFTName?.message?.length > 0 && (
           <FormErrorMessage>{errors.roles[roleId].NFTName.message}</FormErrorMessage>
-        )}
-      </FormControl>
-
-      <FormControl isInvalid={errors.roles?.[roleId]?.ipfsHash?.message?.length > 0}>
-        <FormLabel>IPFS image hash</FormLabel>
-        <Input
-          size="sm"
-          {...register(`roles.${roleId}.ipfsHash`, {
-            validate: async (value) => {
-              if (value.length === 0) return true
-              const response = await fetch(`https://ipfs.fleek.co/ipfs/${value}`)
-              return response.ok || "Not a valid IPSF hash"
-            },
-            onChange: ({ target: { value } }) => {
-              if (value.length === 0) {
-                setImagePreview(
-                  URL.createObjectURL(formRoles?.[roleId]?.image?.[0] ?? "")
-                )
-                return
-              }
-              fetch(`https://ipfs.fleek.co/ipfs/${value}`).then((response) => {
-                if (response.ok)
-                  setImagePreview(`https://ipfs.fleek.co/ipfs/${value}`)
-              })
-            },
-          })}
-        />
-        {errors.roles?.[roleId]?.ipfsHash?.message?.length > 0 && (
-          <FormErrorMessage>
-            {errors.roles[roleId].ipfsHash.message}
-          </FormErrorMessage>
         )}
       </FormControl>
 

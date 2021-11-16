@@ -1,11 +1,9 @@
-import { Contract } from "@ethersproject/contracts"
 import {
   JsonRpcSigner,
   Provider,
   TransactionReceipt,
 } from "@ethersproject/providers"
 import { StartAirdropData } from "hooks/machines/useStartAirdropMachine"
-import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 import TransactionError from "utils/errors/TransactionError"
 import { contractsByDeployer, startAirdrop as airdropStartAirdrop } from "./airdrop"
 import startAirdropSignature from "./utils/signatures/startAirdrop"
@@ -28,15 +26,9 @@ const startAirdrop = async (
     contractsByDeployer(chainId, account, +contractId, provider),
   ])
 
-  const tokenContract = new Contract(tokenAddress, ROLE_TOKEN_ABI, signer)
-  const assetData = await Promise.all([
-    tokenContract.name(),
-    tokenContract.symbol(),
-  ]).then(([tokenName, symbol]) => ({ name: tokenName, symbol }))
-
   const imagesToUpload = Object.fromEntries(
     roles
-      .filter(([, { ipfsHash, image }]) => ipfsHash.length <= 0 && image.length > 0)
+      .filter(([, { image }]) => image.length > 0)
       .map(
         ([
           roleId,
@@ -51,14 +43,9 @@ const startAirdrop = async (
     ? await uploadImages(imagesToUpload, serverId, tokenAddress)
     : {}
 
-  // Append inputted ipfs hashes to the uploaded ones
+  // Append the default hash for the roles withour uploaded image
   roles
-    .filter(([, { ipfsHash }]) => ipfsHash.length > 0)
-    .forEach(([roleId, { ipfsHash }]) => (hashes[roleId] = ipfsHash))
-
-  // Append the default hash for the rest of the roles
-  roles
-    .filter(([, { ipfsHash, image }]) => ipfsHash.length <= 0 && image.length <= 0)
+    .filter(([, { image }]) => image.length <= 0)
     .forEach(
       ([roleId]) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH)
     )
