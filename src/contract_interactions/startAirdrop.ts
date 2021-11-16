@@ -59,7 +59,9 @@ const startAirdrop = async (
   // Append the default hash for the rest of the roles
   roles
     .filter(([, { ipfsHash, image }]) => ipfsHash.length <= 0 && image.length <= 0)
-    .map(([roleId]) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH))
+    .forEach(
+      ([roleId]) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH)
+    )
 
   if (!!setUploadedImages) setUploadedImages(hashes)
 
@@ -71,10 +73,10 @@ const startAirdrop = async (
       urlName,
       name,
       serverId,
-      roles.map(([roleId, { traits, traitKeyIds }]) => ({
+      roles.map(([roleId, { traits, traitKeyIds, NFTName }]) => ({
         roleId,
         tokenImageHash: hashes[roleId],
-        NFTName: assetData.name,
+        NFTName,
         traitTypes: Object.keys(traits ?? {}).map(
           (traitKey) => traitKeyIds[traitKey]
         ),

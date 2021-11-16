@@ -17,6 +17,7 @@ export type StartAirdropData = {
       ipfsHash: string
       traits: Record<string, string>
       traitKeyIds: Record<string, string>
+      NFTName: string
     }
   >
   contractId: string

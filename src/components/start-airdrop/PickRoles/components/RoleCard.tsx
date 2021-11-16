@@ -42,7 +42,7 @@ const validateFiles = (value: FileList) => {
 }
 
 const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
-  const { register, unregister, setValue } = useFormContext()
+  const { register, setValue } = useFormContext()
   const serverId = useWatch({ name: "serverId" })
   const formRoles = useWatch({ name: "roles" })
   const roles = useRoles(serverId)
@@ -141,6 +141,19 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
           </Button>
         </FileUpload>
       </Box>
+
+      <FormControl isInvalid={errors.roles?.[roleId]?.NFTName?.message?.length > 0}>
+        <FormLabel>Name</FormLabel>
+        <Input
+          size="sm"
+          {...register(`roles.${roleId}.NFTName`, {
+            required: "Please give a name for this role NFT",
+          })}
+        />
+        {errors.roles?.[roleId]?.NFTName?.message?.length > 0 && (
+          <FormErrorMessage>{errors.roles[roleId].NFTName.message}</FormErrorMessage>
+        )}
+      </FormControl>
 
       <FormControl isInvalid={errors.roles?.[roleId]?.ipfsHash?.message?.length > 0}>
         <FormLabel>IPFS image hash</FormLabel>
