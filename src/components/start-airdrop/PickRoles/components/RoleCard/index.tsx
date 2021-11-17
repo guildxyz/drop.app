@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Center,
-  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -17,7 +16,7 @@ import useIsActive from "hooks/airdrop/useIsActive"
 import useRoleTokenAddress from "hooks/airdrop/useRoleTokenAddress"
 import useRoles from "hooks/discord/useRoles"
 import Image from "next/image"
-import { Minus, Plus, X } from "phosphor-react"
+import { Plus, X } from "phosphor-react"
 import { ReactElement, useEffect, useState } from "react"
 import {
   useFieldArray,
@@ -25,7 +24,8 @@ import {
   useFormState,
   useWatch,
 } from "react-hook-form"
-import FileUpload from "./FileUpload"
+import FileUpload from "../FileUpload"
+import TraitInput from "./components/TraitInput"
 
 type Props = {
   index: number
@@ -46,7 +46,7 @@ const validateFiles = (value: FileList) => {
 }
 
 const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
-  const { register } = useFormContext()
+  const { register, getValues } = useFormContext()
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
   const [imagePreview, setImagePreview] = useState<string>("")
@@ -143,34 +143,12 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
 
         <VStack>
           {traitFields.map((field, traitIndex) => (
-            <HStack key={field.id}>
-              <HStack spacing={0}>
-                <Input
-                  borderRightWidth={0}
-                  borderRightRadius={0}
-                  size="sm"
-                  placeholder="key"
-                  {...register(`roles.${index}.traits.${traitIndex}.key`)}
-                />
-
-                <Divider orientation="vertical" />
-
-                <Input
-                  borderLeftWidth={0}
-                  borderLeftRadius={0}
-                  size="sm"
-                  placeholder="value"
-                  {...register(`roles.${index}.traits.${traitIndex}.value`)}
-                />
-              </HStack>
-
-              <IconButton
-                onClick={() => remove(traitIndex)}
-                size="xs"
-                icon={<Minus />}
-                aria-label="Remove trait"
-              />
-            </HStack>
+            <TraitInput
+              key={field.id}
+              roleIndex={index}
+              traitIndex={traitIndex}
+              unselectTrait={() => remove(traitIndex)}
+            />
           ))}
 
           <IconButton
