@@ -12,7 +12,7 @@ const getIsActive = async (
   provider: Provider
 ) =>
   claimables(chainId, serverId, roleId, tokenAddress, provider).then(
-    ({ dropped }) => dropped
+    ({ dropped, active }) => dropped && active
   )
 
 const useIsActive = (

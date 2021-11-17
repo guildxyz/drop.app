@@ -70,6 +70,7 @@ const DropPage = ({ urlName, drop: initialDropWithRoles }: Props): ReactElement 
             key={roleId}
             tokenAddress={tokenAddress}
             serverId={serverId}
+            urlName={urlName}
           />
         ))}
       </Grid>
