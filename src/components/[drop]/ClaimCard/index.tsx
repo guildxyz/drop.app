@@ -56,11 +56,11 @@ const ClaimCard = ({
   const isActive = useIsActive(serverId, roleId, tokenAddress)
 
   const [buttonText, tooltipLabel] = useMemo(() => {
-    if (isClaimed || isSuccess) return ["Claimed", null]
     if (!isActive) return ["Claim", "This role is inactive in this drop"]
-    if (!canClaim) return ["No Permission", `You don't have the role '${roleName}'`]
     if (!account) return ["Claim", "Connect your wallet to claim"]
     if (!isAuthenticated) return ["Claim", "You are not authenticated"]
+    if (!canClaim) return ["No Permission", `You don't have the role '${roleName}'`]
+    if (isClaimed || isSuccess) return ["Claimed", null]
     return ["Claim", null]
   }, [isClaimed, isSuccess, canClaim, roleName, isAuthenticated, account, isActive])
 
