@@ -10,17 +10,15 @@ export type StartAirdropData = {
   channel: string
   assetType: "NFT" | "TOKEN" | "ERC1155"
   serverId: string
-  roles: Record<
-    string,
-    {
-      image: FileList
-      traits: Array<{
-        key: string
-        value: string
-      }>
-      NFTName: string
-    }
-  >
+  roles: Array<{
+    roleId: string
+    image: FileList
+    traits: Array<{
+      key: string
+      value: string
+    }>
+    NFTName: string
+  }>
   contractId: string
 }
 

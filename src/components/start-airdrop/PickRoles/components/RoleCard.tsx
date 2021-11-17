@@ -28,6 +28,7 @@ import {
 import FileUpload from "./FileUpload"
 
 type Props = {
+  index: number
   roleId: string
   unselectRole: () => void
 }
@@ -44,7 +45,7 @@ const validateFiles = (value: FileList) => {
   return true
 }
 
-const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
+const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
   const { register } = useFormContext()
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
@@ -59,7 +60,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
     append,
     remove,
   } = useFieldArray({
-    name: `roles.${roleId}.traits`,
+    name: `roles.${index}.traits`,
   })
 
   const addTrait = () =>
@@ -70,6 +71,8 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
 
   useEffect(() => {
     if (traitFields.length <= 0) addTrait()
+    // This should only be needed for dev mode
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -107,7 +110,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
       <Box width="full">
         <FileUpload
           accept="image/*"
-          register={register(`roles.${roleId}.image`, {
+          register={register(`roles.${index}.image`, {
             validate: validateFiles,
             onChange: ({
               target: {
@@ -126,7 +129,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
         <FormLabel>Name</FormLabel>
         <Input
           size="sm"
-          {...register(`roles.${roleId}.NFTName`, {
+          {...register(`roles.${index}.NFTName`, {
             required: "Please give a name for this role NFT",
           })}
         />
@@ -139,7 +142,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
         <FormLabel>Set traits</FormLabel>
 
         <VStack>
-          {traitFields.map((field, index) => (
+          {traitFields.map((field, traitIndex) => (
             <HStack key={field.id}>
               <HStack spacing={0}>
                 <Input
@@ -147,7 +150,7 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
                   borderRightRadius={0}
                   size="sm"
                   placeholder="key"
-                  {...register(`roles.${roleId}.traits.${index}.key`)}
+                  {...register(`roles.${index}.traits.${traitIndex}.key`)}
                 />
 
                 <Divider orientation="vertical" />
@@ -157,12 +160,12 @@ const RoleCard = ({ roleId, unselectRole }: Props): ReactElement => {
                   borderLeftRadius={0}
                   size="sm"
                   placeholder="value"
-                  {...register(`roles.${roleId}.traits.${index}.value`)}
+                  {...register(`roles.${index}.traits.${traitIndex}.value`)}
                 />
               </HStack>
 
               <IconButton
-                onClick={() => remove(index)}
+                onClick={() => remove(traitIndex)}
                 size="xs"
                 icon={<Minus />}
                 aria-label="Remove trait"

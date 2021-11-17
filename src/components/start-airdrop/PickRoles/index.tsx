@@ -1,53 +1,61 @@
 import { FormControl, FormErrorMessage, Grid, VStack } from "@chakra-ui/react"
 import useRoles from "hooks/discord/useRoles"
-import { ReactElement } from "react"
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import { ReactElement, useMemo } from "react"
+import {
+  useFieldArray,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from "react-hook-form"
 import AddRoleButton from "./components/AddRoleButton"
 import RoleCard from "./components/RoleCard"
 
 const PickRoles = (): ReactElement => {
-  const { setValue } = useFormContext()
   const { errors } = useFormState()
+  const { getValues } = useFormContext()
 
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
-  const formRoles = useWatch({ name: "roles" })
 
-  const selectRole = (id: string) => setValue(`roles.${id}`, {})
+  const {
+    fields: roleFields,
+    append,
+    remove,
+  } = useFieldArray({
+    name: "roles",
+  })
 
-  const unselectRole = (id: string) => {
-    const newFormRoles = formRoles
-    delete newFormRoles[id]
-    setValue(`roles`, newFormRoles)
-  }
+  const selectedRoles = useMemo(
+    () => roleFields.map((_, index) => getValues(`roles.${index}.roleId`)),
+    [roleFields, getValues]
+  )
 
   return (
     <FormControl isInvalid={errors.roles?.message?.length > 0}>
       <VStack spacing={10}>
         <Grid width="full" templateColumns="repeat(5, 1fr)" gap={5}>
           {Object.entries(roles ?? {})
-            .filter(([id]) => !(id in formRoles))
+            .filter(([id]) => !selectedRoles.includes(id))
             .map(([id, name]) => (
               <AddRoleButton
                 key={id}
-                setSelected={() => selectRole(id)}
+                setSelected={() => append({ roleId: id })}
                 roleName={name}
                 roleId={id}
               />
             ))}
         </Grid>
 
-        {Object.keys(formRoles ?? {}).length > 0 && (
-          <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
-            {Object.keys(formRoles ?? {}).map((roleId) => (
-              <RoleCard
-                key={roleId}
-                roleId={roleId}
-                unselectRole={() => unselectRole(roleId)}
-              />
-            ))}
-          </Grid>
-        )}
+        <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
+          {roleFields.map((field, index) => (
+            <RoleCard
+              key={field.id}
+              roleId={selectedRoles[index]}
+              index={index}
+              unselectRole={() => remove(index)}
+            />
+          ))}
+        </Grid>
 
         {errors.roles?.message && (
           <FormErrorMessage>{errors.roles.message}</FormErrorMessage>

@@ -17,8 +17,7 @@ const startAirdrop = async (
   provider?: Provider,
   setUploadedImages?: (hashes: Record<string, string>) => void
 ): Promise<TransactionReceipt> => {
-  const { contractId, serverId, name, roles: rolesObject, channel, urlName } = data
-  const roles = Object.entries(rolesObject)
+  const { contractId, serverId, name, roles, channel, urlName } = data
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
   const [signature, tokenAddress] = await Promise.all([
@@ -28,15 +27,8 @@ const startAirdrop = async (
 
   const imagesToUpload = Object.fromEntries(
     roles
-      .filter(([, { image }]) => image.length > 0)
-      .map(
-        ([
-          roleId,
-          {
-            image: [image],
-          },
-        ]) => [roleId, image]
-      )
+      .filter(({ image }) => image.length > 0)
+      .map(({ roleId, image: [image] }) => [roleId, image])
   )
 
   const hashes = Object.keys(imagesToUpload).length
@@ -45,9 +37,9 @@ const startAirdrop = async (
 
   // Append the default hash for the roles withour uploaded image
   roles
-    .filter(([, { image }]) => image.length <= 0)
+    .filter(({ image }) => image.length <= 0)
     .forEach(
-      ([roleId]) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH)
+      ({ roleId }) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH)
     )
 
   if (!!setUploadedImages) setUploadedImages(hashes)
@@ -60,7 +52,7 @@ const startAirdrop = async (
       urlName,
       name,
       serverId,
-      roles.map(([roleId, { traits, NFTName }]) => ({
+      roles.map(({ traits, NFTName, roleId }) => ({
         roleId,
         tokenImageHash: hashes[roleId],
         NFTName,
