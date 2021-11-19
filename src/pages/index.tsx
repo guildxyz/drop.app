@@ -126,7 +126,10 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
 
 const getStaticProps: GetStaticProps = async () => {
   const drops = await getDrops(Chains[process.env.NEXT_PUBLIC_CHAIN])
-  return { props: { drops } }
+  return {
+    props: { drops },
+    revalidate: 10_000,
+  }
 }
 
 export { getStaticProps }
