@@ -4,11 +4,10 @@ import { useFormContext, useWatch } from "react-hook-form"
 import useDeployToken from "./hooks/useDeployToken"
 
 const DeployTokenButton = (): ReactElement => {
-  const { onSubmit, isLoading, isSuccess } = useDeployToken()
+  const { onSubmit, isLoading } = useDeployToken()
   const { trigger } = useFormContext()
   const assetData = useWatch({ name: "assetData" })
 
-  // TODO maybe do this with a machine
   const [validating, setValidating] = useState(false)
   const validate = async () => {
     const [isNameValid, isSymbolValid] = await Promise.all([
@@ -21,7 +20,6 @@ const DeployTokenButton = (): ReactElement => {
   return (
     <CtaButton
       colorScheme="yellow"
-      disabled={isSuccess}
       flexShrink={0}
       size="lg"
       isLoading={isLoading || validating}

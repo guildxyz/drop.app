@@ -1,9 +1,9 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import startAirdrop from "contract_interactions/startAirdrop"
-import useFetchMachine from "../../../../hooks/useFetchMachine"
-import { FetchMachine } from "../../../../hooks/useFetchMachine/useFetchMachine"
-import { SubmitEvent } from "../../../../hooks/useFetchMachine/utils/machine"
+import useSubmit from "hooks/useSubmit"
+import useToast from "hooks/useToast"
+import { useRouter } from "next/router"
 
 export type StartAirdropData = {
   name: string
@@ -23,33 +23,24 @@ export type StartAirdropData = {
   contractId: string
 }
 
-const useStartAirdrop = (): FetchMachine<StartAirdropData> => {
+const useStartAirdrop = () => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
+  const router = useRouter()
+  const toast = useToast()
 
-  return useFetchMachine<StartAirdropData>(
-    "Airdrop started",
-    async (
-      _context,
-      {
-        data: { roles, serverId, name, channel, assetType, contractId, urlName },
-      }: SubmitEvent<StartAirdropData>
-    ) =>
-      startAirdrop(
-        chainId,
-        account,
-        library.getSigner(account),
-        {
-          name,
-          urlName,
-          channel,
-          roles,
-          serverId,
-          assetType,
-          contractId,
-        },
-        library
-      )
-  )
+  const fetch = async (data: StartAirdropData) =>
+    startAirdrop(chainId, account, library.getSigner(account), data, library)
+
+  const onSuccess = (urlName: string) => {
+    toast({
+      status: "success",
+      title: "Airdrop started",
+      description: "You will soon be redirected to the created drop's page",
+    })
+    router.push(`/${urlName}`)
+  }
+
+  return useSubmit<StartAirdropData, string>(fetch, { onSuccess })
 }
 
 export default useStartAirdrop

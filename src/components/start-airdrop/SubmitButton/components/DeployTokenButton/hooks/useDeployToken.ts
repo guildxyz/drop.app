@@ -1,8 +1,8 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import deployTokenContract from "contract_interactions/deployTokenContract"
-import useFetchMachine from "hooks/useFetchMachine"
-import { FetchMachine } from "hooks/useFetchMachine/useFetchMachine"
+import useSubmit from "hooks/useSubmit"
+import useToast from "hooks/useToast"
 import { useFormContext } from "react-hook-form"
 import { mutate } from "swr"
 
@@ -13,25 +13,34 @@ type DeployToken = {
   }
 }
 
-const useDeployToken = (): FetchMachine<DeployToken> => {
+const useDeployToken = () => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
   const { setValue } = useFormContext()
+  const toast = useToast()
 
-  return useFetchMachine<DeployToken>(
-    "Token deployed",
-    async (_context, { data }) => {
-      const { contractId } = await deployTokenContract(
-        chainId,
-        account,
-        library.getSigner(account),
-        data.NFT.name,
-        data.NFT.symbol,
-        library
-      )
-      await mutate(["deployedTokens", chainId, account, library])
-      setValue("contractId", contractId.toString())
-    }
-  )
+  const fetch = async (data: DeployToken) => {
+    const contractId = await deployTokenContract(
+      chainId,
+      account,
+      library.getSigner(account),
+      data.NFT.name,
+      data.NFT.symbol,
+      library
+    )
+    return contractId
+  }
+
+  const onSuccess = async (contractId: number) => {
+    toast({
+      status: "success",
+      title: "Token deployed",
+      description: "You can now start a new airdrop with this token!",
+    })
+    await mutate(["deployedTokens", chainId, account, library])
+    setValue("contractId", contractId.toString())
+  }
+
+  return useSubmit<DeployToken, number>(fetch, { onSuccess })
 }
 
 export default useDeployToken

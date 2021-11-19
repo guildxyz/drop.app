@@ -2,8 +2,7 @@ import { useWeb3React } from "@web3-react/core"
 import CtaButton from "components/common/CtaButton"
 import { Web3Connection } from "components/_app/Web3ConnectionManager"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
-import usePersonalSign from "hooks/usePersonalSign"
-import { ReactElement, useContext, useMemo } from "react"
+import { ReactElement, useContext } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import AuthenticateButton from "./components/AuthenticateButton"
 import ConnectWalletButton from "./components/ConnectWalletButton"
@@ -14,16 +13,10 @@ import useStartAirdrop from "./hooks/useStartAirdrop"
 const SubmitButton = (): ReactElement => {
   const { account } = useWeb3React()
   const isAuthenticated = useIsAuthenticated()
-  const { isSigning, callbackWithSign } = usePersonalSign(true)
-  const { onSubmit, isLoading, isSuccess } = useStartAirdrop()
+  const { onSubmit, isLoading } = useStartAirdrop()
   const { triedEager } = useContext(Web3Connection)
 
   const { handleSubmit } = useFormContext()
-
-  const loadingText = useMemo(() => {
-    if (isSigning) return "Signing"
-    if (isLoading) return "Starting airdrop"
-  }, [isSigning, isLoading])
 
   const contractId = useWatch({ name: "contractId" })
 
@@ -39,14 +32,14 @@ const SubmitButton = (): ReactElement => {
   return (
     <CtaButton
       colorScheme="yellow"
-      disabled={!isAuthenticated || isSuccess}
+      disabled={!isAuthenticated}
       flexShrink={0}
       size="lg"
-      isLoading={isLoading || isSigning}
-      loadingText={loadingText}
-      onClick={callbackWithSign(handleSubmit(onSubmit))}
+      isLoading={isLoading}
+      loadingText="Starting airdrop"
+      onClick={handleSubmit(onSubmit)}
     >
-      {isSuccess ? "Success" : "Drop"}
+      Drop
     </CtaButton>
   )
 }
