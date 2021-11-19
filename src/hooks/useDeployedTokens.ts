@@ -12,11 +12,10 @@ const getDeployedTokens = (
 
 const useDeployedTokens = (): string[] => {
   const { account, chainId, library } = useWeb3React<Web3Provider>()
-  const shouldFetch = account?.length > 0
+  const shouldFetch = account?.length > 0 && typeof chainId === "number" && !!library
   const { data } = useSWR(
     shouldFetch ? ["deployedTokens", chainId, account, library] : null,
-    getDeployedTokens,
-    { revalidateIfStale: true }
+    getDeployedTokens
   )
 
   return data
