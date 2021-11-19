@@ -1,8 +1,9 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import startAirdrop from "contract_interactions/startAirdrop"
-import useFetchMachine, { FetchMachine } from "./useFetchMachine"
-import { SubmitEvent } from "./useFetchMachine/machine"
+import useFetchMachine from "./useFetchMachine"
+import { FetchMachine } from "./useFetchMachine/useFetchMachine"
+import { SubmitEvent } from "./useFetchMachine/utils/machine"
 
 export type StartAirdropData = {
   name: string

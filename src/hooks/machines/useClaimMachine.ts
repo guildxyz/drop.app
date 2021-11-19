@@ -1,8 +1,9 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import claim from "contract_interactions/claim"
-import useFetchMachine, { FetchMachine } from "./useFetchMachine"
-import { SubmitEvent } from "./useFetchMachine/machine"
+import useFetchMachine from "./useFetchMachine"
+import { FetchMachine } from "./useFetchMachine/useFetchMachine"
+import { SubmitEvent } from "./useFetchMachine/utils/machine"
 
 type ClaimData = {
   serverId: string

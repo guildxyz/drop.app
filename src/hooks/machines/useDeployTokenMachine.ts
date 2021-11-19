@@ -3,7 +3,8 @@ import { useWeb3React } from "@web3-react/core"
 import deployTokenContract from "contract_interactions/deployTokenContract"
 import { useFormContext } from "react-hook-form"
 import { mutate } from "swr"
-import useFetchMachine, { FetchMachine } from "./useFetchMachine"
+import useFetchMachine from "./useFetchMachine"
+import { FetchMachine } from "./useFetchMachine/useFetchMachine"
 
 type DeployToken = {
   NFT: {
