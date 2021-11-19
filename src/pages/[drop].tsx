@@ -91,7 +91,7 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
 
     return {
       props: { urlName, drop },
-      revalidate: 10_000,
+      revalidate: 10,
     }
   } catch {
     return {

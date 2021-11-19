@@ -125,7 +125,7 @@ const getStaticProps: GetStaticProps = async () => {
   const drops = await getDrops(Chains[process.env.NEXT_PUBLIC_CHAIN])
   return {
     props: { drops },
-    revalidate: 10_000,
+    revalidate: 10,
   }
 }
 
