@@ -34,7 +34,7 @@ type Props = {
 }
 
 const validateFiles = (value: FileList) => {
-  if (value?.length < 1) return "File is required"
+  // if (value?.length < 1) return "File is required"
   for (const actFile of Array.from(value)) {
     const fsMb = actFile.size / (1024 * 1024)
     const MAX_FILE_SIZE = 10
@@ -128,7 +128,7 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
         </FileUpload>
       </Box>
 
-      <FormControl isInvalid={errors.roles?.[roleId]?.NFTName?.message?.length > 0}>
+      <FormControl isInvalid={errors.roles?.[index]?.NFTName?.message?.length > 0}>
         <FormLabel>Name</FormLabel>
         <Input
           size="sm"
@@ -136,8 +136,8 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
             required: "Please give a name for this role NFT",
           })}
         />
-        {errors.roles?.[roleId]?.NFTName?.message?.length > 0 && (
-          <FormErrorMessage>{errors.roles[roleId].NFTName.message}</FormErrorMessage>
+        {errors.roles?.[index]?.NFTName?.message?.length > 0 && (
+          <FormErrorMessage>{errors.roles[index].NFTName.message}</FormErrorMessage>
         )}
       </FormControl>
 
