@@ -70,8 +70,11 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
     })
 
   useEffect(() => {
-    if (traitFields.length <= 0) addTrait()
-    // This should only be needed for dev mode
+    // This condition should only be needed for dev mode
+    if (traitFields.length <= 0) {
+      addTrait()
+      addTrait()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

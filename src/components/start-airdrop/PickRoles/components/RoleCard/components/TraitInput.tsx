@@ -9,6 +9,11 @@ type Props = {
   unselectTrait: () => void
 }
 
+const placeholders = [
+  ["eg.: color", "eg.: red"],
+  ["eg.: time", "eg.: season 1"],
+]
+
 const TraitInput = ({
   roleIndex,
   traitIndex,
@@ -24,7 +29,7 @@ const TraitInput = ({
           borderRightWidth={0}
           borderRightRadius={0}
           size="sm"
-          placeholder="key"
+          placeholder={placeholders[traitIndex]?.[0] ?? ""}
           {...register(`roles.${roleIndex}.traits.${traitIndex}.key`)}
         />
 
@@ -34,7 +39,7 @@ const TraitInput = ({
           borderLeftWidth={0}
           borderLeftRadius={0}
           size="sm"
-          placeholder="value"
+          placeholder={placeholders[traitIndex]?.[1] ?? ""}
           {...register(`roles.${roleIndex}.traits.${traitIndex}.value`)}
         />
       </HStack>
