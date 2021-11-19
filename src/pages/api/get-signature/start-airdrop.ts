@@ -2,10 +2,10 @@ import { defaultAbiCoder } from "@ethersproject/abi"
 import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
+import { fetchOwnerId } from "components/[drop]/ClaimCard/hooks/useOwnerId"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import { fetchDiscordID } from "hooks/discord/useDiscordId"
-import { fetchOwnerId } from "hooks/discord/useOwnerId"
+import { fetchDiscordID } from "hooks/useDiscordId"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 type Body = {

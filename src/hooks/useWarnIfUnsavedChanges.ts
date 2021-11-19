@@ -1,7 +1,7 @@
 import Router from "next/router"
 import { useEffect } from "react"
 
-const useWarnIfUnsavedChanges = (unsavedChanges: boolean) => {
+const useWarnIfUnsavedChanges = (unsavedChanges: boolean): void => {
   useEffect(() => {
     const confirmationMessage = "Changes you made may not be saved."
 

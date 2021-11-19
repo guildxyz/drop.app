@@ -2,11 +2,11 @@ import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { getDataOfDrop } from "contract_interactions/airdrop"
-import useDeployedTokens from "hooks/airdrop/useDeployedTokens"
-import useTokenName from "hooks/roletoken/useTokenName"
+import useDeployedTokens from "hooks/useDeployedTokens"
 import { ReactElement, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import slugify from "utils/slugify"
+import useTokenName from "./hooks/useTokenName"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 

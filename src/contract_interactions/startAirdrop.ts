@@ -3,7 +3,7 @@ import {
   Provider,
   TransactionReceipt,
 } from "@ethersproject/providers"
-import { StartAirdropData } from "hooks/machines/useStartAirdropMachine"
+import { StartAirdropData } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import TransactionError from "utils/errors/TransactionError"
 import { contractsByDeployer, startAirdrop as airdropStartAirdrop } from "./airdrop"
 import startAirdropSignature from "./utils/signatures/startAirdrop"

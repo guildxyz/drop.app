@@ -8,9 +8,8 @@ import getDropRolesData, {
   DropWithRoles,
 } from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
-import useDropWithRoles from "hooks/airdrop/useDropWithRoles"
-import useIsAuthenticated from "hooks/discord/useIsAuthenticated"
-import useServerData from "hooks/discord/useServerData"
+import useIsAuthenticated from "hooks/useIsAuthenticated"
+import useServerData from "hooks/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
 import { ReactElement } from "react"
@@ -21,9 +20,10 @@ type Props = {
   urlName: string
 }
 
-const DropPage = ({ urlName, drop: initialDropWithRoles }: Props): ReactElement => {
-  const { roles, ...drop } = useDropWithRoles(urlName, initialDropWithRoles)
-  const { tokenAddress, dropName, serverId } = drop
+const DropPage = ({
+  urlName,
+  drop: { roles, tokenAddress, dropName, serverId },
+}: Props): ReactElement => {
   const { name: serverName, id, icon } = useServerData(serverId)
   const isAuthenticated = useIsAuthenticated()
 

@@ -3,7 +3,7 @@ import Card from "components/common/Card"
 import Link from "components/common/Link"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
-import useServerData from "hooks/discord/useServerData"
+import useServerData from "hooks/useServerData"
 import { useMemo } from "react"
 
 type Props = {
