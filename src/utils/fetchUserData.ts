@@ -1,6 +1,3 @@
-import { Event } from "components/start-airdrop/SubmitButton/components/AuthenticateButton/hooks/useAuth/utils/types"
-import BackendError from "utils/errors/BackendError"
-
 export type UserData = {
   id: string
   userName: string
@@ -8,10 +5,9 @@ export type UserData = {
 }
 
 const fetchUserData = async (
-  event: Event<UserData>
-): Promise<{ data: UserData }> => {
-  const { tokenType, accessToken } = event.data.auth
-
+  accessToken: string,
+  tokenType: string
+): Promise<UserData> => {
   const response = await fetch("https://discord.com/api/users/@me", {
     headers: {
       authorization: `${tokenType} ${accessToken}`,
@@ -19,15 +15,15 @@ const fetchUserData = async (
   })
 
   if (!response.ok)
-    Promise.reject({
-      error: new BackendError("There was an error, while fetching the user data"),
-    })
+    throw new Error(
+      "There was an error, while fetching user data, disable any extensions like privacy badgeractive on this site, as these block our request to discord"
+    )
 
   const { id, username: userName, avatar: avatarHash } = await response.json()
 
   const avatar = `https://cdn.discordapp.com/avatars/${id}/${avatarHash}.png`
 
-  return { data: { id, userName, avatar } }
+  return { id, userName, avatar }
 }
 
 export default fetchUserData

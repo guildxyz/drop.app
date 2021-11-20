@@ -40,7 +40,15 @@ const useStartAirdrop = () => {
     router.push(`/${urlName}`)
   }
 
-  return useSubmit<StartAirdropData, string>(fetch, { onSuccess })
+  const onError = () =>
+    toast({
+      status: "error",
+      title: "Start failed",
+      description:
+        "Failed to start airdrop, please double check your gas prices and try again",
+    })
+
+  return useSubmit<StartAirdropData, string>(fetch, { onSuccess, onError })
 }
 
 export default useStartAirdrop

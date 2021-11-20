@@ -1,11 +1,9 @@
 import useSWR from "swr"
-import BackendError from "utils/errors/BackendError"
 import useDiscordId from "./useDiscordId"
 
 const getServersOfUser = (_: string, userId: string): Promise<string[]> =>
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/servers/${userId}`).then(
-    (response) =>
-      response.ok ? response.json() : Promise.reject(new BackendError())
+    (response) => (response.ok ? response.json() : Promise.reject(new Error()))
   )
 
 const useServersOfUser = (): string[] => {

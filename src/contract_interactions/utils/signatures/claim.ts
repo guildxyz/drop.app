@@ -1,5 +1,3 @@
-import BackendError from "utils/errors/BackendError"
-
 const claimSignature = (
   chainId: number,
   roleId: string,
@@ -20,7 +18,7 @@ const claimSignature = (
   }).then((response) =>
     response.json().then((body) => {
       if (response.ok) return body.signature
-      throw new BackendError(JSON.stringify(body.errors))
+      throw new Error(JSON.stringify(body.errors))
     })
   )
 

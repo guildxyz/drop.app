@@ -17,7 +17,8 @@ const StopAirdropButton = ({
   tokenAddress,
   urlName,
 }: Props): ReactElement => {
-  const { isLoading, isSuccess, onSubmit } = useStopAirdrop()
+  const { isLoading, response, onSubmit } = useStopAirdrop()
+  const successfullyStopped = !!response
   const isActive = useIsActive(serverId, roleId, tokenAddress)
   const contractId = useContractId(tokenAddress)
 
@@ -29,14 +30,14 @@ const StopAirdropButton = ({
   return (
     <CtaButton
       colorScheme="yellow"
-      disabled={!isActive || isSuccess}
+      disabled={!isActive || successfullyStopped}
       flexShrink={0}
       size="sm"
       isLoading={isLoading || contractId === undefined}
       loadingText={loadingText}
       onClick={() => onSubmit({ serverId, roleId, contractId, urlName })}
     >
-      {isSuccess ? "Success" : "Stop"}
+      {successfullyStopped ? "Success" : "Stop"}
     </CtaButton>
   )
 }

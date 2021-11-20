@@ -1,39 +1,42 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
-import stopAirdrop from "contract_interactions/stopAirdrop"
-import useFetchMachine from "../../../../../../hooks/useFetchMachine"
-import { FetchMachine } from "../../../../../../hooks/useFetchMachine/useFetchMachine"
-import { SubmitEvent } from "../../../../../../hooks/useFetchMachine/utils/machine"
+import stopAirdrop, { StoppedAirdrop } from "contract_interactions/stopAirdrop"
+import useSubmit from "hooks/useSubmit"
+import useToast from "hooks/useToast"
+import { mutate } from "swr"
 
-type StopAirdropData = {
+export type StopAirdropData = {
   roleId: string
   serverId: string
   contractId: number
   urlName: string
 }
 
-const useStopAirdrop = (): FetchMachine<StopAirdropData> => {
+const useStopAirdrop = () => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
+  const toast = useToast()
 
-  return useFetchMachine<StopAirdropData>(
-    "Airdrop stopped",
-    async (
-      _context,
-      {
-        data: { roleId, serverId, contractId, urlName },
-      }: SubmitEvent<StopAirdropData>
-    ) =>
-      stopAirdrop(
-        chainId,
-        account,
-        library.getSigner(account),
-        serverId,
-        urlName,
-        roleId,
-        contractId,
-        library
-      )
-  )
+  const fetcher = async (data: StopAirdropData): Promise<StoppedAirdrop> =>
+    stopAirdrop(chainId, account, library.getSigner(account), data, library)
+
+  const onSuccess = ({ serverId, roleId, tokenAddress }: StoppedAirdrop) => {
+    toast({
+      status: "success",
+      title: "Drop stopped",
+      description: "You successfully stopped the drop for this role!",
+    })
+    mutate(["isActive", chainId, serverId, roleId, tokenAddress, library])
+  }
+
+  const onError = () =>
+    toast({
+      status: "error",
+      title: "Stop failed",
+      description:
+        "Failed to stop airdrop for this role, please try again, and double check gas prices",
+    })
+
+  return useSubmit(fetcher, { onSuccess, onError })
 }
 
 export default useStopAirdrop

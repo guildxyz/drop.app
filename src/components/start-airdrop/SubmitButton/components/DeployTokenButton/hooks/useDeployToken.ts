@@ -40,7 +40,15 @@ const useDeployToken = () => {
     setValue("contractId", contractId.toString())
   }
 
-  return useSubmit<DeployToken, number>(fetch, { onSuccess })
+  const onError = () =>
+    toast({
+      status: "error",
+      title: "Deploy Failed",
+      description:
+        "Failed to deploy token, please double check your gas prices and try again",
+    })
+
+  return useSubmit<DeployToken, number>(fetch, { onSuccess, onError })
 }
 
 export default useDeployToken

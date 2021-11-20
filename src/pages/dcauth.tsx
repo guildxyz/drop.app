@@ -1,6 +1,7 @@
 import { Box, Heading, Text } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import { ReactElement, useEffect } from "react"
+import fetchUserData from "utils/fetchUserData"
 
 const DCAuth = (): ReactElement => {
   const router = useRouter()
@@ -41,14 +42,19 @@ const DCAuth = (): ReactElement => {
 
     // Error from authentication
     if (error) sendError(error, errorDescription)
-
-    window.opener.postMessage(
-      {
-        type: "DC_AUTH_SUCCESS",
-        data: { tokenType, accessToken },
-      },
-      target
-    )
+    else {
+      fetchUserData(accessToken, tokenType)
+        .then((data) =>
+          window.opener.postMessage(
+            {
+              type: "DC_AUTH_SUCCESS",
+              data,
+            },
+            target
+          )
+        )
+        .catch((e) => sendError("Authentication error", e.message))
+    }
   }, [router])
 
   return (

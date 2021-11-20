@@ -27,7 +27,7 @@ const useIsActive = (
 
   const { data } = useSWR(
     shouldFetch
-      ? ["claimableRoles", chainId, serverId, roleId, tokenAddress, library]
+      ? ["isActive", chainId, serverId, roleId, tokenAddress, library]
       : null,
     getIsActive
   )

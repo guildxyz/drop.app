@@ -1,6 +1,5 @@
 import { Provider } from "@ethersproject/providers"
 import { getAirdropContract } from "contracts"
-import TransactionError from "utils/errors/TransactionError"
 
 const claims = (
   chainId: number,
@@ -14,7 +13,7 @@ const claims = (
     .claims(address, serverId, roleId, tokenAddress)
     .then(([claimed, approved]) => ({ claimed, approved }))
     .catch(() => {
-      throw new TransactionError("Failed to read claimed NFTs")
+      throw new Error("Failed to read claimed NFTs")
     })
 
 export default claims

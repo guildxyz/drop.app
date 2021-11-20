@@ -1,9 +1,5 @@
-import {
-  JsonRpcSigner,
-  Provider,
-  TransactionReceipt,
-} from "@ethersproject/providers"
-import TransactionError from "utils/errors/TransactionError"
+import { JsonRpcSigner, Provider } from "@ethersproject/providers"
+import { StopAirdropData } from "components/[drop]/ClaimCard/components/StopAirdropButton/hooks/useStopAirdrop"
 import {
   contractsByDeployer,
   numOfDeployedContracts,
@@ -11,16 +7,19 @@ import {
 } from "./airdrop"
 import stopAirdropSignature from "./utils/signatures/stopAirdrop"
 
+export type StoppedAirdrop = {
+  serverId: string
+  roleId: string
+  tokenAddress: string
+}
+
 const stopAirdrop = async (
   chainId: number,
   account: string,
   signer: JsonRpcSigner,
-  serverId: string,
-  urlName: string,
-  roleId: string,
-  contractId: number,
+  { serverId, urlName, roleId, contractId }: StopAirdropData,
   provider?: Provider
-): Promise<TransactionReceipt> => {
+): Promise<StoppedAirdrop> => {
   const numberOfTokens = await numOfDeployedContracts(chainId, account, provider)
   if (contractId >= numberOfTokens) throw new Error("Invalid token contract")
 
@@ -48,10 +47,14 @@ const stopAirdrop = async (
       roleId,
       provider
     )
-    const receipt = await tx.wait()
-    return receipt
+    await tx.wait()
+    return {
+      serverId,
+      roleId,
+      tokenAddress,
+    }
   } catch {
-    throw new TransactionError("Failed to stop airdrop.")
+    throw new Error("Failed to stop airdrop.")
   }
 }
 

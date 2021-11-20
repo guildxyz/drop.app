@@ -2,13 +2,13 @@ import CtaButton from "components/common/CtaButton"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import usePersonalSign from "hooks/usePersonalSign"
 import { ReactElement, useMemo } from "react"
-import useAuthMachine from "./hooks/useAuth"
+import useAuth from "./hooks/useAuth"
 
 const AuthenticateButton = (props: Record<string, string>): ReactElement => {
   const isAuthenticated = useIsAuthenticated()
-  const { isSigning, callbackWithSign } = usePersonalSign(true)
+  const { isSigning, callbackWithSign } = usePersonalSign()
 
-  const { isSuccess, isLoading, authenticate } = useAuthMachine()
+  const { isSuccess, isLoading, onAuthenticate } = useAuth()
 
   const loadingText = useMemo(() => {
     if (isSigning) return "Signing"
@@ -23,7 +23,7 @@ const AuthenticateButton = (props: Record<string, string>): ReactElement => {
       size="lg"
       isLoading={isLoading || isSigning}
       loadingText={loadingText}
-      onClick={callbackWithSign(authenticate)}
+      onClick={callbackWithSign(onAuthenticate)}
       {...props}
     >
       Authenticate
