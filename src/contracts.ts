@@ -1,7 +1,8 @@
 import { Contract } from "@ethersproject/contracts"
 import { InfuraProvider, JsonRpcProvider, Provider } from "@ethersproject/providers"
-import { Chains, RPC, supportedChains } from "connectors"
+import { Chains, RPC } from "connectors"
 import AIRDROP_ABI from "static/abis/airdrop.json"
+import DROPCENTER_ABI from "static/abis/dropcenter.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 
 const multicallConfigs = {
@@ -20,17 +21,22 @@ enum AirdropAddresses {
   POLYGON = "0x2223C242858d63E471ac1169254040BE90766AC0",
 }
 
+enum DropCenterAddresses {
+  GOERLI = "",
+  POLYGON = "",
+}
+
 const defaultProviders = {
   GOERLI: new InfuraProvider("goerli"),
   POLYGON: new JsonRpcProvider(RPC.POLYGON.rpcUrls[0]),
 }
 
-const airdropContracts = Object.fromEntries(
-  supportedChains.map((chain) => [
-    chain,
-    new Contract(AirdropAddresses[chain], AIRDROP_ABI, defaultProviders[chain]),
-  ])
-)
+const getDropCenterContract = (chainId: number, provider: Provider): Contract =>
+  new Contract(
+    DropCenterAddresses[Chains[chainId]],
+    DROPCENTER_ABI,
+    provider ?? defaultProviders[Chains[chainId]]
+  )
 
 const getAirdropContract = (chainId: number, provider: Provider): Contract =>
   new Contract(
@@ -50,5 +56,10 @@ const getTokenContract = (
     provider ?? defaultProviders[Chains[chainId]]
   )
 
-export { AirdropAddresses, multicallConfigs, getTokenContract, getAirdropContract }
-export default airdropContracts
+export {
+  AirdropAddresses,
+  multicallConfigs,
+  getTokenContract,
+  getAirdropContract,
+  getDropCenterContract,
+}

@@ -1,9 +1,9 @@
 import { BigNumber } from "@ethersproject/bignumber"
 import { Provider } from "@ethersproject/providers"
-import { getAirdropContract } from "contracts"
+import { getDropCenterContract } from "contracts"
 
 const numOfDrops = (chainId: number, provider?: Provider): Promise<number> =>
-  getAirdropContract(chainId, provider)
+  getDropCenterContract(chainId, provider)
     .numOfDrops()
     .then((_: BigNumber) => +_)
 

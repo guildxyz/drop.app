@@ -6,7 +6,7 @@ const grant = (
   chainId: number,
   signer: JsonRpcSigner,
   signature: string,
-  serverId: string,
+  platform: string,
   roleId: string,
   recieverAddress: string,
   contractId: number,
@@ -14,6 +14,6 @@ const grant = (
 ): Promise<TransactionResponse> =>
   getAirdropContract(chainId, provider)
     .connect(signer)
-    .grant(signature, serverId, roleId, recieverAddress, contractId)
+    .grant(signature, platform, roleId, recieverAddress, contractId)
 
 export default grant

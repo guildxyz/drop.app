@@ -10,8 +10,17 @@ const getDataOfDrop = (
   getAirdropContract(chainId, provider)
     .getDataOfDrop(urlName)
     .then(
-      ([dropName, serverId, roleIds, tokenAddress, contractId, numOfActive]) => ({
+      ([
         dropName,
+        platform,
+        serverId,
+        roleIds,
+        tokenAddress,
+        contractId,
+        numOfActive,
+      ]) => ({
+        dropName,
+        platform,
         serverId,
         roleIds,
         tokenAddress,

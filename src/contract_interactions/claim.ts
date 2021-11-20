@@ -6,16 +6,18 @@ import claimSignature from "./utils/signatures/claim"
 
 const claim = async (
   chainId: number,
-  account: string,
+  address: string,
   signer: JsonRpcSigner,
-  { roleId, serverId, tokenAddress }: ClaimData,
+  { roleId, serverId, tokenAddress, platform, userId }: ClaimData,
   provider?: Provider
 ): Promise<TransactionReceipt> => {
   const signature = await claimSignature(
     chainId,
-    roleId,
     serverId,
-    account,
+    platform,
+    address,
+    userId,
+    roleId,
     tokenAddress
   )
 
@@ -24,8 +26,9 @@ const claim = async (
       chainId,
       signer,
       signature,
-      serverId,
+      platform,
       roleId,
+      userId,
       tokenAddress,
       provider
     )

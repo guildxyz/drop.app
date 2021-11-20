@@ -1,6 +1,7 @@
 export type Drop = {
   urlName: string
   dropName: string
+  platform: "DISCORD" | "TELEGRAM"
   serverId: string
   roleIds: string[]
   tokenAddress: string
@@ -10,8 +11,7 @@ export type Drop = {
   id?: number
 }
 
-export type Role = {
-  roleId: string
+export type Data = {
   tokenImageHash: string
   NFTName: string
   traitTypes: string[]

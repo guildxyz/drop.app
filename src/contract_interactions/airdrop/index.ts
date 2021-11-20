@@ -6,22 +6,20 @@ import deployTokenContract from "./deployTokenContract"
 import getDataOfDrop from "./getDataOfDrop"
 import grant from "./grant"
 import numOfDeployedContracts from "./numOfDeployedContracts"
-import numOfDrops from "./numOfDrops"
 import startAirdrop from "./startAirdrop"
+import startAirdropOnGroup from "./startAirdropOnGroup"
 import stopAirdrop from "./stopAirdrop"
-import urlById from "./urlById"
 
 export {
   claimables,
   claims,
   contractsByDeployer,
-  urlById,
   getDataOfDrop,
   numOfDeployedContracts,
-  numOfDrops,
   deployTokenContract,
   claim,
   startAirdrop,
+  startAirdropOnGroup,
   stopAirdrop,
   grant,
 }

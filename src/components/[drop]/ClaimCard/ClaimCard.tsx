@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { RoleData } from "contract_interactions/types"
+import useDiscordId from "hooks/useDiscordId"
 import useIsActive from "hooks/useIsActive"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
@@ -58,6 +59,7 @@ const ClaimCard = ({
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
   )
+  const userId = useDiscordId()
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "This role is inactive in this drop"]
@@ -142,7 +144,15 @@ const ClaimCard = ({
               }
               w="full"
               colorScheme="yellow"
-              onClick={() => onSubmit({ roleId, serverId, tokenAddress })}
+              onClick={() =>
+                onSubmit({
+                  roleId,
+                  serverId,
+                  tokenAddress,
+                  platform: "DISCORD",
+                  userId,
+                })
+              }
             >
               {buttonText}
             </Button>

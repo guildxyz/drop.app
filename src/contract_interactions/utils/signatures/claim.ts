@@ -1,8 +1,10 @@
 const claimSignature = (
   chainId: number,
-  roleId: string,
   serverId: string,
-  account: string,
+  platform: string,
+  address: string,
+  userId: string,
+  roleId: string,
   tokenAddress: string
 ): Promise<string> =>
   fetch("/api/get-signature/claim", {
@@ -10,9 +12,11 @@ const claimSignature = (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       chainId,
-      roleId,
       serverId,
-      address: account,
+      platform,
+      address,
+      userId,
+      roleId,
       tokenAddress,
     }),
   }).then((response) =>

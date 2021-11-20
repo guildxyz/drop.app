@@ -7,10 +7,11 @@ const deployTokenContract = async (
   signer: JsonRpcSigner,
   tokenName: string,
   tokenSymbol: string,
+  description: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
   getAirdropContract(chainId, provider)
     .connect(signer)
-    .deployTokenContract(tokenName, tokenSymbol)
+    .deployTokenContract(tokenName, tokenSymbol, description)
 
 export default deployTokenContract

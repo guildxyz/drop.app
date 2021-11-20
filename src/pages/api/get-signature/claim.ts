@@ -12,7 +12,9 @@ import type { NextApiRequest, NextApiResponse } from "next"
 type Body = {
   chainId: number
   serverId: string
+  platform: string
   address: string
+  userId: string
   roleId: string
   tokenAddress: string
 }
@@ -20,7 +22,9 @@ type Body = {
 const REQUIRED_BODY = [
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
+  { key: "platform", type: "string" },
   { key: "address", type: "string" },
+  { key: "userId", type: "string" },
   { key: "roleId", type: "string" },
   { key: "tokenAddress", type: "string" },
 ]
@@ -53,7 +57,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    const { chainId, serverId, address, roleId, tokenAddress }: Body = req.body
+    const {
+      chainId,
+      serverId,
+      platform,
+      address,
+      userId,
+      roleId,
+      tokenAddress,
+    }: Body = req.body
     // Is there a deployed airdrop contract on the chain
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
@@ -66,6 +78,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       })
       return
     }
+
+    if (!["DISCORD" || "TELEGRAM"].includes(platform)) {
+      res.status(400).json({
+        errors: [
+          {
+            key: "platform",
+            message: "Platform must be DISCORD or TELEGRAM",
+          },
+        ],
+      })
+      return
+    }
+
+    //TODO check user id from database based on address
 
     try {
       const discordId = await fetchDiscordID("discordId", address).catch(() => {
@@ -86,8 +112,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       ])
 
       const payload = defaultAbiCoder.encode(
-        ["address", "string", "string", "address", "address"],
-        [AirdropAddresses[Chains[chainId]], serverId, roleId, tokenAddress, address]
+        ["address", "string", "string", "address", "string", "address"],
+        [
+          AirdropAddresses[Chains[chainId]],
+          platform,
+          roleId,
+          tokenAddress,
+          userId,
+          address,
+        ]
       )
       const message = keccak256(payload)
       const wallet = new Wallet(process.env.SIGNER_PRIVATE_KEY)
