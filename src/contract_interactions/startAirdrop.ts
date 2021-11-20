@@ -1,10 +1,5 @@
-import {
-  JsonRpcSigner,
-  Provider,
-  TransactionReceipt,
-} from "@ethersproject/providers"
-import { StartAirdropData } from "hooks/machines/useStartAirdropMachine"
-import TransactionError from "utils/errors/TransactionError"
+import { JsonRpcSigner, Provider } from "@ethersproject/providers"
+import { StartAirdropData } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import { contractsByDeployer, startAirdrop as airdropStartAirdrop } from "./airdrop"
 import startAirdropSignature from "./utils/signatures/startAirdrop"
 import uploadImages from "./utils/uploadImages"
@@ -16,7 +11,7 @@ const startAirdrop = async (
   data: StartAirdropData,
   provider?: Provider,
   setUploadedImages?: (hashes: Record<string, string>) => void
-): Promise<TransactionReceipt> => {
+): Promise<string> => {
   const { contractId, serverId, name, roles, channel, urlName } = data
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
@@ -44,40 +39,39 @@ const startAirdrop = async (
 
   if (!!setUploadedImages) setUploadedImages(hashes)
 
-  try {
-    const tx = await airdropStartAirdrop(
-      chainId,
-      signer,
-      signature,
-      urlName,
-      name,
-      serverId,
-      roles.map(({ traits, NFTName, roleId }) => ({
-        roleId,
-        tokenImageHash: hashes[roleId],
-        NFTName,
-        ...traits
-          .filter(({ key, value }) => key.length > 0 && value.length > 0)
-          .reduce(
-            (_acc, { key, value }) => {
-              const acc = _acc
-              acc.traitTypes.push(key)
-              acc.values.push(value)
-              return acc
-            },
-            { traitTypes: [], values: [] }
-          ),
-      })),
-      +contractId,
-      channel,
-      provider
-    )
-    const receipt = await tx.wait()
-    return receipt
-  } catch (error) {
-    console.error(error)
-    throw new TransactionError("Failed to start airdrop.")
-  }
+  const contractRoles = roles.map(({ traits, NFTName, roleId }) => ({
+    roleId,
+    tokenImageHash: hashes[roleId],
+    NFTName,
+    ...traits
+      .filter(({ key, value }) => key.length > 0 && value.length > 0)
+      .reduce(
+        (_acc, { key, value }) => {
+          const acc = _acc
+          acc.traitTypes.push(key)
+          acc.values.push(value)
+          return acc
+        },
+        { traitTypes: [], values: [] }
+      ),
+  }))
+
+  const tx = await airdropStartAirdrop(
+    chainId,
+    signer,
+    signature,
+    urlName,
+    name,
+    serverId,
+    contractRoles,
+    +contractId,
+    channel,
+    provider
+  )
+
+  await tx.wait()
+
+  return urlName
 }
 
 export default startAirdrop

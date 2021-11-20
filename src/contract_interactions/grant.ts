@@ -3,7 +3,6 @@ import {
   Provider,
   TransactionReceipt,
 } from "@ethersproject/providers"
-import TransactionError from "utils/errors/TransactionError"
 import {
   contractsByDeployer,
   grant as airdropGrant,
@@ -54,7 +53,7 @@ const grant = async (
     const receipt = await tx.wait()
     return receipt
   } catch {
-    throw new TransactionError("Failed to grant token.")
+    throw new Error("Failed to grant token.")
   }
 }
 

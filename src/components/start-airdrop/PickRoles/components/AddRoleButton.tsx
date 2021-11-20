@@ -1,9 +1,9 @@
 import { Button } from "@chakra-ui/react"
-import useIsActive from "hooks/airdrop/useIsActive"
-import useRoleTokenAddress from "hooks/airdrop/useRoleTokenAddress"
+import useIsActive from "hooks/useIsActive"
 import { Plus } from "phosphor-react"
 import { ReactElement } from "react"
 import { useWatch } from "react-hook-form"
+import useRoleTokenAddress from "../hooks/useRoleTokenAddress"
 
 type Props = {
   roleId: string
