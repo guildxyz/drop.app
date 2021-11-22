@@ -126,7 +126,7 @@ const Layout = ({
         >
           {`This website is `}
           <Link
-            href="https://github.com/AgoraSpaceDAO/dropapp"
+            href="https://github.com/AgoraSpaceDAO/drop-app"
             isExternal
             colorScheme="green"
           >
@@ -142,7 +142,7 @@ const Layout = ({
           </Link>
           <DotDelimiter />
           <Link
-            href="https://discord.gg/bryPA3peuT"
+            href="https://discord.gg/txJtK6Gu4m"
             isExternal
             colorScheme="DISCORD"
           >
