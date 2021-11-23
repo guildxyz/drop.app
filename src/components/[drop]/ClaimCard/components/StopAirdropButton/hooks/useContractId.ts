@@ -7,7 +7,7 @@ const useContractId = (tokenAddress: string): number => {
 
   return deployedTokens
     .map((deployedToken, index) => ({ deployedToken, index }))
-    .find(({ deployedToken }) => deployedToken === tokenAddress).index
+    .find(({ deployedToken }) => deployedToken === tokenAddress)?.index
 }
 
 export default useContractId

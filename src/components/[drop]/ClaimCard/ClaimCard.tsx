@@ -24,7 +24,7 @@ import { ReactElement, useEffect, useMemo } from "react"
 import StopAirdropButton from "./components/StopAirdropButton"
 import useClaim from "./hooks/useClaim"
 import useIsClaimed from "./hooks/useIsClaimed"
-import useIsOwner from "./hooks/useIsOwner"
+import useIsDeployer from "./hooks/useIsDeployer"
 import useRoleData from "./hooks/useRoleData"
 import useRoleName from "./hooks/useRoleName"
 import useUserRoles from "./hooks/useUserRoles"
@@ -55,8 +55,8 @@ const ClaimCard = ({
   const roleName = useRoleName(serverId, roleId)
   const userRoles = useUserRoles(serverId)
   const isAuthenticated = useIsAuthenticated()
-  const isOwner = useIsOwner(serverId)
-  const isActive = useIsActive(platform, roleId, tokenAddress)
+  const isDeployer = useIsDeployer(tokenAddress)
+  const { active: isActive } = useIsActive(platform, roleId, tokenAddress)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
@@ -94,7 +94,7 @@ const ClaimCard = ({
       >
         <HStack justifyContent="space-between">
           <Text>{roleName}</Text>
-          {isOwner && (
+          {isDeployer && (
             <StopAirdropButton
               platform={platform}
               urlName={urlName}

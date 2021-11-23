@@ -1,14 +1,15 @@
 const uploadImages = async (
   images: Record<string, File>,
-  serverId: string,
-  tokenAddress: string
+  platform: string,
+  tokenAddress: string,
+  chainId: number
 ): Promise<Record<string, string>> => {
   const formData = new FormData()
   Object.entries(images).forEach(([id, image]) =>
     formData.append(
-      `${serverId}-${id}-${tokenAddress}.png`,
+      `${id}-${chainId}-${platform}-${tokenAddress}.png`,
       image,
-      `${serverId}-${id}-${tokenAddress}.${image.name.split(".").pop()}`
+      `${id}-${chainId}-${platform}-${tokenAddress}.${image.name.split(".").pop()}`
     )
   )
   const hashes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/uploadImages`, {

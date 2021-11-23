@@ -6,6 +6,7 @@ import { fetchRoles } from "components/start-airdrop/PickRoles/hooks/useRoles"
 import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
+import hashId from "contract_interactions/utils/hashId"
 import { fetchDiscordID } from "hooks/useDiscordId"
 import type { NextApiRequest, NextApiResponse } from "next"
 
@@ -111,6 +112,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         }),
       ])
 
+      const hashedUserId = await hashId(userId, address)
+
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "address", "string", "address"],
         [
@@ -118,7 +121,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
           platform,
           roleId,
           tokenAddress,
-          userId,
+          hashedUserId,
           address,
         ]
       )

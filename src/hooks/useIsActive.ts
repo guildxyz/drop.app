@@ -12,18 +12,18 @@ const getIsActive = async (
   provider: Provider
 ) =>
   claimables(chainId, platform, roleId, tokenAddress, provider).then(
-    ({ dropped, active }) => dropped && active
+    ({ dropped, active }) => ({ isDropped: dropped, isActive: active })
   )
 
 const useIsActive = (
   platform: string,
   roleId: string,
   tokenAddress: string
-): boolean => {
+): { isActive: boolean; isDropped: boolean } => {
   const { chainId, library } = useWeb3React<Web3Provider>()
 
   const shouldFetch =
-  platform?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
+    platform?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
 
   const { data } = useSWR(
     shouldFetch
@@ -32,7 +32,7 @@ const useIsActive = (
     getIsActive
   )
 
-  return data
+  return data ?? { isActive: undefined, isDropped: undefined }
 }
 
 export default useIsActive

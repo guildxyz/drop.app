@@ -2,6 +2,7 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider"
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import { ClaimData } from "components/[drop]/ClaimCard/hooks/useClaim"
 import { claim as airdropClaim } from "./airdrop"
+import hashId from "./utils/hashId"
 import claimSignature from "./utils/signatures/claim"
 
 const claim = async (
@@ -22,13 +23,14 @@ const claim = async (
   )
 
   try {
+    const userIdHash = await hashId(userId, address)
     const tx = await airdropClaim(
       chainId,
       signer,
       signature,
       platform,
       roleId,
-      userId,
+      userIdHash,
       tokenAddress,
       provider
     )

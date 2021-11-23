@@ -8,12 +8,12 @@ const claim = (
   signature: string,
   platform: string,
   roleId: string,
-  userId: string,
+  userIdHash: string,
   tokenAddress: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
   getAirdropContract(chainId, provider)
     .connect(signer)
-    .claim(signature, platform, roleId, userId, tokenAddress)
+    .claim(signature, platform, roleId, userIdHash, tokenAddress)
 
 export default claim

@@ -13,7 +13,6 @@ const startAirdrop = async (
   setUploadedImages?: (hashes: Record<string, string>) => void
 ): Promise<string> => {
   const { contractId, serverId, name, roles, channel, urlName, platform } = data
-  console.log(data)
 
   const roleIds = roles.map(({ roleId }) => roleId)
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
@@ -45,7 +44,7 @@ const startAirdrop = async (
   )
 
   const hashes = Object.keys(imagesToUpload).length
-    ? await uploadImages(imagesToUpload, serverId, tokenAddress)
+    ? await uploadImages(imagesToUpload, platform, tokenAddress, chainId)
     : {}
 
   // Append the default hash for the roles withour uploaded image

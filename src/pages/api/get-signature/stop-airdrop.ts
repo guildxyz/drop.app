@@ -3,7 +3,6 @@ import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/PickRoles/hooks/useRoles"
-import { fetchOwnerId } from "components/[drop]/ClaimCard/hooks/useOwnerId"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
 import { fetchDiscordID } from "hooks/useDiscordId"
@@ -71,8 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     }
 
     try {
-      const [ownerId, discordId] = await Promise.all([
-        fetchOwnerId("ownerId", serverId),
+      const [discordId] = await Promise.all([
         fetchDiscordID("discordId", address),
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
@@ -80,13 +78,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
           }
         }),
       ])
-
-      if (ownerId !== discordId) {
-        res.status(400).json({
-          errors: [{ key: "address", message: "Not the owner of the server." }],
-        })
-        return
-      }
 
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "address", "address", "string"],

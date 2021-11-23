@@ -16,11 +16,11 @@ const AddRoleButton = ({ roleId, roleName, setSelected }: Props): ReactElement =
   const serverId = useWatch({ name: "serverId" })
   const platform = useWatch({ name: "platform" })
   const tokenAddress = useRoleTokenAddress(contractId)
-  const isActive = useIsActive(platform, roleId, tokenAddress)
+  const { isDropped } = useIsActive(platform, roleId, tokenAddress)
 
   // If we only want to display the inactive roles event when the address hasn't been selected
   // if (isActive === undefined || !!isActive) return null
-  if (isActive !== undefined && !!isActive) return null
+  if (isDropped !== undefined && !!isDropped) return null
 
   return (
     <Button

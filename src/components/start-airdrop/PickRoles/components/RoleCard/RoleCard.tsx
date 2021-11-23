@@ -54,7 +54,7 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
   const contractId = useWatch({ name: "contractId" })
   const platform = useWatch({ name: "platform" })
   const tokenAddress = useRoleTokenAddress(contractId)
-  const isActive = useIsActive(platform, roleId, tokenAddress)
+  const { isDropped } = useIsActive(platform, roleId, tokenAddress)
 
   const {
     fields: traitFields,
@@ -80,8 +80,8 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
   }, [])
 
   useEffect(() => {
-    if (isActive !== undefined && !!isActive) unselectRole()
-  }, [isActive, unselectRole])
+    if (isDropped !== undefined && !!isDropped) unselectRole()
+  }, [isDropped, unselectRole])
 
   return (
     <VStack backgroundColor="primary.200" borderRadius="lg" padding={5}>
