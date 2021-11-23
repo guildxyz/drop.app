@@ -56,7 +56,7 @@ const ClaimCard = ({
   const userRoles = useUserRoles(serverId)
   const isAuthenticated = useIsAuthenticated()
   const isDeployer = useIsDeployer(tokenAddress)
-  const { active: isActive } = useIsActive(platform, roleId, tokenAddress)
+  const { isActive } = useIsActive(platform, roleId, tokenAddress)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
