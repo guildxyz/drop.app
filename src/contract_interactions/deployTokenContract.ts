@@ -10,6 +10,7 @@ const deployTokenContract = async (
   signer: JsonRpcSigner,
   tokenName: string,
   tokenSymbol: string,
+  description: string,
   provider?: Provider
 ): Promise<number> => {
   const tx = await airdropDeployTokenContract(
@@ -17,6 +18,7 @@ const deployTokenContract = async (
     signer,
     tokenName,
     tokenSymbol,
+    description,
     provider
   )
   await tx.wait()

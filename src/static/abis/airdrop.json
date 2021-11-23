@@ -1,6 +1,7 @@
 [
   {
     "inputs": [
+      { "internalType": "address", "name": "_dropCenterAddress", "type": "address" },
       { "internalType": "address", "name": "_botAddress", "type": "address" },
       { "internalType": "string", "name": "_externalUrl", "type": "string" }
     ],
@@ -13,7 +14,7 @@
       {
         "indexed": true,
         "internalType": "string",
-        "name": "serverId",
+        "name": "platform",
         "type": "string"
       },
       {
@@ -44,14 +45,20 @@
       {
         "indexed": true,
         "internalType": "string",
-        "name": "serverId",
+        "name": "platform",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "string",
+        "name": "groupId",
         "type": "string"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "dropId",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "dropUrl",
+        "type": "string"
       }
     ],
     "name": "DropOnServer",
@@ -69,7 +76,7 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "serverId",
+        "name": "platform",
         "type": "string"
       },
       {
@@ -91,6 +98,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "platform",
+        "type": "string"
+      },
       {
         "indexed": false,
         "internalType": "string",
@@ -154,6 +167,70 @@
   },
   {
     "inputs": [
+      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_dropUrl", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
+      { "internalType": "string", "name": "_dropName", "type": "string" },
+      { "internalType": "string", "name": "_groupId", "type": "string" },
+      {
+        "components": [
+          { "internalType": "string", "name": "tokenImageHash", "type": "string" },
+          { "internalType": "string", "name": "NFTName", "type": "string" },
+          { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
+          { "internalType": "string[]", "name": "values", "type": "string[]" }
+        ],
+        "internalType": "struct CommunityNFTAirdrop.Data",
+        "name": "_data",
+        "type": "tuple"
+      },
+      { "internalType": "uint256", "name": "_contractId", "type": "uint256" }
+    ],
+    "name": "airdropOnGroup",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
+      { "internalType": "string", "name": "_dropUrl", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
+      { "internalType": "string", "name": "_dropName", "type": "string" },
+      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string[]", "name": "_roleIds", "type": "string[]" },
+      {
+        "components": [
+          { "internalType": "string", "name": "tokenImageHash", "type": "string" },
+          { "internalType": "string", "name": "NFTName", "type": "string" },
+          { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
+          { "internalType": "string[]", "name": "values", "type": "string[]" }
+        ],
+        "internalType": "struct CommunityNFTAirdrop.Data[]",
+        "name": "_dataOfRoles",
+        "type": "tuple[]"
+      },
+      { "internalType": "uint256", "name": "_contractId", "type": "uint256" },
+      { "internalType": "string", "name": "_channelId", "type": "string" }
+    ],
+    "name": "airdropOnServer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "approvals",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "_newBotAddress", "type": "address" }
     ],
     "name": "changeBot",
@@ -164,8 +241,9 @@
   {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
-      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
+      { "internalType": "string", "name": "_userId", "type": "string" },
       { "internalType": "address", "name": "_tokenAddress", "type": "address" }
     ],
     "name": "claim",
@@ -189,16 +267,13 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "address", "name": "", "type": "address" }
     ],
     "name": "claims",
-    "outputs": [
-      { "internalType": "bool", "name": "claimed", "type": "bool" },
-      { "internalType": "bool", "name": "approved", "type": "bool" }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -215,7 +290,8 @@
   {
     "inputs": [
       { "internalType": "string", "name": "_tokenName", "type": "string" },
-      { "internalType": "string", "name": "_tokenSymbol", "type": "string" }
+      { "internalType": "string", "name": "_tokenSymbol", "type": "string" },
+      { "internalType": "string", "name": "_description", "type": "string" }
     ],
     "name": "deployTokenContract",
     "outputs": [],
@@ -235,6 +311,7 @@
     "outputs": [
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string[]", "name": "", "type": "string[]" },
       { "internalType": "address", "name": "", "type": "address" },
       { "internalType": "uint256", "name": "", "type": "uint256" },
@@ -246,7 +323,7 @@
   {
     "inputs": [
       { "internalType": "bytes", "name": "_signature", "type": "bytes" },
-      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
       { "internalType": "address", "name": "_user", "type": "address" },
       { "internalType": "uint256", "name": "_contractId", "type": "uint256" }
@@ -257,41 +334,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "bytes", "name": "_signature", "type": "bytes" },
-      { "internalType": "string", "name": "_dropUrl", "type": "string" },
-      { "internalType": "string", "name": "_dropName", "type": "string" },
-      { "internalType": "string", "name": "_serverId", "type": "string" },
-      {
-        "components": [
-          { "internalType": "string", "name": "roleId", "type": "string" },
-          { "internalType": "string", "name": "tokenImageHash", "type": "string" },
-          { "internalType": "string", "name": "NFTName", "type": "string" },
-          { "internalType": "string[]", "name": "traitTypes", "type": "string[]" },
-          { "internalType": "string[]", "name": "values", "type": "string[]" }
-        ],
-        "internalType": "struct RoleNFTAirdrop.Role[]",
-        "name": "_roles",
-        "type": "tuple[]"
-      },
-      { "internalType": "uint256", "name": "_contractId", "type": "uint256" },
-      { "internalType": "string", "name": "_channelId", "type": "string" }
-    ],
-    "name": "newAirdrop",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "name": "numOfDeployedContracts",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "numOfDrops",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -384,13 +428,6 @@
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "urlById",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

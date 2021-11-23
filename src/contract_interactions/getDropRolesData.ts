@@ -11,10 +11,10 @@ const getDropRolesData = async (
   provider?: Provider
 ): Promise<DropWithRoles> => {
   const dropData = await getDataOfDrop(chainId, urlName, provider)
-  const { roleIds, tokenAddress, serverId } = dropData
+  const { roleIds, tokenAddress, platform } = dropData
   const roles = await Promise.all(
     roleIds.map((roleId) =>
-      getDataOfRole(chainId, tokenAddress, serverId, roleId, provider)
+      getDataOfRole(chainId, tokenAddress, platform, roleId, provider)
     )
   )
 

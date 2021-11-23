@@ -27,12 +27,14 @@ const StartAirdropPage = (): JSX.Element => {
         NFT: {
           name: "",
           symbol: "",
+          description: "",
         },
       },
       inviteLink: "",
       contractId: "",
       serverId: "",
       roles: [],
+      platform: "DISCORD",
     },
   })
   const serverId = useWatch({

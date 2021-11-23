@@ -3,7 +3,8 @@
     "inputs": [
       { "internalType": "string", "name": "_name", "type": "string" },
       { "internalType": "string", "name": "_symbol", "type": "string" },
-      { "internalType": "string", "name": "_externalUrl", "type": "string" }
+      { "internalType": "string", "name": "_externalUrl", "type": "string" },
+      { "internalType": "string", "name": "_description", "type": "string" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -104,7 +105,7 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
       { "internalType": "string", "name": "_tokenImageHash", "type": "string" },
       { "internalType": "string", "name": "_NFTName", "type": "string" },
@@ -142,6 +143,13 @@
   },
   {
     "inputs": [],
+    "name": "description",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "externalUrl",
     "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
@@ -156,22 +164,15 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" }
     ],
     "name": "getDataOfRole",
     "outputs": [
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
-      {
-        "components": [
-          { "internalType": "string", "name": "traitType", "type": "string" },
-          { "internalType": "string", "name": "value", "type": "string" }
-        ],
-        "internalType": "struct DCRoleToken.Attribute[]",
-        "name": "",
-        "type": "tuple[]"
-      }
+      { "internalType": "string[]", "name": "", "type": "string[]" },
+      { "internalType": "string[]", "name": "", "type": "string[]" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -218,7 +219,7 @@
     "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "roleOfToken",
     "outputs": [
-      { "internalType": "string", "name": "serverId", "type": "string" },
+      { "internalType": "string", "name": "platform", "type": "string" },
       { "internalType": "string", "name": "roleId", "type": "string" }
     ],
     "stateMutability": "view",
@@ -227,7 +228,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "_to", "type": "address" },
-      { "internalType": "string", "name": "_serverId", "type": "string" },
+      { "internalType": "string", "name": "_platform", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" }
     ],
     "name": "safeMint",

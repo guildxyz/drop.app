@@ -1,5 +1,5 @@
 import { Provider } from "@ethersproject/providers"
-import { numOfDrops, urlById } from "./airdrop"
+import { numOfDrops, urlById } from "./dropCenter"
 
 const getDropUrlNames = (chainId: number, provider?: Provider): Promise<string[]> =>
   numOfDrops(chainId, provider).then((dropsCount) =>

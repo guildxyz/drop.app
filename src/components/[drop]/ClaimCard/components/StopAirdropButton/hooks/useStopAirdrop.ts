@@ -10,6 +10,7 @@ export type StopAirdropData = {
   serverId: string
   contractId: number
   urlName: string
+  platform: string
 }
 
 const useStopAirdrop = () => {

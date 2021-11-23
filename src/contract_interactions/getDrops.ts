@@ -1,5 +1,5 @@
 import { Provider } from "@ethersproject/providers"
-import { numOfDrops, urlById } from "./airdrop"
+import { numOfDrops, urlById } from "./dropCenter"
 import getDropRolesData, { DropWithRoles } from "./getDropRolesData"
 
 const getDrops = async (

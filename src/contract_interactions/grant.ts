@@ -15,6 +15,7 @@ const grant = async (
   account: string,
   signer: JsonRpcSigner,
   serverId: string,
+  platform: string,
   roleId: string,
   contractId: number,
   recieverAddress: string,
@@ -33,6 +34,7 @@ const grant = async (
   const signature = await grantSignature(
     chainId,
     serverId,
+    platform,
     account,
     roleId,
     tokenAddress,

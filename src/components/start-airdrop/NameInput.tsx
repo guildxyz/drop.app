@@ -37,11 +37,16 @@ const NameInput = (): ReactElement => {
         placeholder="name"
         {...register("name", {
           required: "This field is required",
-          validate: async (value) =>
-            getDataOfDrop(chainId, slugify(value), library).then(
+          validate: async (value) => {
+            const urlName = slugify(value)
+            if (["start-airdrop", "dcauth"].includes(urlName)) {
+              return "Invalid name"
+            }
+            return getDataOfDrop(chainId, urlName, library).then(
               ({ tokenAddress }) =>
                 tokenAddress === ZERO_ADDRESS || "Drop already exists"
-            ),
+            )
+          },
         })}
       />
       {errors?.name?.message && (

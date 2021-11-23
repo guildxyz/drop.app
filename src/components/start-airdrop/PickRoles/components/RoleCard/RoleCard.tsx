@@ -52,8 +52,9 @@ const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
   const [imagePreview, setImagePreview] = useState<string>("")
   const { errors } = useFormState()
   const contractId = useWatch({ name: "contractId" })
+  const platform = useWatch({ name: "platform" })
   const tokenAddress = useRoleTokenAddress(contractId)
-  const isActive = useIsActive(serverId, roleId, tokenAddress)
+  const isActive = useIsActive(platform, roleId, tokenAddress)
 
   const {
     fields: traitFields,

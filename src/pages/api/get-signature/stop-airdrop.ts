@@ -12,6 +12,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 type Body = {
   chainId: number
   serverId: string
+  platform: string
   address: string
   roleId: string
   tokenAddress: string
@@ -20,6 +21,7 @@ type Body = {
 const REQUIRED_BODY = [
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
+  { key: "platform", type: "string" },
   { key: "address", type: "string" },
   { key: "roleId", type: "string" },
   { key: "tokenAddress", type: "string" },
@@ -53,7 +55,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    const { chainId, serverId, address, roleId, tokenAddress }: Body = req.body
+    const { chainId, serverId, platform, address, roleId, tokenAddress }: Body =
+      req.body
     // Is there a deployed airdrop contract on the chain
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
@@ -89,7 +92,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         ["address", "string", "string", "address", "address", "string"],
         [
           AirdropAddresses[Chains[chainId]],
-          serverId,
+          platform,
           roleId,
           tokenAddress,
           address,

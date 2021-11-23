@@ -6,28 +6,28 @@ import useSWR from "swr"
 const getIsActive = async (
   _: string,
   chainId: number,
-  serverId: string,
+  platform: string,
   roleId: string,
   tokenAddress: string,
   provider: Provider
 ) =>
-  claimables(chainId, serverId, roleId, tokenAddress, provider).then(
+  claimables(chainId, platform, roleId, tokenAddress, provider).then(
     ({ dropped, active }) => dropped && active
   )
 
 const useIsActive = (
-  serverId: string,
+  platform: string,
   roleId: string,
   tokenAddress: string
 ): boolean => {
   const { chainId, library } = useWeb3React<Web3Provider>()
 
   const shouldFetch =
-    serverId?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
+  platform?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
 
   const { data } = useSWR(
     shouldFetch
-      ? ["isActive", chainId, serverId, roleId, tokenAddress, library]
+      ? ["isActive", chainId, platform, roleId, tokenAddress, library]
       : null,
     getIsActive
   )

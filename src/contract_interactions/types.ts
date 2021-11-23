@@ -21,5 +21,6 @@ export type Data = {
 export type RoleData = {
   imageHash: string
   tokenName: string
-  traits: Array<[string, string]>
+  traits: string[]
+  values: string[]
 }

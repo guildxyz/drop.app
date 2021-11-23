@@ -20,7 +20,7 @@ import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
 import Image from "next/image"
 import { Check } from "phosphor-react"
-import { ReactElement, useMemo } from "react"
+import { ReactElement, useEffect, useMemo } from "react"
 import StopAirdropButton from "./components/StopAirdropButton"
 import useClaim from "./hooks/useClaim"
 import useIsClaimed from "./hooks/useIsClaimed"
@@ -35,6 +35,7 @@ type Props = {
   tokenAddress: string
   serverId: string
   urlName: string
+  platform: string
 }
 
 const ClaimCard = ({
@@ -43,10 +44,11 @@ const ClaimCard = ({
   tokenAddress,
   serverId,
   urlName,
+  platform,
 }: Props): ReactElement => {
   const { account } = useWeb3React()
   const userServers = useServersOfUser()
-  const roleData = useRoleData(tokenAddress, serverId, roleId, role)
+  const roleData = useRoleData(tokenAddress, platform, roleId, role)
   const { isLoading, response, onSubmit } = useClaim()
   const successfullyClaimed = !!response
   const isClaimed = useIsClaimed(serverId, roleId, tokenAddress)
@@ -54,12 +56,14 @@ const ClaimCard = ({
   const userRoles = useUserRoles(serverId)
   const isAuthenticated = useIsAuthenticated()
   const isOwner = useIsOwner(serverId)
-  const isActive = useIsActive(serverId, roleId, tokenAddress)
+  const isActive = useIsActive(platform, roleId, tokenAddress)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
   )
   const userId = useDiscordId()
+
+  useEffect(() => console.log(roleData), [roleData])
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "This role is inactive in this drop"]
@@ -92,6 +96,7 @@ const ClaimCard = ({
           <Text>{roleName}</Text>
           {isOwner && (
             <StopAirdropButton
+              platform={platform}
               urlName={urlName}
               roleId={roleId}
               serverId={serverId}
@@ -122,9 +127,9 @@ const ClaimCard = ({
               </HStack>
             </AccordionButton>
             <AccordionPanel pb={4}>
-              {roleData?.traits.map(([key, value]) => (
-                <Text key={`${key}-${value}`}>
-                  {key}: {value}
+              {roleData?.traits.map((key, index) => (
+                <Text key={`${key}-${roleData?.values?.[index]}`}>
+                  {key}: {roleData?.values?.[index]}
                 </Text>
               ))}
             </AccordionPanel>

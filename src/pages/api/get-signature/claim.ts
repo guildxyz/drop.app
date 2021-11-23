@@ -79,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    if (!["DISCORD" || "TELEGRAM"].includes(platform)) {
+    if (!["DISCORD", "TELEGRAM"].includes(platform)) {
       res.status(400).json({
         errors: [
           {

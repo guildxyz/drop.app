@@ -7,6 +7,7 @@ import { useRouter } from "next/router"
 
 export type StartAirdropData = {
   name: string
+  platform: "DISCORD"
   urlName: string
   channel: string
   assetType: "NFT" | "TOKEN" | "ERC1155"
@@ -29,7 +30,13 @@ const useStartAirdrop = () => {
   const toast = useToast()
 
   const fetch = async (data: StartAirdropData) =>
-    startAirdrop(chainId, account, library.getSigner(account), data, library)
+    startAirdrop(
+      chainId,
+      account,
+      library.getSigner(account),
+      { ...data, platform: "DISCORD" },
+      library
+    )
 
   const onSuccess = (urlName: string) => {
     toast({
