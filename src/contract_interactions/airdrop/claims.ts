@@ -10,11 +10,10 @@ const claims = (
   roleId: string,
   tokenAddress: string,
   provider?: Provider
-): Promise<{ claimed: boolean; approved: boolean }> =>
+): Promise<boolean> =>
   hashId(userId, address).then((hash) =>
     getAirdropContract(chainId, provider)
       .claims(hash, platform, roleId, tokenAddress)
-      .then(([claimed, approved]) => ({ claimed, approved }))
       .catch(() => {
         throw new Error("Failed to read claimed NFTs")
       })

@@ -20,7 +20,7 @@ import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
 import Image from "next/image"
 import { Check } from "phosphor-react"
-import { ReactElement, useEffect, useMemo } from "react"
+import { ReactElement, useMemo } from "react"
 import StopAirdropButton from "./components/StopAirdropButton"
 import useClaim from "./hooks/useClaim"
 import useIsClaimed from "./hooks/useIsClaimed"
@@ -51,7 +51,7 @@ const ClaimCard = ({
   const roleData = useRoleData(tokenAddress, platform, roleId, role)
   const { isLoading, response, onSubmit } = useClaim()
   const successfullyClaimed = !!response
-  const isClaimed = useIsClaimed(serverId, roleId, tokenAddress)
+  const isClaimed = useIsClaimed(platform, roleId, tokenAddress)
   const roleName = useRoleName(serverId, roleId)
   const userRoles = useUserRoles(serverId)
   const isAuthenticated = useIsAuthenticated()
@@ -62,8 +62,6 @@ const ClaimCard = ({
     [userRoles, roleId]
   )
   const userId = useDiscordId()
-
-  useEffect(() => console.log(roleData), [roleData])
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "This role is inactive in this drop"]

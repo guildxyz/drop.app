@@ -9,17 +9,14 @@ const getClaims = (
   chainId: number,
   userId: string,
   account: string,
-  serverId: string,
+  platform: string,
   roleId: string,
   tokenAddress: string,
   provider: Provider
-) =>
-  claims(chainId, userId, account, serverId, roleId, tokenAddress, provider).then(
-    ({ claimed }) => claimed
-  )
+) => claims(chainId, userId, account, platform, roleId, tokenAddress, provider)
 
 const useIsClaimed = (
-  serverId: string,
+  platform: string,
   roleId: string,
   tokenAddress: string
 ): boolean => {
@@ -27,7 +24,7 @@ const useIsClaimed = (
   const userId = useDiscordId()
 
   const shouldFetch =
-    serverId?.length > 0 &&
+    platform?.length > 0 &&
     roleId?.length > 0 &&
     tokenAddress?.length > 0 &&
     userId?.length > 0
@@ -39,7 +36,7 @@ const useIsClaimed = (
           chainId,
           userId,
           account,
-          serverId,
+          platform,
           roleId,
           tokenAddress,
           library,
