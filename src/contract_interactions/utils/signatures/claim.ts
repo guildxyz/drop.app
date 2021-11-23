@@ -3,7 +3,7 @@ const claimSignature = (
   serverId: string,
   platform: string,
   address: string,
-  userId: string,
+  hashedUserId: string,
   roleId: string,
   tokenAddress: string
 ): Promise<string> =>
@@ -15,7 +15,7 @@ const claimSignature = (
       serverId,
       platform,
       address,
-      userId,
+      hashedUserId,
       roleId,
       tokenAddress,
     }),

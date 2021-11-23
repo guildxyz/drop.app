@@ -6,16 +6,16 @@ import { fetchRoles } from "components/start-airdrop/PickRoles/hooks/useRoles"
 import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import hashId from "contract_interactions/utils/hashId"
 import { fetchDiscordID } from "hooks/useDiscordId"
 import type { NextApiRequest, NextApiResponse } from "next"
+import hash from "utils/api/hash"
 
 type Body = {
   chainId: number
   serverId: string
   platform: string
   address: string
-  userId: string
+  hashedUserId: string
   roleId: string
   tokenAddress: string
 }
@@ -25,7 +25,7 @@ const REQUIRED_BODY = [
   { key: "serverId", type: "string" },
   { key: "platform", type: "string" },
   { key: "address", type: "string" },
-  { key: "userId", type: "string" },
+  { key: "hashedUserId", type: "string" },
   { key: "roleId", type: "string" },
   { key: "tokenAddress", type: "string" },
 ]
@@ -63,7 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       serverId,
       platform,
       address,
-      userId,
+      hashedUserId,
       roleId,
       tokenAddress,
     }: Body = req.body
@@ -99,6 +99,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         throw Error("Failed to fetch discord id of user")
       })
 
+      if (hash(discordId) !== hashedUserId) {
+        throw Error("Not a valid user id hash.")
+      }
+
       await Promise.all([
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
@@ -111,8 +115,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
           }
         }),
       ])
-
-      const hashedUserId = await hashId(userId, address)
 
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "address", "string", "address"],

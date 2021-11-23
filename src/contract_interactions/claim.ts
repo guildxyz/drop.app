@@ -12,18 +12,19 @@ const claim = async (
   { roleId, serverId, tokenAddress, platform, userId }: ClaimData,
   provider?: Provider
 ): Promise<TransactionReceipt> => {
+  const userIdHash = await hashId(userId, address)
+
   const signature = await claimSignature(
     chainId,
     serverId,
     platform,
     address,
-    userId,
+    userIdHash,
     roleId,
     tokenAddress
   )
 
   try {
-    const userIdHash = await hashId(userId, address)
     const tx = await airdropClaim(
       chainId,
       signer,
