@@ -1,8 +1,7 @@
-import BackendError from "utils/errors/BackendError"
-
 const stopAirdropSignature = (
   chainId: number,
   serverId: string,
+  platform: string,
   account: string,
   roleId: string,
   tokenAddress: string
@@ -13,6 +12,7 @@ const stopAirdropSignature = (
     body: JSON.stringify({
       chainId,
       serverId,
+      platform,
       address: account,
       roleId,
       tokenAddress,
@@ -20,7 +20,7 @@ const stopAirdropSignature = (
   }).then((response) =>
     response.json().then((body) => {
       if (response.ok) return body.signature
-      throw new BackendError(JSON.stringify(body.errors))
+      throw new Error(JSON.stringify(body.errors))
     })
   )
 

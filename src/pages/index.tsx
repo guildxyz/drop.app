@@ -6,8 +6,7 @@ import { Chains } from "connectors"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import getDrops from "contract_interactions/getDrops"
 import { motion } from "framer-motion"
-import useDrops from "hooks/airdrop/useDrops"
-import useServersOfUser from "hooks/discord/useServersOfUser"
+import useServersOfUser from "hooks/useServersOfUser"
 import { GetStaticProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -17,7 +16,7 @@ type Props = {
   drops: DropWithRoles[]
 }
 
-const Page = ({ drops: initialDrops }: Props): JSX.Element => {
+const Page = ({ drops }: Props): JSX.Element => {
   const router = useRouter()
   const serverId = router.query.serverId as string
   const [searchInput, setSeacrhInput] = useState<string>(
@@ -25,8 +24,6 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
   )
 
   const serversOfUser = useServersOfUser()
-
-  const drops = useDrops(initialDrops)
 
   const [yourDrops, allDrops] = useMemo(
     () =>
@@ -126,7 +123,10 @@ const Page = ({ drops: initialDrops }: Props): JSX.Element => {
 
 const getStaticProps: GetStaticProps = async () => {
   const drops = await getDrops(Chains[process.env.NEXT_PUBLIC_CHAIN])
-  return { props: { drops } }
+  return {
+    props: { drops },
+    revalidate: 10,
+  }
 }
 
 export { getStaticProps }

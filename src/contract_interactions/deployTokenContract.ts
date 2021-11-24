@@ -1,14 +1,8 @@
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import {
-  contractsByDeployer,
   deployTokenContract as airdropDeployTokenContract,
   numOfDeployedContracts,
 } from "./airdrop"
-
-type DeployedToken = {
-  contractId: number
-  tokenAddress: string
-}
 
 const deployTokenContract = async (
   chainId: number,
@@ -16,29 +10,21 @@ const deployTokenContract = async (
   signer: JsonRpcSigner,
   tokenName: string,
   tokenSymbol: string,
+  description: string,
   provider?: Provider
-): Promise<DeployedToken> => {
+): Promise<number> => {
   const tx = await airdropDeployTokenContract(
     chainId,
     signer,
     tokenName,
     tokenSymbol,
+    description,
     provider
   )
   await tx.wait()
   const numOfContracts = await numOfDeployedContracts(chainId, account, provider)
-  const contractId = +numOfContracts - 1
-  const tokenAddress = await contractsByDeployer(
-    chainId,
-    account,
-    contractId,
-    provider
-  )
 
-  return {
-    contractId,
-    tokenAddress,
-  }
+  return +numOfContracts - 1
 }
 
 export default deployTokenContract

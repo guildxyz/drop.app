@@ -35,6 +35,22 @@ const InputNFT = (props: RadioProps): ReactElement => {
           <FormErrorMessage>{errors.assetData.NFT.symbol.message}</FormErrorMessage>
         )}
       </FormControl>
+
+      <FormControl isInvalid={errors.assetData?.NFT?.description}>
+        <Input
+          as="textarea"
+          type="text"
+          {...register("assetData.NFT.description", {
+            required: assetType === "NFT" && "Please input an NFT description",
+          })}
+          placeholder="Description"
+        />
+        {errors.assetData?.NFT?.description && (
+          <FormErrorMessage>
+            {errors.assetData.NFT.description.message}
+          </FormErrorMessage>
+        )}
+      </FormControl>
     </DropdownRadio>
   )
 }
