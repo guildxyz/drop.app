@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { RoleData } from "contract_interactions/types"
+import useDiscordId from "hooks/useDiscordId"
 import useIsActive from "hooks/useIsActive"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
@@ -23,7 +24,7 @@ import { ReactElement, useMemo } from "react"
 import StopAirdropButton from "./components/StopAirdropButton"
 import useClaim from "./hooks/useClaim"
 import useIsClaimed from "./hooks/useIsClaimed"
-import useIsOwner from "./hooks/useIsOwner"
+import useIsDeployer from "./hooks/useIsDeployer"
 import useRoleData from "./hooks/useRoleData"
 import useRoleName from "./hooks/useRoleName"
 import useUserRoles from "./hooks/useUserRoles"
@@ -34,6 +35,7 @@ type Props = {
   tokenAddress: string
   serverId: string
   urlName: string
+  platform: string
 }
 
 const ClaimCard = ({
@@ -42,22 +44,24 @@ const ClaimCard = ({
   tokenAddress,
   serverId,
   urlName,
+  platform,
 }: Props): ReactElement => {
   const { account } = useWeb3React()
   const userServers = useServersOfUser()
-  const roleData = useRoleData(tokenAddress, serverId, roleId, role)
+  const roleData = useRoleData(tokenAddress, platform, roleId, role)
   const { isLoading, response, onSubmit } = useClaim()
   const successfullyClaimed = !!response
-  const isClaimed = useIsClaimed(serverId, roleId, tokenAddress)
+  const isClaimed = useIsClaimed(platform, roleId, tokenAddress)
   const roleName = useRoleName(serverId, roleId)
   const userRoles = useUserRoles(serverId)
   const isAuthenticated = useIsAuthenticated()
-  const isOwner = useIsOwner(serverId)
-  const isActive = useIsActive(serverId, roleId, tokenAddress)
+  const isDeployer = useIsDeployer(tokenAddress)
+  const { isActive } = useIsActive(platform, roleId, tokenAddress)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
   )
+  const userId = useDiscordId()
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "This role is inactive in this drop"]
@@ -88,8 +92,9 @@ const ClaimCard = ({
       >
         <HStack justifyContent="space-between">
           <Text>{roleName}</Text>
-          {isOwner && (
+          {isDeployer && (
             <StopAirdropButton
+              platform={platform}
               urlName={urlName}
               roleId={roleId}
               serverId={serverId}
@@ -120,9 +125,9 @@ const ClaimCard = ({
               </HStack>
             </AccordionButton>
             <AccordionPanel pb={4}>
-              {roleData?.traits.map(([key, value]) => (
-                <Text key={`${key}-${value}`}>
-                  {key}: {value}
+              {roleData?.traits.map((key, index) => (
+                <Text key={`${key}-${roleData?.values?.[index]}`}>
+                  {key}: {roleData?.values?.[index]}
                 </Text>
               ))}
             </AccordionPanel>
@@ -142,7 +147,15 @@ const ClaimCard = ({
               }
               w="full"
               colorScheme="yellow"
-              onClick={() => onSubmit({ roleId, serverId, tokenAddress })}
+              onClick={() =>
+                onSubmit({
+                  roleId,
+                  serverId,
+                  tokenAddress,
+                  platform: "DISCORD",
+                  userId,
+                })
+              }
             >
               {buttonText}
             </Button>

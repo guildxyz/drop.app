@@ -3,13 +3,13 @@ import { getAirdropContract } from "contracts"
 
 const claimables = (
   chainId: number,
-  serverId: string,
+  platform: string,
   roleId: string,
   tokenAddress: string,
   provider?: Provider
 ): Promise<{ active: boolean; dropped: boolean }> =>
   getAirdropContract(chainId, provider)
-    .claimables(serverId, roleId, tokenAddress)
+    .claimables(platform, roleId, tokenAddress)
     .then(([active, dropped]) => ({ active, dropped }))
     .catch(() => {
       throw new Error("Failed to read claimable NFTs")

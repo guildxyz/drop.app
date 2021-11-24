@@ -1,10 +1,10 @@
 import { Provider } from "@ethersproject/providers"
-import { getAirdropContract } from "contracts"
+import { getDropCenterContract } from "contracts"
 
 const urlById = (
   chainId: number,
   id: number,
   provider?: Provider
-): Promise<string> => getAirdropContract(chainId, provider).urlById(id)
+): Promise<string> => getDropCenterContract(chainId, provider).urlById(id)
 
 export default urlById

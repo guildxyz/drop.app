@@ -22,7 +22,7 @@ type Props = {
 
 const DropPage = ({
   urlName,
-  drop: { roles, tokenAddress, dropName, serverId },
+  drop: { roles, tokenAddress, dropName, serverId, platform },
 }: Props): ReactElement => {
   const { name: serverName, id, icon } = useServerData(serverId)
   const isAuthenticated = useIsAuthenticated()
@@ -65,6 +65,7 @@ const DropPage = ({
       <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
         {Object.entries(roles).map(([roleId, role]) => (
           <ClaimCard
+            platform={platform}
             roleId={roleId}
             role={role}
             key={roleId}

@@ -17,7 +17,7 @@ const stopAirdrop = async (
   chainId: number,
   account: string,
   signer: JsonRpcSigner,
-  { serverId, urlName, roleId, contractId }: StopAirdropData,
+  { serverId, urlName, roleId, contractId, platform }: StopAirdropData,
   provider?: Provider
 ): Promise<StoppedAirdrop> => {
   const numberOfTokens = await numOfDeployedContracts(chainId, account, provider)
@@ -33,6 +33,7 @@ const stopAirdrop = async (
   const signature = await stopAirdropSignature(
     chainId,
     serverId,
+    platform,
     account,
     roleId,
     tokenAddress

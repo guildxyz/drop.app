@@ -12,6 +12,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 type Body = {
   chainId: number
   serverId: string
+  platform: string
   address: string
   roleId: string
   tokenAddress: string
@@ -21,6 +22,7 @@ type Body = {
 const REQUIRED_BODY = [
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
+  { key: "platform", type: "string" },
   { key: "address", type: "string" },
   { key: "roleId", type: "string" },
   { key: "tokenAddress", type: "string" },
@@ -58,6 +60,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     const {
       chainId,
       serverId,
+      platform,
       address,
       roleId,
       tokenAddress,
@@ -98,7 +101,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         ["address", "string", "string", "address", "address", "address"],
         [
           AirdropAddresses[Chains[chainId]],
-          serverId,
+          platform,
           roleId,
           recieverAddress,
           tokenAddress,

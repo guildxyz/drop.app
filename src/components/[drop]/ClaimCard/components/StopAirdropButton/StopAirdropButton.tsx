@@ -9,6 +9,7 @@ type Props = {
   serverId: string
   tokenAddress: string
   urlName: string
+  platform: string
 }
 
 const StopAirdropButton = ({
@@ -16,10 +17,11 @@ const StopAirdropButton = ({
   serverId,
   tokenAddress,
   urlName,
+  platform,
 }: Props): ReactElement => {
   const { isLoading, response, onSubmit } = useStopAirdrop()
   const successfullyStopped = !!response
-  const isActive = useIsActive(serverId, roleId, tokenAddress)
+  const { isActive } = useIsActive(platform, roleId, tokenAddress)
   const contractId = useContractId(tokenAddress)
 
   const loadingText = useMemo(() => {
@@ -35,7 +37,9 @@ const StopAirdropButton = ({
       size="sm"
       isLoading={isLoading || contractId === undefined}
       loadingText={loadingText}
-      onClick={() => onSubmit({ serverId, roleId, contractId, urlName })}
+      onClick={() =>
+        onSubmit({ serverId, roleId, contractId, urlName, platform: "DISCORD" })
+      }
     >
       {successfullyStopped ? "Success" : "Stop"}
     </CtaButton>

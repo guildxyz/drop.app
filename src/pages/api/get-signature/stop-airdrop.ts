@@ -3,7 +3,6 @@ import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/PickRoles/hooks/useRoles"
-import { fetchOwnerId } from "components/[drop]/ClaimCard/hooks/useOwnerId"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
 import { fetchDiscordID } from "hooks/useDiscordId"
@@ -12,6 +11,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 type Body = {
   chainId: number
   serverId: string
+  platform: string
   address: string
   roleId: string
   tokenAddress: string
@@ -20,6 +20,7 @@ type Body = {
 const REQUIRED_BODY = [
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
+  { key: "platform", type: "string" },
   { key: "address", type: "string" },
   { key: "roleId", type: "string" },
   { key: "tokenAddress", type: "string" },
@@ -53,7 +54,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    const { chainId, serverId, address, roleId, tokenAddress }: Body = req.body
+    const { chainId, serverId, platform, address, roleId, tokenAddress }: Body =
+      req.body
     // Is there a deployed airdrop contract on the chain
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
@@ -68,8 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     }
 
     try {
-      const [ownerId, discordId] = await Promise.all([
-        fetchOwnerId("ownerId", serverId),
+      const [discordId] = await Promise.all([
         fetchDiscordID("discordId", address),
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
@@ -78,18 +79,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         }),
       ])
 
-      if (ownerId !== discordId) {
-        res.status(400).json({
-          errors: [{ key: "address", message: "Not the owner of the server." }],
-        })
-        return
-      }
-
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "address", "address", "string"],
         [
           AirdropAddresses[Chains[chainId]],
-          serverId,
+          platform,
           roleId,
           tokenAddress,
           address,

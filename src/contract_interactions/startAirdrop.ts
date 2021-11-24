@@ -12,12 +12,29 @@ const startAirdrop = async (
   provider?: Provider,
   setUploadedImages?: (hashes: Record<string, string>) => void
 ): Promise<string> => {
-  const { contractId, serverId, name, roles, channel, urlName } = data
+  const { contractId, serverId, name, roles, channel, urlName, platform } = data
+
+  const roleIds = roles.map(({ roleId }) => roleId)
   if (contractId === "DEPLOY") throw new Error("Invalid token contract")
 
   const [signature, tokenAddress] = await Promise.all([
-    startAirdropSignature(serverId, account, chainId, urlName),
-    contractsByDeployer(chainId, account, +contractId, provider),
+    startAirdropSignature(
+      serverId,
+      account,
+      chainId,
+      urlName,
+      platform,
+      roleIds
+    ).catch((error) => {
+      console.log("Signature rejected")
+      console.error(error)
+      throw error
+    }),
+    contractsByDeployer(chainId, account, +contractId, provider).catch((error) => {
+      console.log("contractsByDeployer call rejected")
+      console.error(error)
+      throw error
+    }),
   ])
 
   const imagesToUpload = Object.fromEntries(
@@ -27,7 +44,7 @@ const startAirdrop = async (
   )
 
   const hashes = Object.keys(imagesToUpload).length
-    ? await uploadImages(imagesToUpload, serverId, tokenAddress)
+    ? await uploadImages(imagesToUpload, platform, tokenAddress, chainId)
     : {}
 
   // Append the default hash for the roles withour uploaded image
@@ -40,7 +57,6 @@ const startAirdrop = async (
   if (!!setUploadedImages) setUploadedImages(hashes)
 
   const contractRoles = roles.map(({ traits, NFTName, roleId }) => ({
-    roleId,
     tokenImageHash: hashes[roleId],
     NFTName,
     ...traits
@@ -52,7 +68,7 @@ const startAirdrop = async (
           acc.values.push(value)
           return acc
         },
-        { traitTypes: [], values: [] }
+        { traitTypes: ["Server ID", "Role ID"], values: [serverId, roleId] }
       ),
   }))
 
@@ -61,8 +77,10 @@ const startAirdrop = async (
     signer,
     signature,
     urlName,
+    platform,
     name,
     serverId,
+    roleIds,
     contractRoles,
     +contractId,
     channel,

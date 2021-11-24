@@ -1,6 +1,7 @@
 const grantSignature = (
   chainId: number,
   serverId: string,
+  platform: string,
   account: string,
   roleId: string,
   tokenAddress: string,
@@ -12,6 +13,7 @@ const grantSignature = (
     body: JSON.stringify({
       chainId,
       serverId,
+      platform,
       address: account,
       roleId,
       tokenAddress,

@@ -8,6 +8,8 @@ export type ClaimData = {
   serverId: string
   roleId: string
   tokenAddress: string
+  platform: string
+  userId: string
 }
 
 const useClaim = () => {
