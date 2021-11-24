@@ -18,12 +18,12 @@ const multicallConfigs = {
 
 enum AirdropAddresses {
   GOERLI = "0x9c0751108eADa6D81A60e619101199B7465f45A9",
-  POLYGON = "",
+  POLYGON = "0xfeF14F59DC11b1C266ecbF740f0924b18E7e998a",
 }
 
 enum DropCenterAddresses {
   GOERLI = "0xA25e73F5aa65C116A166D28690d6a561f18EA0FD",
-  POLYGON = "",
+  POLYGON = "0x007CB6225B69f0467C4044B560E36f6323dB4b35",
 }
 
 const defaultProviders = {
