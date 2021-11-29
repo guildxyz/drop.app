@@ -1,6 +1,7 @@
-import { Box, Flex, Heading, Img, VStack } from "@chakra-ui/react"
+import { Box, Button, Flex, Heading, Img, VStack } from "@chakra-ui/react"
 import { motion } from "framer-motion"
 import Head from "next/head"
+import { TelegramLogo } from "phosphor-react"
 
 const Page = (): JSX.Element => (
   <>
@@ -23,6 +24,14 @@ const Page = (): JSX.Element => (
             <Img boxSize={28} src="/logo.png" />
           </motion.div>
           <Heading fontFamily="display">Coming soon!</Heading>
+          <Button
+            as="a"
+            colorScheme="telegram"
+            leftIcon={<TelegramLogo />}
+            href="https://t.me/+bMt6N5h4TRAyNjM0"
+          >
+            Join Telegram
+          </Button>
         </VStack>
       </Flex>
     </Box>
