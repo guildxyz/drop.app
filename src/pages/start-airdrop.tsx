@@ -2,10 +2,10 @@ import { VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import NameInput from "components/start-airdrop/NameInput"
-import PickRoles from "components/start-airdrop/PickRoles"
 import SelectAsset from "components/start-airdrop/SelectAsset"
 import SelectPlatform from "components/start-airdrop/SelectPlatform"
 import SubmitButton from "components/start-airdrop/SubmitButton"
+import UploadNFTs from "components/start-airdrop/UploadNFTs"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
@@ -60,7 +60,7 @@ const StartAirdropPage = (): JSX.Element => {
           </Section>
 
           <Section title="Upload your NFTs">
-            <PickRoles />
+            <UploadNFTs />
           </Section>
 
           <Section title="Set NFT collection name and symbol">
