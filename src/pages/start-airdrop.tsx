@@ -1,16 +1,14 @@
 import { VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
-import Asset from "components/start-airdrop/Asset"
 import NameInput from "components/start-airdrop/NameInput"
 import PickRoles from "components/start-airdrop/PickRoles"
-import ServerSelect from "components/start-airdrop/ServerSelect"
+import SelectAsset from "components/start-airdrop/SelectAsset"
 import SubmitButton from "components/start-airdrop/SubmitButton"
-import TokenSelect from "components/start-airdrop/TokenSelect"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
-import { FormProvider, useForm, useWatch } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
   const { query } = useRouter()
@@ -27,7 +25,6 @@ const StartAirdropPage = (): JSX.Element => {
         NFT: {
           name: "",
           symbol: "",
-          description: "",
         },
       },
       inviteLink: "",
@@ -36,14 +33,6 @@ const StartAirdropPage = (): JSX.Element => {
       roles: [],
       platform: "DISCORD",
     },
-  })
-  const serverId = useWatch({
-    name: "serverId",
-    control: methods.control,
-  })
-  const contractId = useWatch({
-    name: "contractId",
-    control: methods.control,
   })
 
   useWarnIfUnsavedChanges(
@@ -60,29 +49,20 @@ const StartAirdropPage = (): JSX.Element => {
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
         <VStack as="form" spacing={10}>
-          <Section title="Choose a server">
-            <ServerSelect />
+          <Section title="Set the platform you want to drop on">{null}</Section>
+
+          <Section title="What kind of asset do you want to drop?">
+            <SelectAsset />
           </Section>
 
-          {serverId?.length > 0 && (
-            <Section title="Pick roles">
-              <PickRoles />
-            </Section>
-          )}
-
-          <Section title="Choose an existing token, or deploy a new one">
-            <TokenSelect />
+          <Section title="Upload your NFTs">
+            <PickRoles />
           </Section>
 
-          {contractId === "DEPLOY" && (
-            <Section title="Choose a type of asset to deploy">
-              <Asset />
-            </Section>
-          )}
-
-          <Section title="Choose a name for your DROP">
+          <Section title="Set NFT collection name and symbol">
             <NameInput />
           </Section>
+
           <SubmitButton />
         </VStack>
       </Layout>
