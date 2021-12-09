@@ -41,7 +41,7 @@ const ServerSelect = (): ReactElement => {
   )
 
   return (
-    <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+    <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} p={5}>
       <FormControl isInvalid={errors.inviteLink}>
         <FormLabel>1. Paste invite link</FormLabel>
         <Input

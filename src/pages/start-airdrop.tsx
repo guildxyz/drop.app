@@ -4,6 +4,7 @@ import Section from "components/common/Section"
 import NameInput from "components/start-airdrop/NameInput"
 import PickRoles from "components/start-airdrop/PickRoles"
 import SelectAsset from "components/start-airdrop/SelectAsset"
+import SelectPlatform from "components/start-airdrop/SelectPlatform"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { useRouter } from "next/router"
@@ -13,6 +14,7 @@ import { FormProvider, useForm } from "react-hook-form"
 const StartAirdropPage = (): JSX.Element => {
   const { query } = useRouter()
 
+  // TODO: Some of this might need to be restructured once we add telegram support
   const methods = useForm({
     shouldFocusError: true,
     mode: "all",
@@ -49,7 +51,9 @@ const StartAirdropPage = (): JSX.Element => {
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
         <VStack as="form" spacing={10}>
-          <Section title="Set the platform you want to drop on">{null}</Section>
+          <Section title="Set the platform you want to drop on">
+            <SelectPlatform />
+          </Section>
 
           <Section title="What kind of asset do you want to drop?">
             <SelectAsset />
