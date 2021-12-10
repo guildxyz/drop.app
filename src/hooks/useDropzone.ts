@@ -7,21 +7,21 @@ import {
 } from "react-dropzone"
 import { v4 as uuidv4 } from "uuid"
 
-type Props = {
-  maxSizeMb?: number
-  onUploadError?: (error?: Error) => void
-  onDrop?: (
-    acceptedFiles: Array<File & { id: string }>,
-    fileRejections: FileRejection[],
-    event: DropEvent
-  ) => void
-} & Omit<DropzoneOptions, "onDrop">
-
 export interface UploadedFile extends File {
   preview: string
   progress: number
   hash?: string
 }
+
+type Props = {
+  maxSizeMb?: number
+  onUploadError?: (error?: Error) => void
+  onDrop?: (
+    acceptedFiles: Array<UploadedFile & { id: string }>,
+    fileRejections: FileRejection[],
+    event: DropEvent
+  ) => void
+} & Omit<DropzoneOptions, "onDrop">
 
 const uploadImages = async (
   files: File[],
@@ -103,14 +103,24 @@ const useDropzone = ({
         .finally(() => progressEventSource.close())
 
       dropzoneOptions.onDrop?.(
-        acceptedFilesOfDrop.map((file, index) => ({ ...file, id: ids[index] })),
+        newUploadedFiles.map((file, index) => ({ ...file, id: ids[index] })),
         fileRejections,
         event
       )
     },
   })
 
-  return { ...dropzone, files }
+  const removeFile = useCallback(
+    (id: string) =>
+      setFiles((prev) => {
+        const newFiles = { ...prev }
+        delete newFiles[id]
+        return newFiles
+      }),
+    []
+  )
+
+  return { ...dropzone, files, removeFile }
 }
 
 export default useDropzone

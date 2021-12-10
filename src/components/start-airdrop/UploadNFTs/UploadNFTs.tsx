@@ -7,6 +7,7 @@ import {
   Grid,
   VStack,
 } from "@chakra-ui/react"
+import { motion } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
 import { ReactElement, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
@@ -21,17 +22,22 @@ const PickRoles = (): ReactElement => {
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
 
-  const { getRootProps, getInputProps, isDragActive, files } = useDropzone({
-    onDrop: (acceptedFiles) =>
-      acceptedFiles.forEach((file) => {
-        setValue(`nfts.${file.id}.name`, "")
-        setValue(`nfts.${file.id}.roles`, [])
-        setValue(`nfts.${file.id}.traits`, [
-          { key: "", value: "" },
-          { key: "", value: "" },
-        ])
-      }),
-  })
+  const { getRootProps, getInputProps, isDragActive, files, removeFile } =
+    useDropzone({
+      onDrop: (acceptedFiles) =>
+        acceptedFiles.forEach((file) => {
+          setValue(`nfts.${file.id}.file`, {
+            preview: file.preview,
+            progress: file.progress,
+          })
+          setValue(`nfts.${file.id}.name`, "")
+          setValue(`nfts.${file.id}.roles`, [])
+          setValue(`nfts.${file.id}.traits`, [
+            { key: "", value: "" },
+            { key: "", value: "" },
+          ])
+        }),
+    })
 
   useEffect(() => {
     Object.entries(files).forEach(([id, file]) => setValue(`nfts.${id}.file`, file))
@@ -61,13 +67,15 @@ const PickRoles = (): ReactElement => {
         <VStack spacing={10}>
           <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
             {Object.keys(nfts).map((id) => (
-              <RoleCard key={id} nftId={id} />
+              <RoleCard key={id} nftId={id} removeFile={removeFile} />
             ))}
-            <AddNftButton
-              dropzoneProps={getRootProps()}
-              inputProps={getInputProps()}
-              isDragActive={isDragActive}
-            />
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <AddNftButton
+                dropzoneProps={getRootProps()}
+                inputProps={getInputProps()}
+                isDragActive={isDragActive}
+              />
+            </motion.div>
           </Grid>
 
           {errors.roles?.message && (

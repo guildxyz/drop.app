@@ -41,12 +41,12 @@ const TraitInput = ({ nftId, traitIndex, unselectTrait }: Props): ReactElement =
           <Input
             borderLeftWidth={0}
             borderLeftRadius={0}
-            borderRightRadius={key.length <= 0 ? 0 : undefined}
+            borderRightRadius={key?.length <= 0 ? 0 : undefined}
             size="sm"
             placeholder={placeholders[traitIndex]?.[1] ?? ""}
             {...register(`nfts.${nftId}.traits.${traitIndex}.value`)}
           />
-          {key.length <= 0 && (
+          {key?.length <= 0 && (
             <InputRightAddon
               p="2"
               onClick={unselectTrait}

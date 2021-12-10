@@ -28,9 +28,10 @@ import TraitInput from "./components/TraitInput"
 
 type Props = {
   nftId: string
+  removeFile: (id: string) => void
 }
 
-const RoleCard = ({ nftId }: Props): ReactElement => {
+const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
   const { register, setValue } = useFormContext()
   const nfts = useWatch({ name: "nfts" })
   const nft = useWatch({ name: `nfts.${nftId}` })
@@ -92,6 +93,7 @@ const RoleCard = ({ nftId }: Props): ReactElement => {
     const newNfts = { ...nfts }
     delete newNfts[nftId]
     setValue("nfts", newNfts)
+    removeFile(nftId)
   }, [setValue, nftId, nfts])
 
   return (
