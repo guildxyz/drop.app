@@ -14,15 +14,6 @@ import AddNftButton from "./components/AddNftButton"
 import RoleCard from "./components/RoleCard"
 import useRoles from "./hooks/useRoles"
 
-const defaultNft = {
-  name: "",
-  traits: [
-    { key: "", value: "" },
-    { key: "", value: "" },
-  ],
-  roles: [],
-}
-
 const PickRoles = (): ReactElement => {
   const { setValue, trigger } = useFormContext()
   const { errors } = useFormState()
@@ -30,17 +21,21 @@ const PickRoles = (): ReactElement => {
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
 
-  const { getRootProps, getInputProps, isDragActive, files } = useDropzone()
+  const { getRootProps, getInputProps, isDragActive, files } = useDropzone({
+    onDrop: (acceptedFiles) =>
+      acceptedFiles.forEach((file) => {
+        setValue(`nfts.${file.id}.name`, "")
+        setValue(`nfts.${file.id}.roles`, [])
+        setValue(`nfts.${file.id}.traits`, [
+          { key: "", value: "" },
+          { key: "", value: "" },
+        ])
+      }),
+  })
 
   useEffect(() => {
-    const newNfts = { ...nfts }
-    Object.entries(files).forEach(
-      ([id, file]) => (newNfts[id] = { ...defaultNft, ...newNfts[id], file })
-    )
-    setValue("nfts", newNfts)
+    Object.entries(files).forEach(([id, file]) => setValue(`nfts.${id}.file`, file))
   }, [files, setValue]) // Not including "nfts" since its value is being updated in the useEffect
-
-  useEffect(() => console.log(files), [files])
 
   return (
     <>

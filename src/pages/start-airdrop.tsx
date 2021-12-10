@@ -29,7 +29,6 @@ const StartAirdropPage = (): JSX.Element => {
         },
       },
       inviteLink: "",
-      contractId: "",
       serverId: "",
       nfts: {},
       platform: "DISCORD",

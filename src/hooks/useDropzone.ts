@@ -1,13 +1,23 @@
 import { useCallback, useState } from "react"
-import { DropzoneOptions, useDropzone as useReactDropzone } from "react-dropzone"
+import {
+  DropEvent,
+  DropzoneOptions,
+  FileRejection,
+  useDropzone as useReactDropzone,
+} from "react-dropzone"
 import { v4 as uuidv4 } from "uuid"
 
 type Props = {
   maxSizeMb?: number
   onUploadError?: (error?: Error) => void
-} & DropzoneOptions
+  onDrop?: (
+    acceptedFiles: Array<File & { id: string }>,
+    fileRejections: FileRejection[],
+    event: DropEvent
+  ) => void
+} & Omit<DropzoneOptions, "onDrop">
 
-interface UploadedFile extends File {
+export interface UploadedFile extends File {
   preview: string
   progress: number
   hash?: string
@@ -92,7 +102,11 @@ const useDropzone = ({
         .catch(onUploadError)
         .finally(() => progressEventSource.close())
 
-      dropzoneOptions.onDrop?.(acceptedFilesOfDrop, fileRejections, event)
+      dropzoneOptions.onDrop?.(
+        acceptedFilesOfDrop.map((file, index) => ({ ...file, id: ids[index] })),
+        fileRejections,
+        event
+      )
     },
   })
 

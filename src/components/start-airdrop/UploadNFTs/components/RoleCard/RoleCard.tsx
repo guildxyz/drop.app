@@ -13,9 +13,10 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Select } from "components/common/ChakraReactSelect"
+import { NftsField } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import Image from "next/image"
 import { Plus, TrashSimple } from "phosphor-react"
-import { ReactElement, useCallback } from "react"
+import { ReactElement, useCallback, useEffect, useMemo } from "react"
 import {
   useFieldArray,
   useFormContext,
@@ -45,6 +46,30 @@ const RoleCard = ({ nftId }: Props): ReactElement => {
     name: `nfts.${nftId}.traits`,
   })
 
+  const pickedRoles = useMemo(
+    () =>
+      Object.values(nfts as NftsField).reduce(
+        (acc, curr) => [...acc, ...(curr.roles ?? [])],
+        []
+      ),
+    [nfts]
+  )
+
+  const filteredRoleEntries = useMemo(
+    () => Object.entries(roles ?? {}).filter(([id]) => !pickedRoles.includes(id)),
+    [pickedRoles, roles]
+  )
+
+  const handleSelectChange = useCallback(
+    (items) => {
+      setValue(
+        `nfts.${nftId}.roles`,
+        items.map(({ value }) => value)
+      )
+    },
+    [setValue, nftId]
+  )
+
   const addTrait = useCallback(
     () =>
       append({
@@ -53,6 +78,15 @@ const RoleCard = ({ nftId }: Props): ReactElement => {
       }),
     [append]
   )
+
+  useEffect(() => {
+    // This condition should only be needed for dev mode
+    if (traitFields.length <= 0) {
+      addTrait()
+      addTrait()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const removeNft = useCallback(() => {
     const newNfts = { ...nfts }
@@ -120,7 +154,7 @@ const RoleCard = ({ nftId }: Props): ReactElement => {
           <VStack>
             {traitFields.map((field, traitIndex) => (
               <TraitInput
-                key={field.id}
+                key={`${nftId}-${field.id}`}
                 nftId={nftId}
                 traitIndex={traitIndex}
                 unselectTrait={() => remove(traitIndex)}
@@ -143,7 +177,8 @@ const RoleCard = ({ nftId }: Props): ReactElement => {
               size="sm"
               placeholder="Select roles"
               isMulti
-              options={Object.entries(roles).map(([id, name]) => ({
+              onChange={handleSelectChange}
+              options={filteredRoleEntries.map(([id, name]) => ({
                 img: "",
                 label: name,
                 value: id,
