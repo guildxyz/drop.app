@@ -1,60 +1,47 @@
 import { FormControl, FormErrorMessage, Grid, VStack } from "@chakra-ui/react"
-import { ReactElement, useMemo } from "react"
-import {
-  useFieldArray,
-  useFormContext,
-  useFormState,
-  useWatch,
-} from "react-hook-form"
-import AddRoleButton from "./components/AddRoleButton"
+import useDropzone from "hooks/useDropzone"
+import { ReactElement, useEffect } from "react"
+import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import AddNftButton from "./components/AddNftButton"
 import RoleCard from "./components/RoleCard"
-import useRoles from "./hooks/useRoles"
 
 const PickRoles = (): ReactElement => {
+  const { setValue } = useFormContext()
   const { errors } = useFormState()
-  const { getValues } = useFormContext()
+  const nfts = useWatch({ name: "nfts" })
 
-  const serverId = useWatch({ name: "serverId" })
-  const roles = useRoles(serverId)
+  const { getRootProps, getInputProps, isDragActive, files, progresses } =
+    useDropzone()
 
-  const {
-    fields: roleFields,
-    append,
-    remove,
-  } = useFieldArray({
-    name: "roles",
-  })
-
-  const selectedRoles = useMemo(
-    () => roleFields.map((_, index) => getValues(`roles.${index}.roleId`)),
-    [roleFields, getValues]
-  )
+  useEffect(() => {
+    const newNfts = { ...nfts }
+    Object.entries(files).forEach(
+      ([id, file]) =>
+        (newNfts[id] = {
+          file,
+          name: newNfts[id]?.name ?? "",
+          traits: newNfts[id]?.traits ?? [
+            { key: "", value: "" },
+            { key: "", value: "" },
+          ],
+          roles: newNfts[id]?.roles ?? [],
+        })
+    )
+    setValue("nfts", newNfts)
+  }, [files, setValue]) // Not including "nfts" since its value is being updated in the useEffect
 
   return (
     <FormControl isInvalid={errors.roles?.message?.length > 0}>
       <VStack spacing={10}>
-        <Grid width="full" templateColumns="repeat(5, 1fr)" gap={5}>
-          {Object.entries(roles ?? {})
-            .filter(([id]) => !selectedRoles.includes(id))
-            .map(([id, name]) => (
-              <AddRoleButton
-                key={id}
-                setSelected={() => append({ roleId: id })}
-                roleName={name}
-                roleId={id}
-              />
-            ))}
-        </Grid>
-
         <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
-          {roleFields.map((field, index) => (
-            <RoleCard
-              key={field.id}
-              roleId={selectedRoles[index]}
-              index={index}
-              unselectRole={() => remove(index)}
-            />
+          {Object.keys(nfts).map((id) => (
+            <RoleCard key={id} nftId={id} progress={progresses[id] ?? 0} />
           ))}
+          <AddNftButton
+            dropzoneProps={getRootProps()}
+            inputProps={getInputProps()}
+            isDragActive={isDragActive}
+          />
         </Grid>
 
         {errors.roles?.message && (

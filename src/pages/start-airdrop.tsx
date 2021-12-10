@@ -32,7 +32,7 @@ const StartAirdropPage = (): JSX.Element => {
       inviteLink: "",
       contractId: "",
       serverId: "",
-      roles: [],
+      nfts: {},
       platform: "DISCORD",
     },
   })

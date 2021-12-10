@@ -1,21 +1,21 @@
 import {
-  AspectRatio,
   Box,
   Button,
-  Center,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
   HStack,
   IconButton,
   Input,
+  Progress,
   Text,
   VStack,
 } from "@chakra-ui/react"
-import useIsActive from "hooks/useIsActive"
+import { Select } from "components/common/ChakraReactSelect"
 import Image from "next/image"
-import { Plus, X } from "phosphor-react"
-import { ReactElement, useEffect, useState } from "react"
+import { Plus, TrashSimple } from "phosphor-react"
+import { ReactElement, useCallback } from "react"
 import {
   useFieldArray,
   useFormContext,
@@ -23,147 +23,138 @@ import {
   useWatch,
 } from "react-hook-form"
 import useRoles from "../../hooks/useRoles"
-import useRoleTokenAddress from "../../hooks/useRoleTokenAddress"
-import FileUpload from "../FileUpload"
 import TraitInput from "./components/TraitInput"
 
 type Props = {
-  index: number
-  roleId: string
-  unselectRole: () => void
+  nftId: string
+  progress: number
 }
 
-const validateFiles = (value: FileList) => {
-  // if (value?.length < 1) return "File is required"
-  for (const actFile of Array.from(value)) {
-    const fsMb = actFile.size / (1024 * 1024)
-    const MAX_FILE_SIZE = 10
-    if (fsMb > MAX_FILE_SIZE) {
-      return "Max file size 10mb"
-    }
-  }
-  return true
-}
-
-const RoleCard = ({ roleId, index, unselectRole }: Props): ReactElement => {
-  const { register } = useFormContext()
+const RoleCard = ({ nftId, progress }: Props): ReactElement => {
+  const { register, setValue } = useFormContext()
+  const nfts = useWatch({ name: "nfts" })
+  const nft = useWatch({ name: `nfts.${nftId}` })
+  const { errors } = useFormState()
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
-  const [imagePreview, setImagePreview] = useState<string>("")
-  const { errors } = useFormState()
-  const contractId = useWatch({ name: "contractId" })
-  const platform = useWatch({ name: "platform" })
-  const tokenAddress = useRoleTokenAddress(contractId)
-  const { isDropped } = useIsActive(platform, roleId, tokenAddress)
 
   const {
     fields: traitFields,
     append,
     remove,
   } = useFieldArray({
-    name: `roles.${index}.traits`,
+    name: `nfts.${nftId}.traits`,
   })
 
-  const addTrait = () =>
-    append({
-      key: "",
-      value: "",
-    })
+  const addTrait = useCallback(
+    () =>
+      append({
+        key: "",
+        value: "",
+      }),
+    [append]
+  )
 
-  useEffect(() => {
-    // This condition should only be needed for dev mode
-    if (traitFields.length <= 0) {
-      addTrait()
-      addTrait()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    if (isDropped !== undefined && !!isDropped) unselectRole()
-  }, [isDropped, unselectRole])
+  const removeNft = useCallback(() => {
+    const newNfts = { ...nfts }
+    delete newNfts[nftId]
+    setValue("nfts", newNfts)
+  }, [setValue, nftId, nfts])
 
   return (
-    <VStack backgroundColor="primary.200" borderRadius="lg" padding={5}>
-      <HStack width="full" justifyContent="space-between">
-        <Text fontSize="xl" fontWeight="bold">
-          {roles[roleId]}
-        </Text>
-        <Center>
-          <IconButton
-            size="sm"
-            borderRadius="full"
-            aria-label={`Unselect role ${roles[roleId]}`}
-            icon={<X />}
-            onClick={unselectRole}
-          />
-        </Center>
-      </HStack>
-
-      {imagePreview.length > 0 && (
-        <AspectRatio width="full" position="relative" ratio={1}>
-          <Image
-            src={imagePreview}
-            alt="Uploaded NFT image"
-            layout="fill"
-            objectFit="cover"
-          />
-        </AspectRatio>
-      )}
-
-      <Box width="full">
-        <FileUpload
-          accept="image/*"
-          register={register(`roles.${index}.image`, {
-            validate: validateFiles,
-            onChange: ({
-              target: {
-                files: [file],
-              },
-            }) => {
-              if (file) setImagePreview(URL.createObjectURL(file))
-            },
-          })}
-        >
-          <Button size="sm">Upload image</Button>
-        </FileUpload>
-      </Box>
-
-      <FormControl isInvalid={errors.roles?.[index]?.NFTName?.message?.length > 0}>
-        <FormLabel>Name</FormLabel>
-        <Input
-          size="sm"
-          {...register(`roles.${index}.NFTName`, {
-            required: "Please give a name for this role NFT",
-          })}
+    <VStack
+      backgroundColor="primary.200"
+      borderRadius="3xl"
+      overflow="hidden"
+      spacing={0}
+    >
+      <Box
+        height={200}
+        width="full"
+        position="relative"
+        overflow="hidden"
+        minHeight="150"
+      >
+        <Image
+          src={nft.file.preview}
+          alt="Uploaded NFT image"
+          layout="fill"
+          objectFit="cover"
         />
-        {errors.roles?.[index]?.NFTName?.message?.length > 0 && (
-          <FormErrorMessage>{errors.roles[index].NFTName.message}</FormErrorMessage>
-        )}
-      </FormControl>
+      </Box>
+      <Progress
+        width="full"
+        value={progress * 100}
+        colorScheme="yellow"
+        size="xs"
+        backgroundColor="transparent"
+      />
 
-      <FormControl>
-        <FormLabel>Set traits</FormLabel>
-
-        <VStack>
-          {traitFields.map((field, traitIndex) => (
-            <TraitInput
-              key={field.id}
-              roleIndex={index}
-              traitIndex={traitIndex}
-              unselectTrait={() => remove(traitIndex)}
+      <VStack p={5}>
+        <FormControl isInvalid={errors.nfts?.[nftId]?.name?.message?.length > 0}>
+          <HStack>
+            <Input
+              placeholder="name"
+              size="sm"
+              {...register(`nfts.${nftId}.name`, {
+                required: "Please give a name for this NFT",
+              })}
             />
-          ))}
+            <IconButton
+              size="sm"
+              variant="ghost"
+              borderRadius="full"
+              aria-label="Unselect nft"
+              color="red.600"
+              icon={<TrashSimple />}
+              onClick={removeNft}
+            />
+          </HStack>
+          {errors.nfts?.[nftId]?.name?.message?.length > 0 && (
+            <FormErrorMessage>{errors.nfts[nftId].name.message}</FormErrorMessage>
+          )}
+        </FormControl>
 
-          <IconButton
-            onClick={addTrait}
-            width="full"
-            size="xs"
-            icon={<Plus />}
-            aria-label="Add a new trait"
-          />
-        </VStack>
-      </FormControl>
+        <FormControl>
+          <FormLabel>Properties</FormLabel>
+
+          <VStack>
+            {traitFields.map((field, traitIndex) => (
+              <TraitInput
+                key={field.id}
+                nftId={nftId}
+                traitIndex={traitIndex}
+                unselectTrait={() => remove(traitIndex)}
+              />
+            ))}
+
+            <Button onClick={addTrait} width="full" size="sm" leftIcon={<Plus />}>
+              <Text fontSize="xs">Add property</Text>
+            </Button>
+          </VStack>
+        </FormControl>
+
+        <Divider />
+
+        <FormControl>
+          <FormLabel>Roles to drop to</FormLabel>
+
+          {roles ? (
+            <Select
+              size="sm"
+              placeholder="Select roles"
+              isMulti
+              options={Object.entries(roles).map(([id, name]) => ({
+                img: "",
+                label: name,
+                value: id,
+              }))}
+            />
+          ) : (
+            <Text>Select a server to be able to select roles</Text>
+          )}
+        </FormControl>
+      </VStack>
     </VStack>
   )
 }
