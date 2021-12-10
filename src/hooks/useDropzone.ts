@@ -43,19 +43,16 @@ const useDropzone = ({
   const [files, setFiles] = useState<Record<string, UploadedFile>>({})
 
   const setupEventSource = useCallback((clientId: string) => {
-    console.log(`Opening SSE, ${process.env.NEXT_PUBLIC_UPLOADER_API}/${clientId}`)
     const source = new EventSource(
       `${process.env.NEXT_PUBLIC_UPLOADER_API}/${clientId}`
     )
 
     const progressHandler = (event) => {
-      console.log("progress event")
       const [id, progress] = JSON.parse((event as Event & { data: string }).data)
       setFiles((prev) => ({ ...prev, [id]: { ...prev[id], progress } }))
     }
 
     const hashHandler = (event) => {
-      console.log("hash event")
       const [id, hash] = JSON.parse((event as Event & { data: string }).data)
       setFiles((prev) => ({ ...prev, [id]: { ...prev[id], hash } }))
     }
