@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react"
+import { Flex, VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import NameInput from "components/start-airdrop/NameInput"
@@ -19,7 +19,6 @@ const StartAirdropPage = (): JSX.Element => {
     shouldFocusError: true,
     mode: "all",
     defaultValues: {
-      name: "",
       urlName: "",
       channel: "",
       assetType: "NFT",
@@ -67,7 +66,9 @@ const StartAirdropPage = (): JSX.Element => {
             <NameInput />
           </Section>
 
-          <SubmitButton />
+          <Flex width="full" justifyContent="end">
+            <SubmitButton />
+          </Flex>
         </VStack>
       </Layout>
     </FormProvider>

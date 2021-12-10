@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useState } from "react"
 import { DropzoneOptions, useDropzone as useReactDropzone } from "react-dropzone"
 import { v4 as uuidv4 } from "uuid"
 
@@ -40,11 +40,30 @@ const useDropzone = ({
   maxSizeMb = 10,
   ...dropzoneOptions
 }: Props = {}) => {
-  // Needed to handle SSE
-  const progressEventSource = useRef<EventSource | null>(null)
-  const uploadProgressId = useRef<string>(uuidv4())
-
   const [files, setFiles] = useState<Record<string, UploadedFile>>({})
+
+  const setupEventSource = useCallback((clientId: string) => {
+    console.log(`Opening SSE, ${process.env.NEXT_PUBLIC_UPLOADER_API}/${clientId}`)
+    const source = new EventSource(
+      `${process.env.NEXT_PUBLIC_UPLOADER_API}/${clientId}`
+    )
+
+    const progressHandler = (event) => {
+      console.log("progress event")
+      const [id, progress] = JSON.parse((event as Event & { data: string }).data)
+      setFiles((prev) => ({ ...prev, [id]: { ...prev[id], progress } }))
+    }
+
+    const hashHandler = (event) => {
+      console.log("hash event")
+      const [id, hash] = JSON.parse((event as Event & { data: string }).data)
+      setFiles((prev) => ({ ...prev, [id]: { ...prev[id], hash } }))
+    }
+
+    source.addEventListener("progress", progressHandler)
+    source.addEventListener("hash", hashHandler)
+    return source
+  }, [])
 
   // Start uploading files on drop event. After the POST request, the backend will start sending SSE messages
   const dropzone = useReactDropzone({
@@ -53,6 +72,9 @@ const useDropzone = ({
     noClick: dropzoneOptions.noClick ?? true,
     maxSize: dropzoneOptions.maxSize ?? maxSizeMb * 1024 * 1024,
     onDrop: (acceptedFilesOfDrop, fileRejections, event) => {
+      const uploadProgressId = uuidv4()
+      const progressEventSource = setupEventSource(uploadProgressId)
+
       const newUploadedFiles = acceptedFilesOfDrop.map((file) => ({
         ...file,
         preview: URL.createObjectURL(file),
@@ -68,35 +90,14 @@ const useDropzone = ({
         ),
       }))
 
-      uploadImages(acceptedFilesOfDrop, uploadProgressId.current, ids).catch(
-        onUploadError
-      )
+      // Intentionally not awaiting here
+      uploadImages(acceptedFilesOfDrop, uploadProgressId, ids)
+        .catch(onUploadError)
+        .finally(() => progressEventSource.close())
 
       dropzoneOptions.onDrop?.(acceptedFilesOfDrop, fileRejections, event)
     },
   })
-
-  // Set up SSE client on mount
-  useEffect(() => {
-    const source = new EventSource(
-      `${process.env.NEXT_PUBLIC_UPLOADER_API}/${uploadProgressId.current}`
-    )
-
-    source.addEventListener("progress", (event) => {
-      const [id, progress] = JSON.parse((event as Event & { data: string }).data)
-      setFiles((prev) => ({ ...prev, [id]: { ...prev[id], progress } }))
-    })
-
-    source.addEventListener("hash", (event) => {
-      const [id, hash] = JSON.parse((event as Event & { data: string }).data)
-      setFiles((prev) => ({ ...prev, [id]: { ...prev[id], hash } }))
-    })
-
-    progressEventSource.current = source
-  }, [])
-
-  // Disconnect SSE on unmount
-  useEffect(() => () => progressEventSource.current?.close(), [progressEventSource])
 
   return { ...dropzone, files }
 }

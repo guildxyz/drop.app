@@ -50,6 +50,7 @@ const TraitInput = ({ nftId, traitIndex, unselectTrait }: Props): ReactElement =
             <InputRightAddon
               p="2"
               onClick={unselectTrait}
+              cursor="pointer"
               _hover={{ backgroundColor: "blackAlpha.50" }}
               _active={{ backgroundColor: "blackAlpha.200" }}
             >
