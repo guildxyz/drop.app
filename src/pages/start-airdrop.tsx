@@ -1,4 +1,5 @@
-import { Flex, VStack } from "@chakra-ui/react"
+import { Alert, AlertDescription, AlertIcon, Flex, VStack } from "@chakra-ui/react"
+import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
 import NameInput from "components/start-airdrop/NameInput"
@@ -12,6 +13,7 @@ import { useEffect } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
+  const { account } = useWeb3React()
   const { query } = useRouter()
 
   // TODO: Some of this might need to be restructured once we add telegram support
@@ -44,6 +46,18 @@ const StartAirdropPage = (): JSX.Element => {
       methods.setValue("inviteLink", `https://discord.gg/${query.inviteCode}`)
     }
   }, [query, methods])
+
+  if (!account)
+    return (
+      <Layout title="Drop to your community">
+        <Alert status="error">
+          <AlertIcon />
+          <AlertDescription>
+            Please connect your wallet in order to continue!
+          </AlertDescription>
+        </Alert>
+      </Layout>
+    )
 
   return (
     <FormProvider {...methods}>
