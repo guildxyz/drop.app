@@ -27,10 +27,9 @@ import TraitInput from "./components/TraitInput"
 
 type Props = {
   nftId: string
-  progress: number
 }
 
-const RoleCard = ({ nftId, progress }: Props): ReactElement => {
+const RoleCard = ({ nftId }: Props): ReactElement => {
   const { register, setValue } = useFormContext()
   const nfts = useWatch({ name: "nfts" })
   const nft = useWatch({ name: `nfts.${nftId}` })
@@ -84,7 +83,7 @@ const RoleCard = ({ nftId, progress }: Props): ReactElement => {
       </Box>
       <Progress
         width="full"
-        value={progress * 100}
+        value={nft.file.progress * 100}
         colorScheme="yellow"
         size="xs"
         backgroundColor="transparent"

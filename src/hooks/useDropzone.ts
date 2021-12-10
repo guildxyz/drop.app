@@ -9,12 +9,13 @@ type Props = {
 
 interface UploadedFile extends File {
   preview: string
+  progress: number
   hash?: string
 }
 
 const uploadImages = async (
   files: File[],
-  clientId: number,
+  clientId: string,
   ids: string[]
 ): Promise<string[]> => {
   const formData = new FormData()
@@ -41,10 +42,9 @@ const useDropzone = ({
 }: Props = {}) => {
   // Needed to handle SSE
   const progressEventSource = useRef<EventSource | null>(null)
-  const uploadProgressId = useRef<number>(+Date.now())
+  const uploadProgressId = useRef<string>(uuidv4())
 
   const [files, setFiles] = useState<Record<string, UploadedFile>>({})
-  const [progresses, setProgresses] = useState<Record<string, number>>({})
 
   // Start uploading files on drop event. After the POST request, the backend will start sending SSE messages
   const dropzone = useReactDropzone({
@@ -56,6 +56,7 @@ const useDropzone = ({
       const newUploadedFiles = acceptedFilesOfDrop.map((file) => ({
         ...file,
         preview: URL.createObjectURL(file),
+        progress: 0,
       }))
 
       const ids: string[] = newUploadedFiles.map(() => uuidv4())
@@ -83,23 +84,12 @@ const useDropzone = ({
 
     source.addEventListener("progress", (event) => {
       const [id, progress] = JSON.parse((event as Event & { data: string }).data)
-
-      setProgresses((prev) => ({
-        ...prev,
-        [id]: progress,
-      }))
+      setFiles((prev) => ({ ...prev, [id]: { ...prev[id], progress } }))
     })
 
     source.addEventListener("hash", (event) => {
       const [id, hash] = JSON.parse((event as Event & { data: string }).data)
-
-      setFiles((prev) => ({
-        ...prev,
-        [id]: {
-          ...prev[id],
-          hash,
-        },
-      }))
+      setFiles((prev) => ({ ...prev, [id]: { ...prev[id], hash } }))
     })
 
     progressEventSource.current = source
@@ -108,7 +98,7 @@ const useDropzone = ({
   // Disconnect SSE on unmount
   useEffect(() => () => progressEventSource.current?.close(), [progressEventSource])
 
-  return { ...dropzone, files, progresses }
+  return { ...dropzone, files }
 }
 
 export default useDropzone
