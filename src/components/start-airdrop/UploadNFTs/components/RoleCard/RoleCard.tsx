@@ -136,10 +136,10 @@ const RoleCard = ({ nftId, progress }: Props): ReactElement => {
 
         <Divider />
 
-        <FormControl>
-          <FormLabel>Roles to drop to</FormLabel>
+        {roles && (
+          <FormControl>
+            <FormLabel>Roles to drop to</FormLabel>
 
-          {roles ? (
             <Select
               size="sm"
               placeholder="Select roles"
@@ -150,10 +150,8 @@ const RoleCard = ({ nftId, progress }: Props): ReactElement => {
                 value: id,
               }))}
             />
-          ) : (
-            <Text>Select a server to be able to select roles</Text>
-          )}
-        </FormControl>
+          </FormControl>
+        )}
       </VStack>
     </VStack>
   )
