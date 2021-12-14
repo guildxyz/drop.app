@@ -31,7 +31,7 @@ const SubmitButton = (): ReactElement => {
       isLoading={isLoading}
       loadingText="Starting airdrop"
       onClick={(event) => {
-        if (nfts.length >= 0) {
+        if (nfts.length <= 0) {
           setError("nfts", { message: "Choose at least one NFT" })
           handleSubmit(() => {})()
           document.getElementById("upload-nfts").focus()
