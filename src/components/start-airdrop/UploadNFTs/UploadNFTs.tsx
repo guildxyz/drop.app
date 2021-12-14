@@ -10,7 +10,7 @@ import {
 import CardMotionWrapper from "components/common/CardMotionWrapper"
 import { AnimateSharedLayout } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
-import { ReactElement } from "react"
+import { ReactElement, useEffect } from "react"
 import {
   useFieldArray,
   useFormContext,
@@ -23,13 +23,17 @@ import NftCard from "./components/NftCard"
 import useRoles from "./hooks/useRoles"
 
 const UploadNFTs = (): ReactElement => {
-  const { setValue, trigger } = useFormContext()
+  const { setValue, trigger, setError } = useFormContext()
   const { errors } = useFormState()
   const nfts = useWatch({ name: "nfts" })
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
 
   const { fields, append, remove } = useFieldArray({ name: "nfts" })
+
+  useEffect(() => {
+    if (fields.length <= 0) setError("nfts", { message: "Choose at least one NFT" })
+  }, [fields, trigger, setError])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -84,8 +88,8 @@ const UploadNFTs = (): ReactElement => {
         </Alert>
       )}
 
-      <FormControl isInvalid={errors.roles?.message?.length > 0}>
-        <VStack spacing={10}>
+      <FormControl isInvalid={errors.nfts?.message?.length > 0}>
+        <VStack spacing={5}>
           <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
             <AnimateSharedLayout>
               {fields.map((field, index) => (
@@ -105,9 +109,7 @@ const UploadNFTs = (): ReactElement => {
             </AnimateSharedLayout>
           </Grid>
 
-          {errors.roles?.message && (
-            <FormErrorMessage>{errors.roles.message}</FormErrorMessage>
-          )}
+          <FormErrorMessage w="full">{errors.nfts?.message}</FormErrorMessage>
         </VStack>
       </FormControl>
     </>

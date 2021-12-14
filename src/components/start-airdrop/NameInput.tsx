@@ -17,7 +17,7 @@ const NameInput = (): ReactElement => {
   useEffect(() => setValue("urlName", slugify(nftName)), [nftName, setValue])
 
   return (
-    <HStack spacing={2}>
+    <HStack spacing={2} alignItems="start">
       <FormControl isInvalid={!!errors?.assetData?.NFT?.name} maxWidth="sm">
         <Input
           type="text"
@@ -36,9 +36,7 @@ const NameInput = (): ReactElement => {
             },
           })}
         />
-        {errors?.assetData?.NFT?.name?.message && (
-          <FormErrorMessage>{errors.assetData?.NFT.name.message}</FormErrorMessage>
-        )}
+        <FormErrorMessage>{errors?.assetData?.NFT?.name?.message}</FormErrorMessage>
       </FormControl>
 
       <FormControl isInvalid={!!errors?.assetData?.NFT?.symbol}>
@@ -50,9 +48,9 @@ const NameInput = (): ReactElement => {
             required: "This field is required",
           })}
         />
-        {errors?.assetData?.NFT?.symbol?.message && (
-          <FormErrorMessage>{errors.assetData.NFT.symbol.message}</FormErrorMessage>
-        )}
+        <FormErrorMessage>
+          {errors?.assetData?.NFT?.symbol?.message}
+        </FormErrorMessage>
       </FormControl>
     </HStack>
   )
