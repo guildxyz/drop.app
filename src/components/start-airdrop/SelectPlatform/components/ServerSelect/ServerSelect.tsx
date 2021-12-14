@@ -107,9 +107,7 @@ const ServerSelect = (): ReactElement => {
           ))}
         </Select>
 
-        {errors.channel?.message && (
-          <FormErrorMessage>{errors.channel.message}</FormErrorMessage>
-        )}
+        <FormErrorMessage>{errors?.channel?.message}</FormErrorMessage>
       </FormControl>
     </Grid>
   )

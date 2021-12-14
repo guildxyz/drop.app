@@ -58,9 +58,7 @@ const TokenSelect = (): ReactElement => {
           <Text>Deploy a new asset</Text>
         </DeployedToken>
       </Grid>
-      {errors.contractId?.message?.length > 0 && (
-        <FormErrorMessage>{errors.contractId.message}</FormErrorMessage>
-      )}
+      <FormErrorMessage>{errors?.contractId?.message}</FormErrorMessage>
     </FormControl>
   )
 }
