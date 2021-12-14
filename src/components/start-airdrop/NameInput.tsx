@@ -18,7 +18,7 @@ const NameInput = (): ReactElement => {
 
   return (
     <HStack spacing={2}>
-      <FormControl isInvalid={!!errors?.name} maxWidth="sm">
+      <FormControl isInvalid={!!errors?.assetData?.NFT?.name} maxWidth="sm">
         <Input
           type="text"
           placeholder="name"
@@ -36,12 +36,12 @@ const NameInput = (): ReactElement => {
             },
           })}
         />
-        {errors?.name?.message && (
-          <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+        {errors?.assetData?.NFT?.name?.message && (
+          <FormErrorMessage>{errors.assetData?.NFT.name.message}</FormErrorMessage>
         )}
       </FormControl>
 
-      <FormControl isInvalid={!!errors?.name}>
+      <FormControl isInvalid={!!errors?.assetData?.NFT?.symbol}>
         <Input
           maxWidth="24"
           type="text"
@@ -50,8 +50,8 @@ const NameInput = (): ReactElement => {
             required: "This field is required",
           })}
         />
-        {errors?.name?.message && (
-          <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+        {errors?.assetData?.NFT?.symbol?.message && (
+          <FormErrorMessage>{errors.assetData.NFT.symbol.message}</FormErrorMessage>
         )}
       </FormControl>
     </HStack>

@@ -1,33 +1,24 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import startAirdrop from "contract_interactions/startAirdrop"
-import { UploadedFile } from "hooks/useDropzone"
 import useSubmit from "hooks/useSubmit"
 import useToast from "hooks/useToast"
 import { useRouter } from "next/router"
 
 export type NftField = {
-  file: UploadedFile
+  file: File
   traits: Array<{
     key: string
     value: string
   }>
   name: string
   roles: string[]
+  hash: string
+  progress: number
+  preview: string
 }
 
-export type NftsField = Record<
-  string,
-  {
-    file: UploadedFile
-    traits: Array<{
-      key: string
-      value: string
-    }>
-    name: string
-    roles: string[]
-  }
->
+export type NftsField = Record<string, NftField>
 
 export type StartAirdropData = {
   urlName: string

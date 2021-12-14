@@ -32,7 +32,7 @@ const StartAirdropPage = (): JSX.Element => {
       },
       inviteLink: "",
       serverId: "",
-      nfts: {},
+      nfts: [],
       platform: "DISCORD",
     },
   })

@@ -16,7 +16,7 @@ import { Select } from "components/common/ChakraReactSelect"
 import { NftsField } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import Image from "next/image"
 import { Plus, TrashSimple } from "phosphor-react"
-import { ReactElement, useCallback, useEffect, useMemo } from "react"
+import { ReactElement, useCallback, useMemo } from "react"
 import {
   useFieldArray,
   useFormContext,
@@ -27,14 +27,14 @@ import useRoles from "../../hooks/useRoles"
 import TraitInput from "./components/TraitInput"
 
 type Props = {
-  nftId: string
-  removeFile: (id: string) => void
+  nftIndex: number
+  removeNft: () => void
 }
 
-const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
+const RoleCard = ({ nftIndex, removeNft }: Props): ReactElement => {
   const { register, setValue } = useFormContext()
   const nfts = useWatch({ name: "nfts" })
-  const nft = useWatch({ name: `nfts.${nftId}` })
+  const nft = useWatch({ name: `nfts.${nftIndex}` })
   const { errors } = useFormState()
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
@@ -44,7 +44,7 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
     append,
     remove,
   } = useFieldArray({
-    name: `nfts.${nftId}.traits`,
+    name: `nfts.${nftIndex}.traits`,
   })
 
   const pickedRoles = useMemo(
@@ -64,11 +64,11 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
   const handleSelectChange = useCallback(
     (items) => {
       setValue(
-        `nfts.${nftId}.roles`,
+        `nfts.${nftIndex}.roles`,
         items.map(({ value }) => value)
       )
     },
-    [setValue, nftId]
+    [setValue, nftIndex]
   )
 
   const addTrait = useCallback(
@@ -79,22 +79,6 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
       }),
     [append]
   )
-
-  useEffect(() => {
-    // This condition should only be needed for dev mode
-    if (traitFields.length <= 0) {
-      addTrait()
-      addTrait()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const removeNft = useCallback(() => {
-    const newNfts = { ...nfts }
-    delete newNfts[nftId]
-    setValue("nfts", newNfts)
-    removeFile(nftId)
-  }, [setValue, nftId, nfts])
 
   return (
     <VStack
@@ -111,7 +95,7 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
         minHeight="150"
       >
         <Image
-          src={nft.file.preview}
+          src={nft.preview}
           alt="Uploaded NFT image"
           layout="fill"
           objectFit="cover"
@@ -119,19 +103,19 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
       </Box>
       <Progress
         width="full"
-        value={nft.file.progress * 100}
+        value={nft.progress * 100}
         colorScheme="yellow"
         size="xs"
         backgroundColor="transparent"
       />
 
       <VStack p={5}>
-        <FormControl isInvalid={errors.nfts?.[nftId]?.name?.message?.length > 0}>
+        <FormControl isInvalid={errors.nfts?.[nftIndex]?.name?.message?.length > 0}>
           <HStack>
             <Input
               placeholder="name"
               size="sm"
-              {...register(`nfts.${nftId}.name`, {
+              {...register(`nfts.${nftIndex}.name`, {
                 required: "Please give a name for this NFT",
               })}
             />
@@ -145,8 +129,8 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
               onClick={removeNft}
             />
           </HStack>
-          {errors.nfts?.[nftId]?.name?.message?.length > 0 && (
-            <FormErrorMessage>{errors.nfts[nftId].name.message}</FormErrorMessage>
+          {errors.nfts?.[nftIndex]?.name?.message?.length > 0 && (
+            <FormErrorMessage>{errors.nfts[nftIndex].name.message}</FormErrorMessage>
           )}
         </FormControl>
 
@@ -156,8 +140,8 @@ const RoleCard = ({ nftId, removeFile }: Props): ReactElement => {
           <VStack>
             {traitFields.map((field, traitIndex) => (
               <TraitInput
-                key={`${nftId}-${field.id}`}
-                nftId={nftId}
+                key={`${nftIndex}-${field.id}`}
+                nftIndex={nftIndex}
                 traitIndex={traitIndex}
                 unselectTrait={() => remove(traitIndex)}
               />

@@ -46,7 +46,7 @@ const startAirdrop = async (
     const nft = Object.values(nfts).find((_) => _.roles.includes(roleId))
 
     return {
-      tokenImageHash: nft.file.hash,
+      tokenImageHash: nft.hash,
       NFTName: nft.name,
       ...nft.traits
         .filter(({ key, value }) => key.length > 0 && value.length > 0)
@@ -72,7 +72,7 @@ const startAirdrop = async (
     serverId,
     roleIds,
     contractRoles,
-    +contractId,
+    contractId,
     channel,
     provider
   )

@@ -9,39 +9,58 @@ import {
 } from "@chakra-ui/react"
 import { motion } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
-import { ReactElement, useEffect } from "react"
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import { ReactElement } from "react"
+import {
+  useFieldArray,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from "react-hook-form"
+import ipfsUpload from "utils/ipfsUpload"
 import AddNftButton from "./components/AddNftButton"
 import RoleCard from "./components/RoleCard"
 import useRoles from "./hooks/useRoles"
 
-const PickRoles = (): ReactElement => {
+const UploadNFTs = (): ReactElement => {
   const { setValue, trigger } = useFormContext()
   const { errors } = useFormState()
   const nfts = useWatch({ name: "nfts" })
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
 
-  const { getRootProps, getInputProps, isDragActive, files, removeFile } =
-    useDropzone({
-      onDrop: (acceptedFiles) =>
-        acceptedFiles.forEach((file) => {
-          setValue(`nfts.${file.id}.file`, {
-            preview: file.preview,
-            progress: file.progress,
-          })
-          setValue(`nfts.${file.id}.name`, "")
-          setValue(`nfts.${file.id}.roles`, [])
-          setValue(`nfts.${file.id}.traits`, [
-            { key: "", value: "" },
-            { key: "", value: "" },
-          ])
-        }),
-    })
+  const { fields, append, remove } = useFieldArray({ name: "nfts" })
 
-  useEffect(() => {
-    Object.entries(files).forEach(([id, file]) => setValue(`nfts.${id}.file`, file))
-  }, [files, setValue]) // Not including "nfts" since its value is being updated in the useEffect
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      const prevLength = nfts.length
+
+      append(
+        acceptedFiles.map((file) => ({
+          file,
+          name: "",
+          roles: [],
+          traits: [
+            { key: "", value: "" },
+            { key: "", value: "" },
+          ],
+          preview: URL.createObjectURL(file),
+          progress: 0,
+        }))
+      )
+
+      Promise.all(
+        acceptedFiles.map((file, index) =>
+          file.arrayBuffer().then((buffer) =>
+            ipfsUpload(buffer, (progress) => {
+              setValue(`nfts.${prevLength + index}.progress`, progress)
+            }).then((result) =>
+              setValue(`nfts.${prevLength + index}.hash`, result.path)
+            )
+          )
+        )
+      ).catch((error) => console.error("Failed to upload images", error))
+    },
+  })
 
   return (
     <>
@@ -66,8 +85,12 @@ const PickRoles = (): ReactElement => {
       <FormControl isInvalid={errors.roles?.message?.length > 0}>
         <VStack spacing={10}>
           <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
-            {Object.keys(nfts).map((id) => (
-              <RoleCard key={id} nftId={id} removeFile={removeFile} />
+            {fields.map((field, index) => (
+              <RoleCard
+                key={field.id}
+                nftIndex={index}
+                removeNft={() => remove(index)}
+              />
             ))}
             <motion.div whileTap={{ scale: 0.95 }}>
               <AddNftButton
@@ -87,4 +110,4 @@ const PickRoles = (): ReactElement => {
   )
 }
 
-export default PickRoles
+export default UploadNFTs
