@@ -15,7 +15,7 @@ const AddNftButton = ({
   inputProps,
   isDragActive,
 }: Props): ReactElement => (
-  <motion.div whileTap={{ scale: 0.95 }} style={{ cursor: "pointer" }}>
+  <motion.div whileTap={{ scale: 0.95 }}>
     <Box width="full" minHeight="sm" height="full" position="relative">
       <input id="dropzone" {...inputProps} hidden />
       <Button
@@ -28,6 +28,7 @@ const AddNftButton = ({
         variant="outline"
         leftIcon={<FilePlus size={30} />}
         aria-label="Upload images for NFTs"
+        cursor="pointer"
       >
         {isDragActive ? <Text>Drop the files here</Text> : <Text>Add image(s)</Text>}
       </Button>
