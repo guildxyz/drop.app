@@ -7,7 +7,8 @@ import {
   Grid,
   VStack,
 } from "@chakra-ui/react"
-import { motion } from "framer-motion"
+import CardMotionWrapper from "components/common/CardMotionWrapper"
+import { AnimateSharedLayout } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
 import { ReactElement } from "react"
 import {
@@ -18,7 +19,7 @@ import {
 } from "react-hook-form"
 import ipfsUpload from "utils/ipfsUpload"
 import AddNftButton from "./components/AddNftButton"
-import RoleCard from "./components/RoleCard"
+import NftCard from "./components/NftCard"
 import useRoles from "./hooks/useRoles"
 
 const UploadNFTs = (): ReactElement => {
@@ -45,6 +46,7 @@ const UploadNFTs = (): ReactElement => {
           ],
           preview: URL.createObjectURL(file),
           progress: 0,
+          hash: "",
         }))
       )
 
@@ -85,20 +87,22 @@ const UploadNFTs = (): ReactElement => {
       <FormControl isInvalid={errors.roles?.message?.length > 0}>
         <VStack spacing={10}>
           <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
-            {fields.map((field, index) => (
-              <RoleCard
-                key={field.id}
-                nftIndex={index}
-                removeNft={() => remove(index)}
-              />
-            ))}
-            <motion.div whileTap={{ scale: 0.95 }}>
-              <AddNftButton
-                dropzoneProps={getRootProps()}
-                inputProps={getInputProps()}
-                isDragActive={isDragActive}
-              />
-            </motion.div>
+            <AnimateSharedLayout>
+              {fields.map((field, index) => (
+                <NftCard
+                  key={field.id}
+                  nftIndex={index}
+                  removeNft={() => remove(index)}
+                />
+              ))}
+              <CardMotionWrapper>
+                <AddNftButton
+                  dropzoneProps={getRootProps()}
+                  inputProps={getInputProps()}
+                  isDragActive={isDragActive}
+                />
+              </CardMotionWrapper>
+            </AnimateSharedLayout>
           </Grid>
 
           {errors.roles?.message && (
