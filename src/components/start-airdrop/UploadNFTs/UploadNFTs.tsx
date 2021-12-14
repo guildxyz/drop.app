@@ -1,13 +1,15 @@
 import {
   Alert,
   AlertIcon,
+  Box,
   chakra,
+  Collapse,
   FormControl,
   FormErrorMessage,
   Grid,
   VStack,
 } from "@chakra-ui/react"
-import { AnimateSharedLayout } from "framer-motion"
+import { LayoutGroup } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
 import { ReactElement, useEffect } from "react"
 import {
@@ -70,9 +72,9 @@ const UploadNFTs = (): ReactElement => {
   })
 
   return (
-    <>
-      {!roles && Object.keys(nfts).length > 0 && (
-        <Alert status="info">
+    <Box>
+      <Collapse in={!roles && Object.keys(nfts).length > 0}>
+        <Alert status="info" mb="5">
           <AlertIcon />
           <p>
             Once you{" "}
@@ -87,12 +89,12 @@ const UploadNFTs = (): ReactElement => {
             , you can select some roles for these NFTs
           </p>
         </Alert>
-      )}
+      </Collapse>
 
       <FormControl isInvalid={errors.nfts?.message?.length > 0}>
         <VStack spacing={5} id="upload-nfts">
           <Grid width="full" templateColumns="repeat(3, 1fr)" gap={5}>
-            <AnimateSharedLayout>
+            <LayoutGroup>
               {fields.map((field, index) => (
                 <NftCard
                   key={field.id}
@@ -105,13 +107,13 @@ const UploadNFTs = (): ReactElement => {
                 inputProps={getInputProps()}
                 isDragActive={isDragActive}
               />
-            </AnimateSharedLayout>
+            </LayoutGroup>
           </Grid>
 
           <FormErrorMessage w="full">{errors.nfts?.message}</FormErrorMessage>
         </VStack>
       </FormControl>
-    </>
+    </Box>
   )
 }
 

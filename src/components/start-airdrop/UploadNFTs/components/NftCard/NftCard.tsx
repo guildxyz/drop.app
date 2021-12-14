@@ -152,25 +152,21 @@ const NftCard = ({ nftIndex, removeNft }: Props): ReactElement => {
             </VStack>
           </FormControl>
 
-          {roles && (
-            <>
-              <Divider borderColor="gray.300" />
-              <FormControl>
-                <FormLabel>Roles to drop to</FormLabel>
-                <Select
-                  size="sm"
-                  placeholder="Select roles"
-                  isMulti
-                  onChange={handleSelectChange}
-                  options={filteredRoleEntries.map(([id, name]) => ({
-                    img: "",
-                    label: name,
-                    value: id,
-                  }))}
-                />
-              </FormControl>
-            </>
-          )}
+          <Divider borderColor="gray.300" />
+          <FormControl isDisabled={!roles}>
+            <FormLabel>Roles to drop to</FormLabel>
+            <Select
+              size="sm"
+              placeholder="Select roles"
+              isMulti
+              onChange={handleSelectChange}
+              options={filteredRoleEntries.map(([id, name]) => ({
+                img: "",
+                label: name,
+                value: id,
+              }))}
+            />
+          </FormControl>
         </VStack>
       </Card>
     </CardMotionWrapper>
