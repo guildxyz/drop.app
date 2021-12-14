@@ -1,5 +1,5 @@
-import { Box, Button, Text } from "@chakra-ui/react"
-import { motion } from "framer-motion"
+import { Button, Text } from "@chakra-ui/react"
+import CardMotionWrapper from "components/common/CardMotionWrapper"
 import { FilePlus } from "phosphor-react"
 import { ReactElement } from "react"
 import { DropzoneInputProps, DropzoneRootProps } from "react-dropzone"
@@ -15,25 +15,23 @@ const AddNftButton = ({
   inputProps,
   isDragActive,
 }: Props): ReactElement => (
-  <motion.div whileTap={{ scale: 0.95 }}>
-    <Box width="full" minHeight="sm" height="full" position="relative">
-      <input id="dropzone" {...inputProps} hidden />
-      <Button
-        {...dropzoneProps}
-        as="label"
-        htmlFor="dropzone"
-        width="full"
-        height="full"
-        colorScheme="yellow"
-        variant="outline"
-        leftIcon={<FilePlus size={30} />}
-        aria-label="Upload images for NFTs"
-        cursor="pointer"
-      >
-        {isDragActive ? <Text>Drop the files here</Text> : <Text>Add image(s)</Text>}
-      </Button>
-    </Box>
-  </motion.div>
+  <CardMotionWrapper minHeight="sm">
+    <Button
+      {...dropzoneProps}
+      as="label"
+      cursor="pointer"
+      borderRadius="2xl"
+      width="full"
+      height="full"
+      colorScheme="yellow"
+      variant="outline"
+      leftIcon={<FilePlus size={30} />}
+      aria-label="Upload images for NFTs"
+    >
+      <input {...inputProps} hidden />
+      {isDragActive ? <Text>Drop the files here</Text> : <Text>Add image(s)</Text>}
+    </Button>
+  </CardMotionWrapper>
 )
 
 export default AddNftButton

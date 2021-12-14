@@ -1,4 +1,5 @@
 import {
+  Button,
   Divider,
   HStack,
   Input,
@@ -35,7 +36,6 @@ const TraitInput = ({
           <Input
             borderRightWidth={0}
             borderRightRadius={0}
-            size="sm"
             placeholder={placeholders[traitIndex]?.[0] ?? ""}
             {...register(`nfts.${nftIndex}.traits.${traitIndex}.key`)}
           />
@@ -45,20 +45,22 @@ const TraitInput = ({
           <Input
             borderLeftWidth={0}
             borderLeftRadius={0}
-            borderRightRadius={key?.length <= 0 ? 0 : undefined}
-            size="sm"
             placeholder={placeholders[traitIndex]?.[1] ?? ""}
             {...register(`nfts.${nftIndex}.traits.${traitIndex}.value`)}
           />
           {key?.length <= 0 && (
-            <InputRightAddon
-              p="2"
-              onClick={unselectTrait}
-              cursor="pointer"
-              _hover={{ backgroundColor: "blackAlpha.50" }}
-              _active={{ backgroundColor: "blackAlpha.200" }}
-            >
-              <X />
+            <InputRightAddon p="0" overflow="hidden">
+              <Button
+                onClick={unselectTrait}
+                size="sm"
+                variant="ghost"
+                borderRadius="0"
+                px="2"
+                aria-label="Remove property"
+                _hover={{ bg: "blackAlpha.50" }}
+              >
+                <X />
+              </Button>
             </InputRightAddon>
           )}
         </InputGroup>

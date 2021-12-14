@@ -20,8 +20,9 @@ const NameInput = (): ReactElement => {
     <HStack spacing={2} alignItems="start">
       <FormControl isInvalid={!!errors?.assetData?.NFT?.name} maxWidth="sm">
         <Input
+          size="lg"
           type="text"
-          placeholder="name"
+          placeholder="Name"
           {...register("assetData.NFT.name", {
             required: "This field is required",
             validate: async (value) => {
@@ -41,6 +42,7 @@ const NameInput = (): ReactElement => {
 
       <FormControl isInvalid={!!errors?.assetData?.NFT?.symbol}>
         <Input
+          size="lg"
           maxWidth="24"
           type="text"
           placeholder="SYMBL"

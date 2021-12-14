@@ -10,7 +10,6 @@ import {
   Image,
   Input,
   Progress,
-  Text,
   Tooltip,
   VStack,
 } from "@chakra-ui/react"
@@ -85,80 +84,79 @@ const NftCard = ({ nftIndex, removeNft }: Props): ReactElement => {
 
   return (
     <CardMotionWrapper zIndex="1">
-      <Card backgroundColor="primary.200">
-        <VStack overflow="hidden" spacing={0}>
-          <Center bg="gray.900" h="180px" w="full">
-            <Image src={nft.preview} alt="Placeholder" height="100%" width="auto" />
-          </Center>
-          <Progress
-            width="full"
-            value={nft.progress * 100}
-            colorScheme="yellow"
-            size="xs"
-            backgroundColor="transparent"
-          />
+      <Card backgroundColor="primary.100">
+        <Center bg="white" h="180px" w="full">
+          <Image src={nft.preview} alt="Placeholder" height="100%" width="auto" />
+        </Center>
+        <Progress
+          width="full"
+          value={nft.progress * 100}
+          colorScheme="yellow"
+          size="xs"
+          backgroundColor="transparent"
+        />
 
-          <VStack p={5}>
+        <VStack p={5} pt="4" spacing="3">
+          <HStack alignItems="start" w="full">
             <FormControl
               isInvalid={errors.nfts?.[nftIndex]?.name?.message?.length > 0}
             >
-              <HStack>
-                <Input
-                  placeholder="name"
-                  size="sm"
-                  {...register(`nfts.${nftIndex}.name`, {
-                    required: "Please give a name for this NFT",
-                  })}
+              <Input
+                placeholder="name"
+                size="sm"
+                {...register(`nfts.${nftIndex}.name`, {
+                  required: "Please give a name for this NFT",
+                })}
+              />
+              <FormErrorMessage>
+                {errors?.nfts?.[nftIndex]?.name?.message}
+              </FormErrorMessage>
+            </FormControl>
+            <Tooltip label="Remove NFT">
+              <IconButton
+                size="sm"
+                borderRadius="full"
+                aria-label="Remove NFT"
+                color="red.600"
+                icon={<TrashSimple />}
+                onClick={removeNft}
+              />
+            </Tooltip>
+          </HStack>
+
+          <FormControl>
+            <FormLabel>Properties</FormLabel>
+
+            <VStack>
+              {traitFields.map((field, traitIndex) => (
+                <TraitInput
+                  key={`${nftIndex}-${field.id}`}
+                  nftIndex={nftIndex}
+                  traitIndex={traitIndex}
+                  unselectTrait={() => remove(traitIndex)}
                 />
-                <Tooltip label="Remove NFT">
-                  <IconButton
-                    size="sm"
-                    variant="ghost"
-                    borderRadius="full"
-                    aria-label="Remove NFT"
-                    color="red.600"
-                    icon={<TrashSimple />}
-                    onClick={removeNft}
-                  />
-                </Tooltip>
-              </HStack>
-              {errors.nfts?.[nftIndex]?.name?.message?.length > 0 && (
-                <FormErrorMessage>
-                  {errors.nfts[nftIndex].name.message}
-                </FormErrorMessage>
-              )}
-            </FormControl>
+              ))}
 
-            <FormControl>
-              <FormLabel>Properties</FormLabel>
+              <Button
+                onClick={addTrait}
+                width="full"
+                size="sm"
+                fontSize="xs"
+                color="gray.500"
+                borderRadius="lg"
+                leftIcon={<Plus />}
+                aria-label="Add property"
+              >
+                Add property
+              </Button>
+            </VStack>
+          </FormControl>
 
-              <VStack>
-                {traitFields.map((field, traitIndex) => (
-                  <TraitInput
-                    key={`${nftIndex}-${field.id}`}
-                    nftIndex={nftIndex}
-                    traitIndex={traitIndex}
-                    unselectTrait={() => remove(traitIndex)}
-                  />
-                ))}
-
-                <Button
-                  onClick={addTrait}
-                  width="full"
-                  size="sm"
-                  leftIcon={<Plus />}
-                >
-                  <Text fontSize="xs">Add property</Text>
-                </Button>
-              </VStack>
-            </FormControl>
-
-            <Divider />
-
-            {roles && (
+          {roles && (
+            <>
+              <Divider borderColor="gray.300" />
               <FormControl>
                 <FormLabel>Roles to drop to</FormLabel>
-
                 <Select
                   size="sm"
                   placeholder="Select roles"
@@ -171,8 +169,8 @@ const NftCard = ({ nftIndex, removeNft }: Props): ReactElement => {
                   }))}
                 />
               </FormControl>
-            )}
-          </VStack>
+            </>
+          )}
         </VStack>
       </Card>
     </CardMotionWrapper>

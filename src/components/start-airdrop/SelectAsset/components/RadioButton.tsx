@@ -20,7 +20,7 @@ const RadioButton = ({
           cursor="pointer"
           borderWidth="1px"
           borderRadius="xl"
-          boxShadow={radioProps.disabled ? "" : "md"}
+          // boxShadow={radioProps.disabled ? "" : "md"}
           _checked={{
             bg: "yellow.500",
             color: "white",

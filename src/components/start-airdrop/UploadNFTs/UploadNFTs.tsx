@@ -7,7 +7,6 @@ import {
   Grid,
   VStack,
 } from "@chakra-ui/react"
-import CardMotionWrapper from "components/common/CardMotionWrapper"
 import { AnimateSharedLayout } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
 import { ReactElement, useEffect } from "react"
@@ -101,13 +100,11 @@ const UploadNFTs = (): ReactElement => {
                   removeNft={() => remove(index)}
                 />
               ))}
-              <CardMotionWrapper>
-                <AddNftButton
-                  dropzoneProps={getRootProps()}
-                  inputProps={getInputProps()}
-                  isDragActive={isDragActive}
-                />
-              </CardMotionWrapper>
+              <AddNftButton
+                dropzoneProps={getRootProps()}
+                inputProps={getInputProps()}
+                isDragActive={isDragActive}
+              />
             </AnimateSharedLayout>
           </Grid>
 
