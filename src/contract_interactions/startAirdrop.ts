@@ -1,8 +1,12 @@
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import { StartAirdropData } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
+import { Chains } from "connectors"
+import { AirdropAddresses } from "contracts"
+import ipfsUpload from "utils/ipfsUpload"
 import { startAirdrop as airdropStartAirdrop } from "./airdrop"
-import deployTokenContract from "./deployTokenContract"
 import startAirdropSignature from "./utils/signatures/startAirdrop"
+
+const textEncoder = new TextEncoder()
 
 const startAirdrop = async (
   chainId: number,
@@ -13,66 +17,63 @@ const startAirdrop = async (
 ): Promise<string> => {
   const { serverId, channel, urlName, platform, nfts, assetData } = data
 
-  const roleIds = Object.values(nfts).reduce(
-    (acc, curr) => [...acc, ...curr.roles],
-    []
-  )
+  const roleIds = nfts.reduce((acc, curr) => [...acc, ...curr.roles], [])
 
-  const [signature, contractId] = await Promise.all([
-    startAirdropSignature(
-      serverId,
-      account,
-      chainId,
-      urlName,
-      platform,
-      roleIds
-    ).catch((error) => {
-      console.error(error)
-      throw error
-    }),
-    deployTokenContract(
-      chainId,
-      account,
-      signer,
-      assetData.NFT.name,
-      assetData.NFT.symbol,
+  const metaDatas = roleIds.map((roleId) => {
+    const nft = nfts.find((_) => _.roles.includes(roleId))
+
+    return JSON.stringify({
+      name: nft.name,
       // TODO: description?
-      "",
-      provider
-    ),
-  ])
+      description: "",
+      image: `ipfs://${nft.hash}`,
+      external_url: `https://drop.app/nft/${
+        AirdropAddresses[Chains[chainId]]
+      }/${platform}/${roleId}`,
+      attributes: [
+        {
+          trait_type: "Server Id",
+          value: serverId,
+        },
+        {
+          trait_type: "Role Id",
+          value: roleId,
+        },
+        ...nft.traits.map(({ key, value }) => ({ trait_type: key, value })),
+      ],
+    })
+  })
 
-  const contractRoles = roleIds.map((roleId) => {
-    const nft = Object.values(nfts).find((_) => _.roles.includes(roleId))
-
-    return {
-      tokenImageHash: nft.hash,
-      NFTName: nft.name,
-      ...nft.traits
-        .filter(({ key, value }) => key.length > 0 && value.length > 0)
-        .reduce(
-          (_acc, { key, value }) => {
-            const acc = _acc
-            acc.traitTypes.push(key)
-            acc.values.push(value)
-            return acc
-          },
-          { traitTypes: ["Server ID", "Role ID"], values: [serverId, roleId] }
-        ),
-    }
+  const metaDataHashes = await Promise.all(
+    metaDatas.map((metaData) =>
+      ipfsUpload(textEncoder.encode(metaData).buffer).then((result) => result.path)
+    )
+  )
+  const signature = await startAirdropSignature(
+    serverId,
+    account,
+    chainId,
+    urlName,
+    platform,
+    roleIds,
+    metaDataHashes
+  ).catch((error) => {
+    console.error(error)
+    throw error
   })
 
   const tx = await airdropStartAirdrop(
     chainId,
     signer,
     signature,
+    assetData.NFT.name,
+    assetData.NFT.symbol,
     urlName,
     platform,
     assetData.NFT.name,
     serverId,
     roleIds,
-    contractRoles,
-    contractId,
+    metaDataHashes,
     channel,
     provider
   )

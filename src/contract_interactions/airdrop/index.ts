@@ -7,7 +7,6 @@ import getDataOfDrop from "./getDataOfDrop"
 import grant from "./grant"
 import numOfDeployedContracts from "./numOfDeployedContracts"
 import startAirdrop from "./startAirdrop"
-import startAirdropOnGroup from "./startAirdropOnGroup"
 import stopAirdrop from "./stopAirdrop"
 
 export {
@@ -19,7 +18,6 @@ export {
   deployTokenContract,
   claim,
   startAirdrop,
-  startAirdropOnGroup,
   stopAirdrop,
   grant,
 }

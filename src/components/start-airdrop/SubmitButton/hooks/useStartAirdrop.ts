@@ -18,8 +18,6 @@ export type NftField = {
   preview: string
 }
 
-export type NftsField = Record<string, NftField>
-
 export type StartAirdropData = {
   urlName: string
   channel: string
@@ -32,7 +30,7 @@ export type StartAirdropData = {
   }
   inviteLink: string
   serverId: string
-  nfts: NftsField
+  nfts: NftField[]
   platform: "DISCORD"
 }
 

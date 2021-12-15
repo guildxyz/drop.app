@@ -5,6 +5,11 @@ type RequiredBody = Array<{
   type: string
 }>
 
+const stringArrayTypeCheck = (data: any) => {
+  if (!Array.isArray(data)) return false
+  return data.every((item) => typeof item === "string")
+}
+
 const checkParams = (
   req: NextApiRequest,
   res: NextApiResponse,
@@ -21,9 +26,10 @@ const checkParams = (
     return false
   }
 
-  const wrongType = requiredBody.filter(
-    ({ key, type }) => typeof req.body[key] !== type
-  )
+  const wrongType = requiredBody.filter(({ key, type }) => {
+    if (type === "string[]") return !stringArrayTypeCheck(req.body[key])
+    return typeof req.body[key] !== type
+  })
   if (wrongType.length > 0) {
     res.status(400).json({
       errors: wrongType.map(({ key, type }) => ({

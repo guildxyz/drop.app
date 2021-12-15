@@ -1,7 +1,7 @@
 import { FormControl, FormErrorMessage, HStack, Input } from "@chakra-ui/react"
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
-import { getDataOfDrop } from "contract_interactions/airdrop"
+import { contractOfDrop } from "contract_interactions/dropCenter"
 import { ReactElement, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import slugify from "utils/slugify"
@@ -30,8 +30,8 @@ const NameInput = (): ReactElement => {
               if (["start-airdrop", "dcauth"].includes(urlName)) {
                 return "Invalid name"
               }
-              return getDataOfDrop(chainId, urlName, library).then(
-                ({ tokenAddress }) =>
+              return contractOfDrop(chainId, urlName, library).then(
+                (tokenAddress) =>
                   tokenAddress === ZERO_ADDRESS || "Drop already exists"
               )
             },
