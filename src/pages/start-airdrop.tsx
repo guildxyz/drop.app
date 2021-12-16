@@ -36,6 +36,7 @@ const StartAirdropPage = (): JSX.Element => {
       serverId: "",
       nfts: [],
       platform: "DISCORD",
+      description: "",
     },
   })
 

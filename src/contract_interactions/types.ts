@@ -3,24 +3,20 @@ export type Drop = {
   dropName: string
   platform: "DISCORD" | "TELEGRAM"
   serverId: string
-  roleIds: string[]
-  tokenAddress: string
-  name: string
   contractId: number
-  numOfActive: number
+  tokenAddress: string
   id?: number
 }
 
-export type Data = {
-  tokenImageHash: string
-  NFTName: string
-  traitTypes: string[]
-  values: string[]
+export type Attribute = {
+  trait_type: string
+  value: string
 }
 
 export type RoleData = {
-  imageHash: string
-  tokenName: string
-  traits: string[]
-  values: string[]
+  name: string
+  description: string
+  image: string
+  external_url: string
+  attributes: Attribute[]
 }

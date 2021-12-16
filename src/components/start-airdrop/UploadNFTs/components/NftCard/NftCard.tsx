@@ -16,7 +16,7 @@ import {
 import Card from "components/common/Card"
 import CardMotionWrapper from "components/common/CardMotionWrapper"
 import { Select } from "components/common/ChakraReactSelect"
-import { NftsField } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
+import { NftField } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import { Plus, TrashSimple } from "phosphor-react"
 import { ReactElement, useCallback, useEffect, useMemo } from "react"
 import {
@@ -62,7 +62,7 @@ const NftCard = ({
 
   const pickedRoles = useMemo(
     () =>
-      Object.values(nfts as NftsField).reduce(
+      Object.values(nfts as NftField[]).reduce(
         (acc, curr) => [...acc, ...(curr.roles ?? [])],
         []
       ),

@@ -40,7 +40,7 @@ const client = create({
 
 const ipfsUpload = (
   buffer: ArrayBuffer,
-  onProgress: (progress: number) => void,
+  onProgress?: (progress: number) => void,
   addOptions?: AddOptions & HTTPClientExtraOptions
 ): Promise<AddResult> =>
   client.add(buffer, {

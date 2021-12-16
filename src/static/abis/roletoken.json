@@ -2,9 +2,7 @@
   {
     "inputs": [
       { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_symbol", "type": "string" },
-      { "internalType": "string", "name": "_externalUrl", "type": "string" },
-      { "internalType": "string", "name": "_description", "type": "string" }
+      { "internalType": "string", "name": "_symbol", "type": "string" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -107,10 +105,7 @@
     "inputs": [
       { "internalType": "string", "name": "_platform", "type": "string" },
       { "internalType": "string", "name": "_roleId", "type": "string" },
-      { "internalType": "string", "name": "_tokenImageHash", "type": "string" },
-      { "internalType": "string", "name": "_NFTName", "type": "string" },
-      { "internalType": "string[]", "name": "_traitTypes", "type": "string[]" },
-      { "internalType": "string[]", "name": "_values", "type": "string[]" }
+      { "internalType": "string", "name": "_metadataHash", "type": "string" }
     ],
     "name": "addRoleData",
     "outputs": [],
@@ -142,38 +137,9 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "description",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "externalUrl",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
     "name": "getApproved",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "string", "name": "_platform", "type": "string" },
-      { "internalType": "string", "name": "_roleId", "type": "string" }
-    ],
-    "name": "getDataOfRole",
-    "outputs": [
-      { "internalType": "string", "name": "", "type": "string" },
-      { "internalType": "string", "name": "", "type": "string" },
-      { "internalType": "string[]", "name": "", "type": "string[]" },
-      { "internalType": "string[]", "name": "", "type": "string[]" }
-    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -213,6 +179,16 @@
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "string", "name": "", "type": "string" }
+    ],
+    "name": "roleMetadataHash",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
