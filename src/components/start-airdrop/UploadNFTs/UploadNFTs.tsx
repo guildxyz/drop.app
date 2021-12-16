@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react"
 import { LayoutGroup } from "framer-motion"
 import useDropzone from "hooks/useDropzone"
-import { ReactElement, useEffect } from "react"
+import { ReactElement, useCallback, useEffect, useState } from "react"
 import {
   useFieldArray,
   useFormContext,
@@ -24,11 +24,13 @@ import NftCard from "./components/NftCard"
 import useRoles from "./hooks/useRoles"
 
 const UploadNFTs = (): ReactElement => {
-  const { setValue, trigger, setError, clearErrors } = useFormContext()
+  const { trigger, setError, clearErrors } = useFormContext()
   const { errors, dirtyFields } = useFormState()
   const nfts = useWatch({ name: "nfts" })
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
+  const [progresses, setProgresses] = useState<Record<string, number>>({})
+  const [hashes, setHashes] = useState<Record<string, string>>({})
 
   const { fields, append, remove } = useFieldArray({ name: "nfts" })
 
@@ -38,10 +40,8 @@ const UploadNFTs = (): ReactElement => {
     else clearErrors("nfts")
   }, [fields, dirtyFields, setError, clearErrors])
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles) => {
-      const prevLength = nfts.length
-
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
       append(
         acceptedFiles.map((file) => ({
           file,
@@ -56,20 +56,36 @@ const UploadNFTs = (): ReactElement => {
           hash: "",
         }))
       )
-
-      Promise.all(
-        acceptedFiles.map((file, index) =>
-          file.arrayBuffer().then((buffer) =>
-            ipfsUpload(buffer, (progress) => {
-              setValue(`nfts.${prevLength + index}.progress`, progress)
-            }).then((result) =>
-              setValue(`nfts.${prevLength + index}.hash`, result.path)
-            )
-          )
-        )
-      ).catch((error) => console.error("Failed to upload images", error))
     },
+    [append]
+  )
+
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
+    onDrop,
   })
+
+  useEffect(() => {
+    Promise.all(
+      acceptedFiles.map((file, index) =>
+        file.arrayBuffer().then((buffer) => {
+          const fieldIndex = fields.length - acceptedFiles.length + index
+          ipfsUpload(buffer, (progress) => {
+            if (fields[fieldIndex])
+              setProgresses((prev) => ({
+                ...prev,
+                [fields[fieldIndex].id]: progress,
+              }))
+          }).then((result) => {
+            if (fields[fieldIndex])
+              setHashes((prev) => ({
+                ...prev,
+                [fields[fieldIndex].id]: result.path,
+              }))
+          })
+        })
+      )
+    ).catch((error) => console.error("Failed to upload images", error))
+  }, [fields])
 
   return (
     <Box>
@@ -98,6 +114,8 @@ const UploadNFTs = (): ReactElement => {
               {fields.map((field, index) => (
                 <NftCard
                   key={field.id}
+                  progress={progresses[field.id] ?? 0}
+                  imageHash={hashes[field.id] ?? ""}
                   nftIndex={index}
                   removeNft={() => remove(index)}
                 />

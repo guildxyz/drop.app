@@ -18,7 +18,7 @@ import CardMotionWrapper from "components/common/CardMotionWrapper"
 import { Select } from "components/common/ChakraReactSelect"
 import { NftsField } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import { Plus, TrashSimple } from "phosphor-react"
-import { ReactElement, useCallback, useMemo } from "react"
+import { ReactElement, useCallback, useEffect, useMemo } from "react"
 import {
   useFieldArray,
   useFormContext,
@@ -30,16 +30,27 @@ import TraitInput from "./components/TraitInput"
 
 type Props = {
   nftIndex: number
+  progress: number
+  imageHash: string
   removeNft: () => void
 }
 
-const NftCard = ({ nftIndex, removeNft }: Props): ReactElement => {
+const NftCard = ({
+  nftIndex,
+  progress,
+  imageHash,
+  removeNft,
+}: Props): ReactElement => {
   const { register, setValue } = useFormContext()
   const nfts = useWatch({ name: "nfts" })
   const nft = useWatch({ name: `nfts.${nftIndex}` })
   const { errors } = useFormState()
   const serverId = useWatch({ name: "serverId" })
   const roles = useRoles(serverId)
+
+  useEffect(() => {
+    if (imageHash.length > 0) setValue(`nfts.${nftIndex}.hash`, imageHash)
+  }, [imageHash, nftIndex, setValue])
 
   const {
     fields: traitFields,
@@ -90,7 +101,7 @@ const NftCard = ({ nftIndex, removeNft }: Props): ReactElement => {
         </Center>
         <Progress
           width="full"
-          value={nft.progress * 100}
+          value={progress * 100}
           colorScheme="yellow"
           size="xs"
           backgroundColor="transparent"

@@ -51,5 +51,4 @@ const ipfsUpload = (
     },
   })
 
-export { client } // For debugging, won't be needed later
 export default ipfsUpload
