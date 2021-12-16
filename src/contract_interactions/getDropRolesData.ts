@@ -15,6 +15,14 @@ const getDropRolesData = async (
   const dropData = await getDataOfDrop(chainId, urlName, provider)
   const { platform, serverId } = dropData
   const tokenAddress = await getTokenAddress(chainId, urlName, provider)
+  /**
+   * TODO:
+   *
+   * Here we should request all the roles, and filter for the ones that have
+   * metadata, and maybe append the active boolean data to the role, this way we
+   * could display all the ClaimCard-s, that are or were active in the drop and
+   * disable the ones that aren't currently active
+   */
   const activeRoles = await getActiveRoles(
     chainId,
     urlName,
