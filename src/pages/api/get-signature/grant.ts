@@ -2,12 +2,13 @@ import { defaultAbiCoder } from "@ethersproject/abi"
 import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
-import { fetchRoles } from "components/start-airdrop/PickRoles/hooks/useRoles"
-import { fetchOwnerId } from "components/[drop]/ClaimCard/hooks/useOwnerId"
+import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
 import { fetchDiscordID } from "hooks/useDiscordId"
 import type { NextApiRequest, NextApiResponse } from "next"
+import checkParams from "utils/api/checkParams"
+import fetchIsOwner from "utils/fetchIsOwner"
 
 type Body = {
   chainId: number
@@ -31,31 +32,8 @@ const REQUIRED_BODY = [
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   if (req.method === "POST") {
-    const missingKeys = REQUIRED_BODY.filter(({ key }) => !(key in req.body))
-    if (missingKeys.length > 0) {
-      res.status(400).json({
-        errors: missingKeys.map(({ key }) => ({
-          key,
-          message: `Key "${key}" missing.`,
-        })),
-      })
-      return
-    }
-
-    const wrongType = REQUIRED_BODY.filter(
-      ({ key, type }) => typeof req.body[key] !== type
-    )
-    if (wrongType.length > 0) {
-      res.status(400).json({
-        errors: wrongType.map(({ key, type }) => ({
-          key,
-          message: `Wrong type of key "${key}". Recieved "${typeof req.body[
-            key
-          ]}", expected "${type}".`,
-        })),
-      })
-      return
-    }
+    const paramsCorrect = checkParams(req, res, REQUIRED_BODY)
+    if (!paramsCorrect) return
 
     const {
       chainId,
@@ -80,9 +58,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     }
 
     try {
-      const [ownerId, discordId] = await Promise.all([
-        fetchOwnerId("ownerId", serverId),
-        fetchDiscordID("discordId", address),
+      const discordId = await fetchDiscordID("discordId", address)
+      const [isOwner] = await Promise.all([
+        fetchIsOwner(serverId, discordId),
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
             throw Error("Not valid role of server")
@@ -90,10 +68,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         }),
       ])
 
-      if (ownerId !== discordId) {
-        res.status(400).json({
-          errors: [{ key: "address", message: "Not the owner of the server." }],
-        })
+      if (!isOwner) {
+        res.status(400).json({ message: "Not the owner of the server." })
         return
       }
 

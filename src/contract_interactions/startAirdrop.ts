@@ -1,88 +1,78 @@
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import { StartAirdropData } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
-import { contractsByDeployer, startAirdrop as airdropStartAirdrop } from "./airdrop"
+import { Chains } from "connectors"
+import { AirdropAddresses } from "contracts"
+import ipfsUpload from "utils/ipfsUpload"
+import { startAirdrop as airdropStartAirdrop } from "./airdrop"
 import startAirdropSignature from "./utils/signatures/startAirdrop"
-import uploadImages from "./utils/uploadImages"
+
+const textEncoder = new TextEncoder()
 
 const startAirdrop = async (
   chainId: number,
   account: string,
   signer: JsonRpcSigner,
   data: StartAirdropData,
-  provider?: Provider,
-  setUploadedImages?: (hashes: Record<string, string>) => void
+  provider?: Provider
 ): Promise<string> => {
-  const { contractId, serverId, name, roles, channel, urlName, platform } = data
+  const { serverId, channel, urlName, platform, nfts, assetData, description } = data
 
-  const roleIds = roles.map(({ roleId }) => roleId)
-  if (contractId === "DEPLOY") throw new Error("Invalid token contract")
+  const roleIds = nfts.reduce((acc, curr) => [...acc, ...curr.roles], [])
 
-  const [signature, tokenAddress] = await Promise.all([
-    startAirdropSignature(
-      serverId,
-      account,
-      chainId,
-      urlName,
-      platform,
-      roleIds
-    ).catch((error) => {
-      console.log("Signature rejected")
-      console.error(error)
-      throw error
-    }),
-    contractsByDeployer(chainId, account, +contractId, provider).catch((error) => {
-      console.log("contractsByDeployer call rejected")
-      console.error(error)
-      throw error
-    }),
-  ])
+  const metaDatas = roleIds.map((roleId) => {
+    const nft = nfts.find((_) => _.roles.includes(roleId))
 
-  const imagesToUpload = Object.fromEntries(
-    roles
-      .filter(({ image }) => image.length > 0)
-      .map(({ roleId, image: [image] }) => [roleId, image])
-  )
-
-  const hashes = Object.keys(imagesToUpload).length
-    ? await uploadImages(imagesToUpload, platform, tokenAddress, chainId)
-    : {}
-
-  // Append the default hash for the roles withour uploaded image
-  roles
-    .filter(({ image }) => image.length <= 0)
-    .forEach(
-      ({ roleId }) => (hashes[roleId] = process.env.NEXT_PUBLIC_DEFAULT_IMAGE_HASH)
-    )
-
-  if (!!setUploadedImages) setUploadedImages(hashes)
-
-  const contractRoles = roles.map(({ traits, NFTName, roleId }) => ({
-    tokenImageHash: hashes[roleId],
-    NFTName,
-    ...traits
-      .filter(({ key, value }) => key.length > 0 && value.length > 0)
-      .reduce(
-        (_acc, { key, value }) => {
-          const acc = _acc
-          acc.traitTypes.push(key)
-          acc.values.push(value)
-          return acc
+    return JSON.stringify({
+      name: nft.name,
+      description,
+      image: `ipfs://${nft.hash}`,
+      external_url: `https://drop.app/nft/${
+        AirdropAddresses[Chains[chainId]]
+      }/${platform}/${roleId}`,
+      attributes: [
+        {
+          trait_type: "Server Id",
+          value: serverId,
         },
-        { traitTypes: ["Server ID", "Role ID"], values: [serverId, roleId] }
-      ),
-  }))
+        {
+          trait_type: "Role Id",
+          value: roleId,
+        },
+        ...nft.traits.map(({ key, value }) => ({ trait_type: key, value })),
+      ],
+    })
+  })
+
+  const metaDataHashes = await Promise.all(
+    metaDatas.map((metaData) =>
+      ipfsUpload(textEncoder.encode(metaData).buffer).then((result) => result.path)
+    )
+  )
+  const signature = await startAirdropSignature(
+    serverId,
+    account,
+    chainId,
+    urlName,
+    platform,
+    roleIds,
+    metaDataHashes
+  ).catch((error) => {
+    console.error(error)
+    throw error
+  })
 
   const tx = await airdropStartAirdrop(
     chainId,
     signer,
     signature,
+    assetData.NFT.name,
+    assetData.NFT.symbol,
     urlName,
     platform,
-    name,
+    assetData.NFT.name,
     serverId,
     roleIds,
-    contractRoles,
-    +contractId,
+    metaDataHashes,
     channel,
     provider
   )

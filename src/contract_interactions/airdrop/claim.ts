@@ -6,7 +6,7 @@ const claim = (
   chainId: number,
   signer: JsonRpcSigner,
   signature: string,
-  platform: string,
+  urlName: string,
   roleId: string,
   userIdHash: string,
   tokenAddress: string,
@@ -14,6 +14,6 @@ const claim = (
 ): Promise<TransactionResponse> =>
   getAirdropContract(chainId, provider)
     .connect(signer)
-    .claim(signature, platform, roleId, userIdHash, tokenAddress)
+    .claim(signature, urlName, roleId, userIdHash, tokenAddress)
 
 export default claim

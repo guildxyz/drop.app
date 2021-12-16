@@ -21,7 +21,7 @@ const StopAirdropButton = ({
 }: Props): ReactElement => {
   const { isLoading, response, onSubmit } = useStopAirdrop()
   const successfullyStopped = !!response
-  const { isActive } = useIsActive(platform, roleId, tokenAddress)
+  const isActive = useIsActive(urlName, roleId, tokenAddress)
   const contractId = useContractId(tokenAddress)
 
   const loadingText = useMemo(() => {

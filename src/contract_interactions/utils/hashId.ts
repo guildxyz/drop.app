@@ -1,10 +1,10 @@
-const hashId = (userId: string, address: string): Promise<string> =>
+const hashId = (userId: string): Promise<string> =>
   fetch("/api/hash-user-id", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, address }),
+    body: JSON.stringify({ userId }),
   }).then((response) =>
     response.json().then((body) => {
       if (response.ok) return body.hashed

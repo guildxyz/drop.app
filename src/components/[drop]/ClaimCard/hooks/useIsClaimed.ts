@@ -8,19 +8,18 @@ const getClaims = (
   _: string,
   chainId: number,
   userId: string,
-  account: string,
   platform: string,
   roleId: string,
   tokenAddress: string,
   provider: Provider
-) => claims(chainId, userId, account, platform, roleId, tokenAddress, provider)
+) => claims(chainId, userId, platform, roleId, tokenAddress, provider)
 
 const useIsClaimed = (
   platform: string,
   roleId: string,
   tokenAddress: string
 ): boolean => {
-  const { account, chainId, library } = useWeb3React<Web3Provider>()
+  const { chainId, library } = useWeb3React<Web3Provider>()
   const userId = useDiscordId()
 
   const shouldFetch =
@@ -31,16 +30,7 @@ const useIsClaimed = (
 
   const { data } = useSWR(
     shouldFetch
-      ? [
-          "isClaimed",
-          chainId,
-          userId,
-          account,
-          platform,
-          roleId,
-          tokenAddress,
-          library,
-        ]
+      ? ["isClaimed", chainId, userId, platform, roleId, tokenAddress, library]
       : null,
     getClaims
   )

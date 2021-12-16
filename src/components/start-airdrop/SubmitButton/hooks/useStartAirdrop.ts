@@ -5,23 +5,34 @@ import useSubmit from "hooks/useSubmit"
 import useToast from "hooks/useToast"
 import { useRouter } from "next/router"
 
-export type StartAirdropData = {
+export type NftField = {
+  file: File
+  traits: Array<{
+    key: string
+    value: string
+  }>
   name: string
-  platform: "DISCORD"
+  roles: string[]
+  hash: string
+  progress: number
+  preview: string
+}
+
+export type StartAirdropData = {
   urlName: string
   channel: string
   assetType: "NFT" | "TOKEN" | "ERC1155"
+  assetData: {
+    NFT: {
+      name: string
+      symbol: string
+    }
+  }
+  inviteLink: string
   serverId: string
-  roles: Array<{
-    roleId: string
-    image: FileList
-    traits: Array<{
-      key: string
-      value: string
-    }>
-    NFTName: string
-  }>
-  contractId: string
+  nfts: NftField[]
+  platform: "DISCORD"
+  description: string
 }
 
 const useStartAirdrop = () => {
@@ -29,14 +40,11 @@ const useStartAirdrop = () => {
   const router = useRouter()
   const toast = useToast()
 
-  const fetch = async (data: StartAirdropData) =>
-    startAirdrop(
-      chainId,
-      account,
-      library.getSigner(account),
-      { ...data, platform: "DISCORD" },
-      library
-    )
+  const fetch = async (data: StartAirdropData) => {
+    console.log(data)
+
+    return startAirdrop(chainId, account, library.getSigner(account), data, library)
+  }
 
   const onSuccess = (urlName: string) => {
     toast({

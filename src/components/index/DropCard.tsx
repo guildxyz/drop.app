@@ -18,8 +18,8 @@ const DropCard = ({ drop }: Props): JSX.Element => {
     if (!drop?.roles || Object.entries(drop.roles).length === 0) return []
 
     return Object.values(drop.roles).map((roleData) => ({
-      imageHash: roleData.imageHash,
-      tokenName: roleData.tokenName,
+      imageHash: roleData.image.split("/").pop(),
+      tokenName: roleData.name,
     }))
   }, [drop])
 

@@ -1,25 +1,28 @@
-import { VStack } from "@chakra-ui/react"
+import { Alert, AlertDescription, AlertIcon, Flex, VStack } from "@chakra-ui/react"
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DevTool } from "@hookform/devtools"
+import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
-import Asset from "components/start-airdrop/Asset"
 import NameInput from "components/start-airdrop/NameInput"
-import PickRoles from "components/start-airdrop/PickRoles"
-import ServerSelect from "components/start-airdrop/ServerSelect"
+import SelectAsset from "components/start-airdrop/SelectAsset"
+import SelectPlatform from "components/start-airdrop/SelectPlatform"
 import SubmitButton from "components/start-airdrop/SubmitButton"
-import TokenSelect from "components/start-airdrop/TokenSelect"
+import UploadNFTs from "components/start-airdrop/UploadNFTs"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
-import { FormProvider, useForm, useWatch } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 
 const StartAirdropPage = (): JSX.Element => {
+  const { account } = useWeb3React()
   const { query } = useRouter()
 
+  // TODO: Some of this might need to be restructured once we add telegram support
   const methods = useForm({
     shouldFocusError: true,
     mode: "all",
     defaultValues: {
-      name: "",
       urlName: "",
       channel: "",
       assetType: "NFT",
@@ -27,23 +30,14 @@ const StartAirdropPage = (): JSX.Element => {
         NFT: {
           name: "",
           symbol: "",
-          description: "",
         },
       },
       inviteLink: "",
-      contractId: "",
       serverId: "",
-      roles: [],
+      nfts: [],
       platform: "DISCORD",
+      description: "",
     },
-  })
-  const serverId = useWatch({
-    name: "serverId",
-    control: methods.control,
-  })
-  const contractId = useWatch({
-    name: "contractId",
-    control: methods.control,
   })
 
   useWarnIfUnsavedChanges(
@@ -56,36 +50,46 @@ const StartAirdropPage = (): JSX.Element => {
     }
   }, [query, methods])
 
+  if (!account)
+    return (
+      <Layout title="Drop to your community">
+        <Alert status="error">
+          <AlertIcon />
+          <AlertDescription>
+            Please connect your wallet in order to continue!
+          </AlertDescription>
+        </Alert>
+      </Layout>
+    )
+
   return (
     <FormProvider {...methods}>
       <Layout title="Drop to your community">
         <VStack as="form" spacing={10}>
-          <Section title="Choose a server">
-            <ServerSelect />
+          <Section title="Set the platform you want to drop on">
+            <SelectPlatform />
           </Section>
 
-          {serverId?.length > 0 && (
-            <Section title="Pick roles">
-              <PickRoles />
-            </Section>
-          )}
-
-          <Section title="Choose an existing token, or deploy a new one">
-            <TokenSelect />
+          <Section title="What kind of asset do you want to drop?">
+            <SelectAsset />
           </Section>
 
-          {contractId === "DEPLOY" && (
-            <Section title="Choose a type of asset to deploy">
-              <Asset />
-            </Section>
-          )}
+          <Section title="Upload your NFTs">
+            <UploadNFTs />
+          </Section>
 
-          <Section title="Choose a name for your DROP">
+          <Section title="Set NFT collection name and symbol">
             <NameInput />
           </Section>
-          <SubmitButton />
+
+          <Flex width="full" justifyContent="end">
+            <SubmitButton />
+          </Flex>
         </VStack>
       </Layout>
+      {process.env.NODE_ENV === "development" && (
+        <DevTool control={methods.control} />
+      )}
     </FormProvider>
   )
 }

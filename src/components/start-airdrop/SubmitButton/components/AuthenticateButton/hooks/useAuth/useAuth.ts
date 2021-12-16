@@ -2,6 +2,7 @@ import { useWeb3React } from "@web3-react/core"
 import usePersonalSign from "hooks/usePersonalSign"
 import useSubmit from "hooks/useSubmit"
 import { useRef } from "react"
+import { mutate } from "swr"
 import { UserData } from "utils/fetchUserData"
 import authenticate from "./utils/authenticate"
 import handleMessage from "./utils/handleMessage"
@@ -52,6 +53,7 @@ const useAuth = () => {
     })
     closeWindow()
     await authenticate(id, account, addressSignedMessage)
+    await mutate(["discordId", account])
     return true
   }
 

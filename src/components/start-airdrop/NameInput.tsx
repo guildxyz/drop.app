@@ -1,58 +1,79 @@
-import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react"
+import {
+  FormControl,
+  FormErrorMessage,
+  HStack,
+  Input,
+  VStack,
+} from "@chakra-ui/react"
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
-import { getDataOfDrop } from "contract_interactions/airdrop"
-import useDeployedTokens from "hooks/useDeployedTokens"
+import { contractOfDrop } from "contract_interactions/dropCenter"
 import { ReactElement, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import slugify from "utils/slugify"
-import useTokenName from "./hooks/useTokenName"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 const NameInput = (): ReactElement => {
   const { chainId, library } = useWeb3React<Web3Provider>()
-  const { setValue, register, trigger } = useFormContext()
+  const { setValue, register } = useFormContext()
   const { errors } = useFormState()
-  const name = useWatch({ name: "name" })
-  const deployedTokens = useDeployedTokens()
-  const contractId = useWatch({ name: "contractId" })
-  const tokenName = useTokenName(deployedTokens?.[contractId])
+  const nftName = useWatch({ name: "assetData.NFT.name" })
 
-  useEffect(() => setValue("urlName", slugify(name)), [name, setValue])
-
-  useEffect(() => {
-    if ((name?.length <= 0 || !!errors.name) && tokenName?.length > 0) {
-      setValue("name", tokenName)
-      trigger("name")
-    }
-    // Including "name" would set the name back to tokenName in some cases
-  }, [tokenName, contractId, setValue, trigger, errors])
+  useEffect(() => setValue("urlName", slugify(nftName)), [nftName, setValue])
 
   return (
-    <FormControl isInvalid={!!errors?.name}>
+    <VStack w="sm" alignItems="start">
+      <HStack spacing={2} alignItems="start">
+        <FormControl isInvalid={!!errors?.assetData?.NFT?.name}>
+          <Input
+            size="lg"
+            type="text"
+            placeholder="Name"
+            {...register("assetData.NFT.name", {
+              required: "This field is required",
+              validate: async (value) => {
+                const urlName = slugify(value)
+                if (["start-airdrop", "dcauth"].includes(urlName)) {
+                  return "Invalid name"
+                }
+                return contractOfDrop(chainId, urlName, library).then(
+                  (tokenAddress) =>
+                    tokenAddress === ZERO_ADDRESS || "Drop already exists"
+                )
+              },
+            })}
+          />
+          <FormErrorMessage>
+            {errors?.assetData?.NFT?.name?.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={!!errors?.assetData?.NFT?.symbol}>
+          <Input
+            size="lg"
+            maxWidth="24"
+            type="text"
+            placeholder="SYMBL"
+            {...register("assetData.NFT.symbol", {
+              required: "This field is required",
+            })}
+          />
+          <FormErrorMessage>
+            {errors?.assetData?.NFT?.symbol?.message}
+          </FormErrorMessage>
+        </FormControl>
+      </HStack>
       <Input
-        maxWidth="sm"
-        type="text"
-        placeholder="name"
-        {...register("name", {
+        minH={100}
+        pt={3}
+        placeholder="Description"
+        as="textarea"
+        {...register("description", {
           required: "This field is required",
-          validate: async (value) => {
-            const urlName = slugify(value)
-            if (["start-airdrop", "dcauth"].includes(urlName)) {
-              return "Invalid name"
-            }
-            return getDataOfDrop(chainId, urlName, library).then(
-              ({ tokenAddress }) =>
-                tokenAddress === ZERO_ADDRESS || "Drop already exists"
-            )
-          },
         })}
       />
-      {errors?.name?.message && (
-        <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-      )}
-    </FormControl>
+    </VStack>
   )
 }
 

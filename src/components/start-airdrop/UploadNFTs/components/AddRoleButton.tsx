@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react"
-import useIsActive from "hooks/useIsActive"
+import useRoleData from "components/[drop]/ClaimCard/hooks/useRoleData"
 import { Plus } from "phosphor-react"
 import { ReactElement } from "react"
 import { useWatch } from "react-hook-form"
@@ -13,10 +13,9 @@ type Props = {
 
 const AddRoleButton = ({ roleId, roleName, setSelected }: Props): ReactElement => {
   const contractId = useWatch({ name: "contractId" })
-  const serverId = useWatch({ name: "serverId" })
   const platform = useWatch({ name: "platform" })
   const tokenAddress = useRoleTokenAddress(contractId)
-  const { isDropped } = useIsActive(platform, roleId, tokenAddress)
+  const isDropped = !!useRoleData(tokenAddress, platform, roleId)
 
   // If we only want to display the inactive roles event when the address hasn't been selected
   // if (isActive === undefined || !!isActive) return null

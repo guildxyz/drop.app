@@ -41,7 +41,7 @@ const ServerSelect = (): ReactElement => {
   )
 
   return (
-    <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+    <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} p={5}>
       <FormControl isInvalid={errors.inviteLink}>
         <FormLabel>1. Paste invite link</FormLabel>
         <Input
@@ -107,9 +107,7 @@ const ServerSelect = (): ReactElement => {
           ))}
         </Select>
 
-        {errors.channel?.message && (
-          <FormErrorMessage>{errors.channel.message}</FormErrorMessage>
-        )}
+        <FormErrorMessage>{errors?.channel?.message}</FormErrorMessage>
       </FormControl>
     </Grid>
   )
