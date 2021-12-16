@@ -1,4 +1,6 @@
 import { Alert, AlertDescription, AlertIcon, Flex, VStack } from "@chakra-ui/react"
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DevTool } from "@hookform/devtools"
 import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
@@ -84,6 +86,9 @@ const StartAirdropPage = (): JSX.Element => {
           </Flex>
         </VStack>
       </Layout>
+      {process.env.NODE_ENV === "development" && (
+        <DevTool control={methods.control} />
+      )}
     </FormProvider>
   )
 }
