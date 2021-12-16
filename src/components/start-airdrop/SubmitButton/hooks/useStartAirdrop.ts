@@ -32,6 +32,7 @@ export type StartAirdropData = {
   serverId: string
   nfts: NftField[]
   platform: "DISCORD"
+  description: string
 }
 
 const useStartAirdrop = () => {

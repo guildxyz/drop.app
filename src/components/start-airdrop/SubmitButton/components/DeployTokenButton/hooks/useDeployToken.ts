@@ -26,7 +26,6 @@ const useDeployToken = () => {
       library.getSigner(account),
       data.NFT.name,
       data.NFT.symbol,
-      data.NFT.description,
       library
     )
     return contractId

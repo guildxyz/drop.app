@@ -56,7 +56,7 @@ const ClaimCard = ({
   const userRoles = useUserRoles(serverId)
   const isAuthenticated = useIsAuthenticated()
   const isDeployer = useIsDeployer(tokenAddress)
-  const { isActive } = useIsActive(platform, roleId, tokenAddress)
+  const isActive = useIsActive(urlName, roleId, tokenAddress)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
@@ -110,7 +110,7 @@ const ClaimCard = ({
           overflow="hidden"
         >
           <Image
-            src={`https://ipfs.fleek.co/ipfs/${roleData?.imageHash}`}
+            src={`https://ipfs.fleek.co/ipfs/${roleData?.image?.split("/").pop()}`}
             alt={`Image of ${"ROLE NAME"} role`}
             layout="fill"
             objectFit="cover"
@@ -120,14 +120,14 @@ const ClaimCard = ({
           <AccordionItem border="none">
             <AccordionButton>
               <HStack width="full" justifyContent="space-between">
-                <Text>{roleData?.tokenName}</Text>
+                <Text>{roleData?.name}</Text>
                 <AccordionIcon />
               </HStack>
             </AccordionButton>
             <AccordionPanel pb={4}>
-              {roleData?.traits.map((key, index) => (
-                <Text key={`${key}-${roleData?.values?.[index]}`}>
-                  {key}: {roleData?.values?.[index]}
+              {roleData?.attributes.map(({ trait_type, value }) => (
+                <Text key={`${trait_type}-${value}`}>
+                  {trait_type}: {value}
                 </Text>
               ))}
             </AccordionPanel>
@@ -152,8 +152,9 @@ const ClaimCard = ({
                   roleId,
                   serverId,
                   tokenAddress,
-                  platform: "DISCORD",
+                  urlName,
                   userId,
+                  platform,
                 })
               }
             >

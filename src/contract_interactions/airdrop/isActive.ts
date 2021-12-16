@@ -1,18 +1,17 @@
 import { Provider } from "@ethersproject/providers"
 import { getAirdropContract } from "contracts"
 
-const claims = (
+const isActive = (
   chainId: number,
-  userId: string,
-  platform: string,
+  urlName: string,
   roleId: string,
   tokenAddress: string,
   provider?: Provider
 ): Promise<boolean> =>
   getAirdropContract(chainId, provider)
-    .claims(userId, platform, roleId, tokenAddress)
+    .active(urlName, roleId, tokenAddress)
     .catch(() => {
-      throw new Error("Failed to read claimed NFTs")
+      throw new Error("Failed to read active NFTs")
     })
 
-export default claims
+export default isActive

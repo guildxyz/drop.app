@@ -1,6 +1,6 @@
 import { Provider, Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
-import getDataOfRole from "contract_interactions/roletoken/getDataOfRole"
+import metadata from "contract_interactions/metadata"
 import { RoleData } from "contract_interactions/types"
 import useSWR from "swr"
 
@@ -11,7 +11,7 @@ const getRoleData = (
   platform: string,
   roleId: string,
   provider: Provider
-) => getDataOfRole(chainId, tokenAddress, platform, roleId, provider)
+) => metadata(chainId, platform, roleId, tokenAddress, provider)
 
 const useRoleData = (
   tokenAddress: string,

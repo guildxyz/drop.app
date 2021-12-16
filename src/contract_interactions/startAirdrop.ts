@@ -15,7 +15,7 @@ const startAirdrop = async (
   data: StartAirdropData,
   provider?: Provider
 ): Promise<string> => {
-  const { serverId, channel, urlName, platform, nfts, assetData } = data
+  const { serverId, channel, urlName, platform, nfts, assetData, description } = data
 
   const roleIds = nfts.reduce((acc, curr) => [...acc, ...curr.roles], [])
 
@@ -24,8 +24,7 @@ const startAirdrop = async (
 
     return JSON.stringify({
       name: nft.name,
-      // TODO: description?
-      description: "",
+      description,
       image: `ipfs://${nft.hash}`,
       external_url: `https://drop.app/nft/${
         AirdropAddresses[Chains[chainId]]

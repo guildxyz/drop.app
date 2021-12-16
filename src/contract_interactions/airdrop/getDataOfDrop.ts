@@ -8,26 +8,13 @@ const getDataOfDrop = (
   provider?: Provider
 ): Promise<Drop> =>
   getAirdropContract(chainId, provider)
-    .getDataOfDrop(urlName)
-    .then(
-      ([
-        dropName,
-        platform,
-        serverId,
-        roleIds,
-        tokenAddress,
-        contractId,
-        numOfActive,
-      ]) => ({
-        dropName,
-        platform,
-        serverId,
-        roleIds,
-        tokenAddress,
-        contractId: +contractId,
-        numOfActive: +numOfActive,
-        urlName,
-      })
-    )
+    .dropsByUrl(urlName)
+    .then(([dropName, platform, serverId, contractId]) => ({
+      dropName,
+      platform,
+      serverId,
+      contractId: +contractId,
+      urlName,
+    }))
 
 export default getDataOfDrop
