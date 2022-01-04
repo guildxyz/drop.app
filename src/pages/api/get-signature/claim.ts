@@ -3,6 +3,7 @@ import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
+import { fetchIsGroupMember } from "components/[drop]/ClaimCard/components/TelegramClaimButton/hooks/useIsGroupMember"
 import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
@@ -72,28 +73,34 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     //TODO check user id from database based on address
 
     try {
-      const discordId = await fetchUserId("discordId", address, platform).catch(
-        () => {
-          throw Error("Failed to fetch discord id of user")
-        }
-      )
+      const userId = await fetchUserId("discordId", address, platform).catch(() => {
+        throw Error("Failed to fetch discord id of user")
+      })
 
-      if (discordId !== hashedUserId) {
+      if (userId !== hashedUserId) {
         throw Error("Not a valid user id hash.")
       }
 
-      await Promise.all([
-        fetchRoles("", serverId).then((roles) => {
-          if (!(roleId in roles)) {
-            throw Error("Not a valid role of server.")
+      if (platform === "DISCORD")
+        await Promise.all([
+          fetchRoles("", serverId).then((roles) => {
+            if (!(roleId in roles)) {
+              throw Error("Not a valid role of server.")
+            }
+          }),
+          fetchUserRoles("", userId, serverId).then((userRoles) => {
+            if (!(roleId in userRoles)) {
+              throw Error("User does not have the given role in the given server.")
+            }
+          }),
+        ])
+
+      if (platform === "TELEGRAM")
+        await fetchIsGroupMember("", serverId, userId).then((isMember) => {
+          if (!isMember) {
+            throw Error("Only members of the group can claim ")
           }
-        }),
-        fetchUserRoles("", discordId, serverId).then((userRoles) => {
-          if (!(roleId in userRoles)) {
-            throw Error("User does not have the given role in the given server.")
-          }
-        }),
-      ])
+        })
 
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "address", "string", "address"],

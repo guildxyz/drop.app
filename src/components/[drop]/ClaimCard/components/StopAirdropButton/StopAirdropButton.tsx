@@ -37,9 +37,7 @@ const StopAirdropButton = ({
       size="sm"
       isLoading={isLoading || contractId === undefined}
       loadingText={loadingText}
-      onClick={() =>
-        onSubmit({ serverId, roleId, contractId, urlName, platform: "DISCORD" })
-      }
+      onClick={() => onSubmit({ serverId, roleId, contractId, urlName, platform })}
     >
       {successfullyStopped ? "Success" : "Stop"}
     </CtaButton>

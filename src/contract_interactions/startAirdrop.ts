@@ -60,7 +60,9 @@ const startAirdrop = async (
                 value: serverId,
               },
             ]),
-        ...nft.traits.map(({ key, value }) => ({ trait_type: key, value })),
+        ...nft.traits
+          .filter(({ key, value }) => key?.length > 0 && value?.length > 0)
+          .map(({ key, value }) => ({ trait_type: key, value })),
       ],
     })
   })

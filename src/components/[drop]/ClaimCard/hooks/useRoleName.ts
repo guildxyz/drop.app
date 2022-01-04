@@ -5,8 +5,14 @@ const getRoleName = (_: string, serverId: string, roleId: string): Promise<strin
     (response) => (response.ok ? response.json() : Promise.reject(Error()))
   )
 
-const useRoleName = (serverId: string, roleId: string): string => {
-  const shouldFetch = serverId?.length > 0 && roleId?.length > 0
+// platform parameter is only needed to avoid unnecessary requests from ClaimCard
+const useRoleName = (
+  serverId: string,
+  roleId: string,
+  platform: "TELEGRAM" | "DISCORD" = "DISCORD"
+): string => {
+  const shouldFetch =
+    serverId?.length > 0 && roleId?.length > 0 && platform === "DISCORD"
 
   const { data } = useSWR(
     shouldFetch ? ["roleName", serverId, roleId] : null,

@@ -11,8 +11,11 @@ const getServerData = (_: string, serverId: string): Promise<ServerData> =>
     (response) => (response.ok ? response.json() : Promise.reject(Error()))
   )
 
-const useServerData = (serverId: string): ServerData => {
-  const shouldFetch = serverId?.length > 0
+const useServerData = (
+  serverId: string,
+  platform: "TELEGRAM" | "DISCORD" = "DISCORD"
+): ServerData => {
+  const shouldFetch = serverId?.length > 0 && platform === "DISCORD"
   const { data } = useSWR(
     shouldFetch ? ["serverData", serverId] : null,
     getServerData,

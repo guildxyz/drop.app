@@ -91,20 +91,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         }
       }
 
-      console.log(
-        "signature",
-        ["address", "string", "string", "string", "string[]", "string[]", "address"],
-        [
-          AirdropAddresses[Chains[chainId]],
-          platform,
-          serverId,
-          url,
-          roleIds,
-          metadata,
-          address,
-        ]
-      )
-
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "string", "string[]", "string[]", "address"],
         [
