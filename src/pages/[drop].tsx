@@ -9,11 +9,12 @@ import getDropRolesData, {
 } from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
 import useDropIcon from "hooks/useDropIcon"
+import useGroupName from "hooks/useGroupName"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServerData from "hooks/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
-import { ReactElement } from "react"
+import { ReactElement, useEffect } from "react"
 import shortenHex from "utils/shortenHex"
 
 type Props = {
@@ -25,9 +26,13 @@ const DropPage = ({
   urlName,
   drop: { roles, tokenAddress, dropName, serverId, platform, platformImage },
 }: Props): ReactElement => {
+  // TODO: Make one hook for all platforms similarly to useDropIcon
   const { name: serverName } = useServerData(serverId, platform)
+  const groupName = useGroupName(serverId, platform)
   const isAuthenticated = useIsAuthenticated(platform)
   const icon = useDropIcon(serverId, platformImage, platform)
+
+  useEffect(() => console.log(serverName, groupName), [serverName, groupName])
 
   return (
     <Layout title={dropName}>
@@ -38,13 +43,13 @@ const DropPage = ({
               <Circle overflow="hidden">
                 <Image
                   src={icon}
-                  alt={`Icon of ${serverName} sever`}
+                  alt={`Icon of ${serverName ?? groupName ?? ""} sever`}
                   width={40}
                   height={40}
                 />
               </Circle>
             )}
-            <Text>{serverName}</Text>
+            <Text>{serverName ?? groupName ?? ""}</Text>
           </HStack>
 
           <HStack>
