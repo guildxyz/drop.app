@@ -1,26 +1,26 @@
 import { Provider, Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { claims } from "contract_interactions/airdrop"
-import useDiscordId from "hooks/useDiscordId"
+import useUserId from "hooks/useUserId"
 import useSWR from "swr"
 
 const getClaims = (
   _: string,
   chainId: number,
   userId: string,
-  platform: string,
+  platform: "DISCORD" | "TELEGRAM",
   roleId: string,
   tokenAddress: string,
   provider: Provider
 ) => claims(chainId, userId, platform, roleId, tokenAddress, provider)
 
 const useIsClaimed = (
-  platform: string,
+  platform: "DISCORD" | "TELEGRAM",
   roleId: string,
   tokenAddress: string
 ): boolean => {
   const { chainId, library } = useWeb3React<Web3Provider>()
-  const userId = useDiscordId()
+  const userId = useUserId(platform)
 
   const shouldFetch =
     platform?.length > 0 &&

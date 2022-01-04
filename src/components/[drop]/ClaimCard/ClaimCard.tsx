@@ -14,10 +14,10 @@ import {
 } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { RoleData } from "contract_interactions/types"
-import useDiscordId from "hooks/useDiscordId"
 import useIsActive from "hooks/useIsActive"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
+import useUserId from "hooks/useUserId"
 import Image from "next/image"
 import { Check } from "phosphor-react"
 import { ReactElement, useMemo } from "react"
@@ -35,7 +35,7 @@ type Props = {
   tokenAddress: string
   serverId: string
   urlName: string
-  platform: string
+  platform: "DISCORD" | "TELEGRAM"
 }
 
 const ClaimCard = ({
@@ -54,14 +54,14 @@ const ClaimCard = ({
   const isClaimed = useIsClaimed(platform, roleId, tokenAddress)
   const roleName = useRoleName(serverId, roleId)
   const userRoles = useUserRoles(serverId)
-  const isAuthenticated = useIsAuthenticated()
+  const isAuthenticated = useIsAuthenticated(platform)
   const isDeployer = useIsDeployer(tokenAddress)
   const isActive = useIsActive(urlName, roleId, tokenAddress)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
   )
-  const userId = useDiscordId()
+  const userId = useUserId(platform)
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "This role is inactive in this drop"]

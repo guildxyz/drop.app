@@ -5,14 +5,14 @@ import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import { fetchDiscordID } from "hooks/useDiscordId"
+import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
 
 type Body = {
   chainId: number
   serverId: string
-  platform: string
+  platform: "DISCORD" | "TELEGRAM"
   address: string
   roleId: string
   tokenAddress: string
@@ -49,7 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 
     try {
       const [discordId] = await Promise.all([
-        fetchDiscordID("discordId", address),
+        fetchUserId("discordId", address, platform),
         fetchRoles("", serverId).then((roles) => {
           if (!(roleId in roles)) {
             throw Error("Not valid role of server")

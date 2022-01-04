@@ -1,18 +1,19 @@
 import useSWR from "swr"
-import useDiscordId from "./useDiscordId"
+import useUserId from "./useUserId"
 
 const getServersOfUser = (_: string, userId: string): Promise<string[]> =>
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/servers/${userId}`).then(
     (response) => (response.ok ? response.json() : Promise.reject(new Error()))
   )
 
+// TODO: We need a similar hook for groups of user
 const useServersOfUser = (): string[] => {
-  const userId = useDiscordId()
+  const discordId = useUserId("DISCORD")
 
-  const shouldFetch = userId?.length > 0
+  const shouldFetch = discordId?.length > 0
 
   const { data } = useSWR(
-    shouldFetch ? ["serversOfUser", userId] : null,
+    shouldFetch ? ["serversOfUser", discordId] : null,
     getServersOfUser
   )
 

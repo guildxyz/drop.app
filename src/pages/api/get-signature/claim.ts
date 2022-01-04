@@ -6,14 +6,14 @@ import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import { fetchDiscordID } from "hooks/useDiscordId"
+import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
 
 type Body = {
   chainId: number
   serverId: string
-  platform: string
+  platform: "DISCORD" | "TELEGRAM"
   address: string
   hashedUserId: string
   roleId: string
@@ -72,9 +72,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     //TODO check user id from database based on address
 
     try {
-      const discordId = await fetchDiscordID("discordId", address).catch(() => {
-        throw Error("Failed to fetch discord id of user")
-      })
+      const discordId = await fetchUserId("discordId", address, platform).catch(
+        () => {
+          throw Error("Failed to fetch discord id of user")
+        }
+      )
 
       if (discordId !== hashedUserId) {
         throw Error("Not a valid user id hash.")

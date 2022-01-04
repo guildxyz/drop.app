@@ -52,8 +52,8 @@ const useAuth = () => {
       window.addEventListener("message", listener.current)
     })
     closeWindow()
-    await authenticate(id, account, addressSignedMessage)
-    await mutate(["discordId", account])
+    await authenticate(id, account, addressSignedMessage, "DISCORD")
+    await mutate(["userId", account, "DISCORD"])
     return true
   }
 

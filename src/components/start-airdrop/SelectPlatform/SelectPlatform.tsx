@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react"
 import { DiscordLogo, TelegramLogo } from "phosphor-react"
 import { useController, useFormContext } from "react-hook-form"
+import GroupSelect from "./components/GroupSelect"
 import PlatformOption from "./components/PlatformOption"
 import ServerSelect from "./components/ServerSelect"
 
@@ -15,9 +16,10 @@ const options = [
     value: "TELEGRAM",
     color: "TELEGRAM",
     title: "Telegram",
-    description: "",
+    description: "Drop to the members of your group",
     icon: TelegramLogo,
-    disabled: "Coming soon",
+    disabled: false,
+    children: <GroupSelect />,
   },
   {
     value: "DISCORD",

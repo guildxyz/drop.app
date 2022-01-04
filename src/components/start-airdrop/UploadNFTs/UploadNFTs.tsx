@@ -31,6 +31,7 @@ const UploadNFTs = (): ReactElement => {
   const roles = useRoles(serverId)
   const [progresses, setProgresses] = useState<Record<string, number>>({})
   const [hashes, setHashes] = useState<Record<string, string>>({})
+  const platform = useWatch({ name: "platform" })
 
   const { fields, append, remove } = useFieldArray({ name: "nfts" })
 

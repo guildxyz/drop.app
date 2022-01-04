@@ -1,5 +1,5 @@
 import useSWRImmutable from "swr/immutable"
-import useDiscordId from "../../../../hooks/useDiscordId"
+import useUserId from "../../../../hooks/useUserId"
 
 const fetchUserRoles = (
   _: string,
@@ -16,7 +16,7 @@ const useUserRoles = (
   serverId: string,
   userId?: string
 ): Array<Record<string, string>> => {
-  const userIdOfConnectedWallet = useDiscordId()
+  const userIdOfConnectedWallet = useUserId("DISCORD")
   const discordId = userId ? userId : userIdOfConnectedWallet
   const shouldFetch = discordId?.length > 0 && serverId?.length > 0
 

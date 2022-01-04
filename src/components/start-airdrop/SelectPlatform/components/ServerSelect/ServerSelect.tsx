@@ -18,6 +18,7 @@ const INVITE_REGEX = /^https:\/\/discord.gg\/([a-z0-9]+)$/i
 const ServerSelect = (): ReactElement => {
   const { isReady } = useRouter()
   const { register, setValue } = useFormContext()
+  const platform = useWatch({ name: "platform" })
 
   const inviteLink = useWatch<{ inviteLink: string }>({
     name: "inviteLink",
@@ -47,12 +48,11 @@ const ServerSelect = (): ReactElement => {
         <Input
           {...register("inviteLink", {
             disabled: !isReady,
-            required: "This field is required.",
+            required: platform === "DISCORD" && "This field is required.",
             validate: async (value) => {
+              if (platform !== "DISCORD") return true
               if (!INVITE_REGEX.test(value)) return "Not a valid invite"
-              const inviteCode = value.match(
-                /^https:\/\/discord.gg\/([a-z0-9]+)$/i
-              )[1]
+              const inviteCode = value.match(INVITE_REGEX)[1]
               const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
               )
@@ -96,7 +96,7 @@ const ServerSelect = (): ReactElement => {
         <FormLabel>3. Select channel</FormLabel>
         <Select
           {...register("channel", {
-            required: "Please select a channel",
+            required: platform === "DISCORD" && "Please select a channel",
           })}
         >
           <option value="">Select a channel</option>

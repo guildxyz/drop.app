@@ -15,8 +15,21 @@ const startAirdrop = async (
   data: StartAirdropData,
   provider?: Provider
 ): Promise<string> => {
-  const { serverId, channel, urlName, platform, nfts, assetData, description } = data
+  const {
+    serverId: formServerId,
+    channel,
+    urlName,
+    platform,
+    nfts: formNfts,
+    assetData,
+    description,
+  } = data
 
+  const serverId = platform === "TELEGRAM" ? `-${formServerId}` : formServerId
+  const nfts =
+    platform === "TELEGRAM"
+      ? formNfts.map((nft) => ({ ...nft, roles: nft.roles.map((id) => `-${id}`) }))
+      : formNfts
   const roleIds = nfts.reduce((acc, curr) => [...acc, ...curr.roles], [])
 
   const metaDatas = roleIds.map((roleId) => {
@@ -30,14 +43,23 @@ const startAirdrop = async (
         AirdropAddresses[Chains[chainId]]
       }/${platform}/${roleId}`,
       attributes: [
-        {
-          trait_type: "Server Id",
-          value: serverId,
-        },
-        {
-          trait_type: "Role Id",
-          value: roleId,
-        },
+        ...(platform === "DISCORD"
+          ? [
+              {
+                trait_type: "Server Id",
+                value: serverId,
+              },
+              {
+                trait_type: "Role Id",
+                value: roleId,
+              },
+            ]
+          : [
+              {
+                trait_type: "Group Id",
+                value: serverId,
+              },
+            ]),
         ...nft.traits.map(({ key, value }) => ({ trait_type: key, value })),
       ],
     })
@@ -73,7 +95,7 @@ const startAirdrop = async (
     serverId,
     roleIds,
     metaDataHashes,
-    channel,
+    platform === "TELEGRAM" ? serverId : channel,
     provider
   )
 

@@ -31,7 +31,7 @@ export type StartAirdropData = {
   inviteLink: string
   serverId: string
   nfts: NftField[]
-  platform: "DISCORD"
+  platform: "DISCORD" | "TELEGRAM"
   description: string
 }
 

@@ -9,10 +9,24 @@ import SelectAsset from "components/start-airdrop/SelectAsset"
 import SelectPlatform from "components/start-airdrop/SelectPlatform"
 import SubmitButton from "components/start-airdrop/SubmitButton"
 import UploadNFTs from "components/start-airdrop/UploadNFTs"
+import UploadSingle from "components/start-airdrop/UploadNFTs/UploadSingle"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
-import { FormProvider, useForm } from "react-hook-form"
+import { FormProvider, useForm, useWatch } from "react-hook-form"
+
+const uploadSection = {
+  TELEGRAM: (
+    <Section title="Upload your NFT">
+      <UploadSingle />
+    </Section>
+  ),
+  DISCORD: (
+    <Section title="Upload your NFTs">
+      <UploadNFTs />
+    </Section>
+  ),
+}
 
 const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
@@ -39,6 +53,8 @@ const StartAirdropPage = (): JSX.Element => {
       description: "",
     },
   })
+
+  const platform = useWatch({ name: "platform", control: methods.control })
 
   useWarnIfUnsavedChanges(
     methods.formState?.isDirty && !methods.formState.isSubmitted
@@ -74,9 +90,7 @@ const StartAirdropPage = (): JSX.Element => {
             <SelectAsset />
           </Section>
 
-          <Section title="Upload your NFTs">
-            <UploadNFTs />
-          </Section>
+          {uploadSection[platform]}
 
           <Section title="Set NFT collection name and symbol">
             <NameInput />

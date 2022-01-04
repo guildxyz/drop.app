@@ -23,25 +23,42 @@ const getDropRolesData = async (
    * could display all the ClaimCard-s, that are or were active in the drop and
    * disable the ones that aren't currently active
    */
-  const activeRoles = await getActiveRoles(
+  if (platform === "DISCORD") {
+    const activeRoles = await getActiveRoles(
+      chainId,
+      urlName,
+      serverId,
+      tokenAddress,
+      provider
+    )
+    const metadatas = await Promise.all(
+      activeRoles.map((roleId) =>
+        metadata(chainId, platform, roleId, tokenAddress, provider)
+      )
+    )
+    return {
+      ...dropData,
+      tokenAddress,
+      roles: Object.fromEntries(
+        activeRoles.map((roleId, index) => [roleId, metadatas[index]])
+      ),
+    }
+  }
+
+  // Fetching for telegram
+
+  const mataData = await metadata(
     chainId,
-    urlName,
+    platform,
     serverId,
     tokenAddress,
     provider
-  )
-  const metadatas = await Promise.all(
-    activeRoles.map((roleId) =>
-      metadata(chainId, platform, roleId, tokenAddress, provider)
-    )
   )
 
   return {
     ...dropData,
     tokenAddress,
-    roles: Object.fromEntries(
-      activeRoles.map((roleId, index) => [roleId, metadatas[index]])
-    ),
+    roles: { [serverId]: mataData },
   }
 }
 

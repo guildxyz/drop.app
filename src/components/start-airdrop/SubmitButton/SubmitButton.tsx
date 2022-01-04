@@ -1,24 +1,21 @@
-import { useWeb3React } from "@web3-react/core"
 import CtaButton from "components/common/CtaButton"
-import { Web3Connection } from "components/_app/Web3ConnectionManager"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
-import { ReactElement, useContext } from "react"
+import { ReactElement } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import AuthenticateButton from "./components/AuthenticateButton"
-import LoadingButton from "./components/LoadingButton"
 import useStartAirdrop from "./hooks/useStartAirdrop"
 
 const SubmitButton = (): ReactElement => {
-  const { account } = useWeb3React()
-  const isAuthenticated = useIsAuthenticated()
+  const platform = useWatch({ name: "platform" })
+  const isAuthenticated = useIsAuthenticated(platform)
   const { onSubmit, isLoading } = useStartAirdrop()
-  const { triedEager } = useContext(Web3Connection)
+  // const { triedEager } = useContext(Web3Connection)
   const nfts = useWatch({ name: "nfts" })
 
   const { handleSubmit, setError } = useFormContext()
 
-  if (!triedEager || (!!account && isAuthenticated === undefined))
-    return <LoadingButton />
+  // if (!triedEager || (!!account && isAuthenticated === undefined))
+  //   return <LoadingButton />
 
   if (!isAuthenticated) return <AuthenticateButton />
 

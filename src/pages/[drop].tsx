@@ -25,7 +25,7 @@ const DropPage = ({
   drop: { roles, tokenAddress, dropName, serverId, platform },
 }: Props): ReactElement => {
   const { name: serverName, id, icon } = useServerData(serverId)
-  const isAuthenticated = useIsAuthenticated()
+  const isAuthenticated = useIsAuthenticated(platform)
 
   return (
     <Layout title={dropName}>
