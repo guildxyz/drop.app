@@ -14,7 +14,7 @@ import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServerData from "hooks/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
-import { ReactElement, useEffect } from "react"
+import { ReactElement, useMemo } from "react"
 import shortenHex from "utils/shortenHex"
 
 type Props = {
@@ -29,10 +29,14 @@ const DropPage = ({
   // TODO: Make one hook for all platforms similarly to useDropIcon
   const { name: serverName } = useServerData(serverId, platform)
   const groupName = useGroupName(serverId, platform)
+  const dropPlatformName = useMemo(
+    () =>
+      serverName?.length > 0 ? serverName : groupName?.length > 0 ? groupName : "",
+    [serverName, groupName]
+  )
+
   const isAuthenticated = useIsAuthenticated(platform)
   const icon = useDropIcon(serverId, platformImage, platform)
-
-  useEffect(() => console.log(serverName, groupName), [serverName, groupName])
 
   return (
     <Layout title={dropName}>
@@ -43,13 +47,13 @@ const DropPage = ({
               <Circle overflow="hidden">
                 <Image
                   src={icon}
-                  alt={`Icon of ${serverName ?? groupName ?? ""} sever`}
+                  alt={`Icon of ${dropPlatformName} sever`}
                   width={40}
                   height={40}
                 />
               </Circle>
             )}
-            <Text>{serverName ?? groupName ?? ""}</Text>
+            <Text>{dropPlatformName}</Text>
           </HStack>
 
           <HStack>
