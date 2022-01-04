@@ -6,6 +6,7 @@ import { Chains } from "connectors"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import getDrops from "contract_interactions/getDrops"
 import { motion } from "framer-motion"
+import useGroupsOfUser from "hooks/useGroupsOfUser"
 import useServersOfUser from "hooks/useServersOfUser"
 import { GetStaticProps } from "next"
 import Link from "next/link"
@@ -24,12 +25,17 @@ const Page = ({ drops }: Props): JSX.Element => {
   )
 
   const serversOfUser = useServersOfUser()
+  const groupsOfUser = useGroupsOfUser(drops.map((drop) => drop.serverId))
 
   const [yourDrops, allDrops] = useMemo(
     () =>
       drops.reduce(
-        (acc, airdrop) => {
-          if (serversOfUser?.includes(airdrop.serverId)) {
+        (acc, airdrop, index) => {
+          if (
+            (airdrop.platform === "DISCORD" &&
+              serversOfUser?.includes(airdrop.serverId)) ||
+            (airdrop.platform === "TELEGRAM" && groupsOfUser?.[index])
+          ) {
             acc[0].push(airdrop)
           } else {
             acc[1].push(airdrop)
@@ -38,7 +44,7 @@ const Page = ({ drops }: Props): JSX.Element => {
         },
         [[], []]
       ),
-    [drops, serversOfUser]
+    [drops, serversOfUser, groupsOfUser]
   )
 
   const [filteredYourDrops, filteredAllDrops] = useMemo(
