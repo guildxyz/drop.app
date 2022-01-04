@@ -25,25 +25,7 @@ const getDropRolesData = async (
     ? getServerData("", serverId).then(
         ({ id, icon }) => `https://cdn.discordapp.com/icons/${id}/${icon}`
       )
-    : fetchGroupImage("", serverId).then((path) =>
-        fetch(
-          `https://api.telegram.org/file/bot5099341542:AAFArM0ij5nsWAW1SQPbCGm_GyY1YMfloNE/${path}`
-        )
-          .then((response) =>
-            response
-              .arrayBuffer()
-              .then(
-                (arrayBuffer) =>
-                  `data:image/${path.split(".").pop()};base64,${Buffer.from(
-                    arrayBuffer
-                  ).toString("base64")}`
-              )
-          )
-          .catch((e) => {
-            console.error(e)
-            return ""
-          })
-      ))
+    : fetchGroupImage("", serverId))
 
   /**
    * TODO:

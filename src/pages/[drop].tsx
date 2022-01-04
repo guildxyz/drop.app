@@ -8,6 +8,7 @@ import getDropRolesData, {
   DropWithRoles,
 } from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
+import useDropIcon from "hooks/useDropIcon"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServerData from "hooks/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
@@ -22,10 +23,11 @@ type Props = {
 
 const DropPage = ({
   urlName,
-  drop: { roles, tokenAddress, dropName, serverId, platform },
+  drop: { roles, tokenAddress, dropName, serverId, platform, platformImage },
 }: Props): ReactElement => {
-  const { name: serverName, id, icon } = useServerData(serverId, platform)
+  const { name: serverName } = useServerData(serverId, platform)
   const isAuthenticated = useIsAuthenticated(platform)
+  const icon = useDropIcon(serverId, platformImage, platform)
 
   return (
     <Layout title={dropName}>
@@ -35,7 +37,7 @@ const DropPage = ({
             {icon?.length > 0 && (
               <Circle overflow="hidden">
                 <Image
-                  src={`https://cdn.discordapp.com/icons/${id}/${icon}`}
+                  src={icon}
                   alt={`Icon of ${serverName} sever`}
                   width={40}
                   height={40}

@@ -2,9 +2,10 @@ import useSWR from "swr"
 import { getServerData } from "./useServerData"
 
 const getServerImage = async (_: string, serverId: string) =>
-  getServerData(_, serverId).then(
-    ({ id, icon }) => `https://cdn.discordapp.com/icons/${id}/${icon}`
-  )
+  getServerData(_, serverId).then(({ id, icon }) => {
+    console.log(`https://cdn.discordapp.com/icons/${id}/${icon}`)
+    return `https://cdn.discordapp.com/icons/${id}/${icon}`
+  })
 
 const useServerImage = (
   serverId: string,
@@ -13,7 +14,7 @@ const useServerImage = (
 ): string => {
   const shouldFetch = serverId?.length > 0 && platform === "DISCORD"
   const { data } = useSWR(
-    shouldFetch ? ["serverData", serverId] : null,
+    shouldFetch ? ["serverImage", serverId] : null,
     getServerImage,
     {
       fallbackData,

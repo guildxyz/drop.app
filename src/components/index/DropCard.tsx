@@ -3,8 +3,7 @@ import Card from "components/common/Card"
 import Link from "components/common/Link"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
-import useGroupImage from "hooks/useGroupImage"
-import useServerImage from "hooks/useServerImage"
+import useDropIcon from "hooks/useDropIcon"
 import { useMemo } from "react"
 
 type Props = {
@@ -13,13 +12,7 @@ type Props = {
 
 const DropCard = ({ drop }: Props): JSX.Element => {
   // const dropData = useDropWithRoles(drop.urlName, drop)
-  const serverImage = useServerImage(
-    drop.serverId,
-    drop.platformImage,
-    drop.platform
-  )
-
-  const groupImage = useGroupImage(drop.serverId, drop.platformImage, drop.platform)
+  const icon = useDropIcon(drop.serverId, drop.platformImage, drop.platform)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
     if (!drop?.roles || Object.entries(drop.roles).length === 0) return []
@@ -84,10 +77,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               borderColor="white"
               overflow="hidden"
             >
-              <Img
-                src={serverImage ?? groupImage ?? "/svg/discord-logo.svg"}
-                objectFit="cover"
-              />
+              <Img src={icon} objectFit="cover" />
             </Box>
             <Text
               as="span"
