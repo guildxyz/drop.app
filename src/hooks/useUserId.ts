@@ -6,9 +6,8 @@ const fetchUserId = (
   _: string,
   address: string,
   platform: "TELEGRAM" | "DISCORD"
-): Promise<string> => {
-  console.log(_, address, platform)
-  return platform === "DISCORD"
+): Promise<string> =>
+  platform === "DISCORD"
     ? fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/discordId/${address}`).then(
         (res) =>
           res.ok ? res.json() : Promise.reject(Error("Failed to fetch discord id"))
@@ -17,7 +16,6 @@ const fetchUserId = (
         (res) =>
           res.ok ? res.json() : Promise.reject(Error("Failed to fetch telegram id"))
       )
-}
 
 const useUserId = (platform: "DISCORD" | "TELEGRAM"): string => {
   const { account } = useWeb3React()
