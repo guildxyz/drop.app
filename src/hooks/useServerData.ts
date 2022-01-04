@@ -31,4 +31,5 @@ const useServerData = (
   return data
 }
 
+export { getServerData }
 export default useServerData

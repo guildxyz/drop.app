@@ -5,6 +5,7 @@ export type Drop = {
   serverId: string
   contractId: number
   tokenAddress: string
+  platformImage?: string
   id?: number
 }
 

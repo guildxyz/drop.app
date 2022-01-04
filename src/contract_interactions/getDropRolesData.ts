@@ -1,4 +1,6 @@
 import { Provider } from "@ethersproject/providers"
+import { fetchGroupImage } from "hooks/useGroupImage"
+import { getServerData } from "hooks/useServerData"
 import { getDataOfDrop } from "./airdrop"
 import metadata from "./metadata"
 import { Drop, RoleData } from "./types"
@@ -12,9 +14,37 @@ const getDropRolesData = async (
   urlName: string,
   provider?: Provider
 ): Promise<DropWithRoles> => {
-  const dropData = await getDataOfDrop(chainId, urlName, provider)
+  const [dropData, tokenAddress] = await Promise.all([
+    getDataOfDrop(chainId, urlName, provider),
+    getTokenAddress(chainId, urlName, provider),
+  ])
+
   const { platform, serverId } = dropData
-  const tokenAddress = await getTokenAddress(chainId, urlName, provider)
+
+  const platformImage = await (platform === "DISCORD"
+    ? getServerData("", serverId).then(
+        ({ id, icon }) => `https://cdn.discordapp.com/icons/${id}/${icon}`
+      )
+    : fetchGroupImage("", serverId).then((path) =>
+        fetch(
+          `https://api.telegram.org/file/bot5099341542:AAFArM0ij5nsWAW1SQPbCGm_GyY1YMfloNE/${path}`
+        )
+          .then((response) =>
+            response
+              .arrayBuffer()
+              .then(
+                (arrayBuffer) =>
+                  `data:image/${path.split(".").pop()};base64,${Buffer.from(
+                    arrayBuffer
+                  ).toString("base64")}`
+              )
+          )
+          .catch((e) => {
+            console.error(e)
+            return ""
+          })
+      ))
+
   /**
    * TODO:
    *
@@ -39,6 +69,7 @@ const getDropRolesData = async (
     return {
       ...dropData,
       tokenAddress,
+      platformImage,
       roles: Object.fromEntries(
         activeRoles.map((roleId, index) => [roleId, metadatas[index]])
       ),
@@ -58,6 +89,7 @@ const getDropRolesData = async (
   return {
     ...dropData,
     tokenAddress,
+    platformImage,
     roles: { [serverId]: mataData },
   }
 }
