@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import { Check } from "phosphor-react"
-import { ReactElement, useEffect, useMemo } from "react"
+import { ReactElement, useCallback, useEffect, useMemo } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import useChannels from "./hooks/useChannels"
 
@@ -43,6 +43,20 @@ const ServerSelect = (): ReactElement => {
     [channels, serverId]
   )
 
+  const validateInviteLink = useCallback(
+    async (value) => {
+      if (platform !== "DISCORD") return true
+      if (!INVITE_REGEX.test(value)) return "Not a valid invite"
+      const inviteCode = value.match(INVITE_REGEX)[1]
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
+      )
+      if (!response.ok) return "Not a valid invite"
+      return true
+    },
+    [platform]
+  )
+
   return (
     <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} p={5}>
       <FormControl isInvalid={errors.inviteLink}>
@@ -51,16 +65,7 @@ const ServerSelect = (): ReactElement => {
           {...register("inviteLink", {
             disabled: !isReady,
             required: platform === "DISCORD" && "This field is required.",
-            validate: async (value) => {
-              if (platform !== "DISCORD") return true
-              if (!INVITE_REGEX.test(value)) return "Not a valid invite"
-              const inviteCode = value.match(INVITE_REGEX)[1]
-              const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
-              )
-              if (!response.ok) return "Not a valid invite"
-              return true
-            },
+            validate: validateInviteLink,
           })}
         />
         <FormErrorMessage>

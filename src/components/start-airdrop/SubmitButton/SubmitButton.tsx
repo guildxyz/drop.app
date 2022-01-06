@@ -5,6 +5,16 @@ import { useFormContext, useWatch } from "react-hook-form"
 import AuthenticateButton from "./components/AuthenticateButton"
 import useStartAirdrop from "./hooks/useStartAirdrop"
 
+const platformNFTError = {
+  TELEGRAM: "Select an NFT",
+  DISCORD: "Select at least one NFT",
+}
+
+const platformNFTContainerId = {
+  TELEGRAM: "upload-nft",
+  DISCORD: "upload-nfts",
+}
+
 const SubmitButton = (): ReactElement => {
   const platform = useWatch({ name: "platform" })
   const isAuthenticated = useIsAuthenticated(platform)
@@ -29,9 +39,11 @@ const SubmitButton = (): ReactElement => {
       loadingText="Starting airdrop"
       onClick={(event) => {
         if (nfts.length <= 0) {
-          setError("nfts", { message: "Choose at least one NFT" })
+          setError("nfts", {
+            message: platformNFTError[platform] ?? "Unknown validation error",
+          })
           handleSubmit(() => {})()
-          document.getElementById("upload-nfts").focus()
+          document.getElementById(platformNFTContainerId[platform])?.focus()
         } else handleSubmit(onSubmit)(event)
       }}
     >

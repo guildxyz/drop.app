@@ -32,7 +32,6 @@ const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
   const { query } = useRouter()
 
-  // TODO: Some of this might need to be restructured once we add telegram support
   const methods = useForm({
     shouldFocusError: true,
     mode: "all",
