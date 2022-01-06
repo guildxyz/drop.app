@@ -11,7 +11,10 @@ import useServersOfUser from "hooks/useServersOfUser"
 import { GetStaticProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+
+const SERVER_SEARCH_REGEX = /^server:[0-9]*$/i
+const GROUP_SEARCH_REGEX = /^group:-[0-9]*$/i
 
 type Props = {
   drops: DropWithRoles[]
@@ -19,10 +22,15 @@ type Props = {
 
 const Page = ({ drops }: Props): JSX.Element => {
   const router = useRouter()
-  const serverId = router.query.serverId as string
-  const [searchInput, setSeacrhInput] = useState<string>(
-    serverId?.length > 0 ? `server:${serverId}` : ""
-  )
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.serverId) setSearchInput(`server:${router.query.serverId}`)
+      else if (router.query.groupId) setSearchInput(`group:${router.query.groupId}`)
+    }
+  }, [router])
+
+  const [searchInput, setSearchInput] = useState<string>("")
 
   const serversOfUser = useServersOfUser()
   const groupsOfUser = useGroupsOfUser(drops.map((drop) => drop.serverId))
@@ -50,11 +58,14 @@ const Page = ({ drops }: Props): JSX.Element => {
   const [filteredYourDrops, filteredAllDrops] = useMemo(
     () =>
       [yourDrops, allDrops].map((_) =>
-        _.filter(({ dropName, serverId: server }) => {
-          if (/^server:[0-9]{18}$/.test(searchInput.trim()))
-            return server === searchInput.trim().slice(7)
-          return new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
-        })
+        _.filter(
+          ({ dropName, serverId: server }) =>
+            (SERVER_SEARCH_REGEX.test(searchInput.trim()) &&
+              server === searchInput.trim().slice(7)) ||
+            (GROUP_SEARCH_REGEX.test(searchInput.trim()) &&
+              server === searchInput.trim().slice(6)) ||
+            new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
+        )
       ),
     [yourDrops, allDrops, searchInput]
   )
@@ -64,7 +75,7 @@ const Page = ({ drops }: Props): JSX.Element => {
       <VStack alignItems="left" spacing={10}>
         <Input
           value={searchInput}
-          onChange={({ target: { value } }) => setSeacrhInput(value)}
+          onChange={({ target: { value } }) => setSearchInput(value)}
           maxW="lg"
           type="text"
           placeholder="Search drops"
