@@ -71,8 +71,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    //TODO check user id from database based on address
-
     try {
       const userId = await fetchUserId("discordId", address, platform).catch(() => {
         throw Error("Failed to fetch discord id of user")

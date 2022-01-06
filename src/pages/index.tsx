@@ -33,16 +33,22 @@ const Page = ({ drops }: Props): JSX.Element => {
   const [searchInput, setSearchInput] = useState<string>("")
 
   const serversOfUser = useServersOfUser()
-  const groupsOfUser = useGroupsOfUser(drops.map((drop) => drop.serverId))
+  const groupsOfUser = useGroupsOfUser([
+    ...new Set(
+      drops
+        .filter((drop) => drop.platform === "TELEGRAM")
+        .map((drop) => drop.serverId)
+    ),
+  ])
 
   const [yourDrops, allDrops] = useMemo(
     () =>
       drops.reduce(
-        (acc, airdrop, index) => {
+        (acc, airdrop) => {
           if (
             (airdrop.platform === "DISCORD" &&
               serversOfUser?.includes(airdrop.serverId)) ||
-            (airdrop.platform === "TELEGRAM" && groupsOfUser?.[index])
+            (airdrop.platform === "TELEGRAM" && groupsOfUser?.[airdrop.serverId])
           ) {
             acc[0].push(airdrop)
           } else {

@@ -7,6 +7,8 @@ const fetchGroupsOfUser = (_: string, groupIds: string[], userId: string) =>
     groupIds.map((groupId) =>
       fetchIsGroupMember("", groupId, userId).catch(() => false)
     )
+  ).then((results) =>
+    Object.fromEntries(groupIds.map((groupId, index) => [groupId, results[index]]))
   )
 
 const useGroupsOfUser = (groupIds: string[]) => {
