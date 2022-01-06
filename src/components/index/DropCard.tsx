@@ -1,9 +1,9 @@
 import { Box, Flex, Img, SimpleGrid, Text } from "@chakra-ui/react"
 import Card from "components/common/Card"
 import Link from "components/common/Link"
+import useDropIcon from "components/[drop]/hooks/useDropIcon/useDropIcon"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
-import useDropIcon from "hooks/useDropIcon"
 import { useMemo } from "react"
 
 type Props = {

@@ -1,6 +1,6 @@
 import { fetchIsGroupMember } from "components/[drop]/ClaimCard/components/TelegramClaimButton/hooks/useIsGroupMember"
+import useUserId from "hooks/useUserId"
 import useSWR from "swr"
-import useUserId from "./useUserId"
 
 const fetchGroupsOfUser = (_: string, groupIds: string[], userId: string) =>
   Promise.all(

@@ -1,6 +1,6 @@
 import { Provider } from "@ethersproject/providers"
-import { fetchGroupImage } from "hooks/useGroupImage"
-import { getServerData } from "hooks/useServerData"
+import { getServerData } from "components/[drop]/hooks/useCommunityName/hooks/useServerData"
+import { fetchGroupImage } from "components/[drop]/hooks/useDropIcon/hooks/useGroupImage"
 import { getDataOfDrop } from "./airdrop"
 import metadata from "./metadata"
 import { Drop, RoleData } from "./types"

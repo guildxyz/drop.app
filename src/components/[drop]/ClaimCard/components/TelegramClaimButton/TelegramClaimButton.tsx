@@ -1,12 +1,12 @@
 import { Box, Button, Tooltip } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { useDrop } from "components/[drop]/DropProvider"
-import useIsActive from "hooks/useIsActive"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useUserId from "hooks/useUserId"
 import { Check } from "phosphor-react"
 import { useMemo } from "react"
 import useClaim from "../../hooks/useClaim"
+import useIsActive from "../../hooks/useIsActive"
 import useIsClaimed from "../../hooks/useIsClaimed"
 import useIsGroupMember from "./hooks/useIsGroupMember"
 

@@ -1,6 +1,6 @@
 import { Platform } from "contract_interactions/types"
 import useSWR from "swr"
-import { getServerData } from "./useServerData"
+import { getServerData } from "../../useCommunityName/hooks/useServerData"
 
 const getServerImage = async (_: string, serverId: string) =>
   getServerData(_, serverId).then(

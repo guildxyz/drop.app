@@ -1,6 +1,6 @@
+import useGroupImage from "components/[drop]/hooks/useDropIcon/hooks/useGroupImage"
 import { Platform } from "contract_interactions/types"
-import useGroupImage from "./useGroupImage"
-import useServerImage from "./useServerImage"
+import useServerImage from "./hooks/useServerImage"
 
 const useDropIcon = (serverId: string, fallbackData: string, platform: Platform) => {
   const serverImage = useServerImage(serverId, fallbackData, platform)

@@ -1,7 +1,7 @@
 import CtaButton from "components/common/CtaButton"
 import { useDrop } from "components/[drop]/DropProvider"
-import useIsActive from "hooks/useIsActive"
 import { ReactElement, useMemo } from "react"
+import useIsActive from "../../hooks/useIsActive"
 import useContractId from "./hooks/useContractId"
 import useStopAirdrop from "./hooks/useStopAirdrop"
 

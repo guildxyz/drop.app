@@ -6,7 +6,6 @@ const getServersOfUser = (_: string, userId: string): Promise<string[]> =>
     (response) => (response.ok ? response.json() : Promise.reject(new Error()))
   )
 
-// TODO: We need a similar hook for groups of user
 const useServersOfUser = (): string[] => {
   const discordId = useUserId("DISCORD")
 
