@@ -11,7 +11,15 @@ const fetchIsGroupMember = (
     `${process.env.NEXT_PUBLIC_BACKEND_API}/telegram/member/${groupId}/${userId}`
   )
     .then((response) =>
-      response.json().then((body) => (response.ok ? body : Promise.reject(body)))
+      response
+        .json()
+        .then((body) =>
+          response.ok
+            ? body
+            : body.code === "BOT_IS_NOT_MEMBER"
+            ? null
+            : Promise.reject(body)
+        )
     )
     .catch((error) => Promise.reject({ message: error.message ?? "Unknown error" }))
 

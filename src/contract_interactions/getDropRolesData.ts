@@ -25,7 +25,7 @@ const getDropRolesData = async (
     ? getServerData("", serverId).then(
         ({ id, icon }) => `https://cdn.discordapp.com/icons/${id}/${icon}`
       )
-    : fetchGroupImage("", serverId))
+    : fetchGroupImage("", serverId).catch(() => ""))
 
   /**
    * TODO:

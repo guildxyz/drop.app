@@ -23,6 +23,8 @@ type Props = {
 const Page = ({ drops }: Props): JSX.Element => {
   const router = useRouter()
 
+  const [searchInput, setSearchInput] = useState<string>("")
+
   useEffect(() => {
     if (router.isReady) {
       if (router.query.serverId) setSearchInput(`server:${router.query.serverId}`)
@@ -30,18 +32,22 @@ const Page = ({ drops }: Props): JSX.Element => {
     }
   }, [router])
 
-  const [searchInput, setSearchInput] = useState<string>("")
-
   const serversOfUser = useServersOfUser()
-  const groupsOfUser = useGroupsOfUser([
-    ...new Set(
-      drops
-        .filter((drop) => drop.platform === "TELEGRAM")
-        .map((drop) => drop.serverId)
-    ),
-  ])
 
-  const [yourDrops, allDrops] = useMemo(
+  const groupIds = useMemo(
+    () => [
+      ...new Set(
+        drops
+          .filter((drop) => drop.platform === "TELEGRAM")
+          .map((drop) => drop.serverId)
+      ),
+    ],
+    [drops]
+  )
+
+  const groupsOfUser = useGroupsOfUser(groupIds)
+
+  const [yourDrops, allDrops] = useMemo<[DropWithRoles[], DropWithRoles[]]>(
     () =>
       drops.reduce(
         (acc, airdrop) => {
@@ -64,7 +70,8 @@ const Page = ({ drops }: Props): JSX.Element => {
   const [filteredYourDrops, filteredAllDrops] = useMemo(
     () =>
       [yourDrops, allDrops].map((_) =>
-        _.filter(
+        // null indicates that the bot has no access
+        _.filter(({ serverId }) => groupsOfUser?.[serverId] !== null).filter(
           ({ dropName, serverId: server }) =>
             (SERVER_SEARCH_REGEX.test(searchInput.trim()) &&
               server === searchInput.trim().slice(7)) ||
@@ -73,7 +80,7 @@ const Page = ({ drops }: Props): JSX.Element => {
             new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
         )
       ),
-    [yourDrops, allDrops, searchInput]
+    [yourDrops, allDrops, searchInput, groupsOfUser]
   )
 
   return (
