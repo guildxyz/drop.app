@@ -1,3 +1,4 @@
+import { Platform } from "contract_interactions/types"
 import useSWR from "swr"
 import { getServerData } from "./useServerData"
 
@@ -9,7 +10,7 @@ const getServerImage = async (_: string, serverId: string) =>
 const useServerImage = (
   serverId: string,
   fallbackData: string,
-  platform: "TELEGRAM" | "DISCORD" = "DISCORD"
+  platform: Platform
 ): string => {
   const shouldFetch = serverId?.length > 0 && platform === "DISCORD"
   const { data } = useSWR(

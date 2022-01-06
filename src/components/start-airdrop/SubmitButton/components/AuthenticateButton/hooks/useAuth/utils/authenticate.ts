@@ -1,3 +1,4 @@
+import { Platform } from "contract_interactions/types"
 import hashId from "contract_interactions/utils/hashId"
 import { mutate } from "swr"
 
@@ -5,7 +6,7 @@ const authenticate = async (
   id: string,
   signer: string,
   signature: string,
-  platform: "TELEGRAM" | "DISCORD"
+  platform: Platform
 ): Promise<void> => {
   const hashedId = await hashId(id)
   const authResponse = await (platform === "DISCORD"

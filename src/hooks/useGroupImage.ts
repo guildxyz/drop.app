@@ -1,3 +1,4 @@
+import { Platform } from "contract_interactions/types"
 import useSWR from "swr"
 
 const fetchGroupImage = (_: string, chatId: string) =>
@@ -7,11 +8,7 @@ const fetchGroupImage = (_: string, chatId: string) =>
     )
     .catch((error) => Promise.reject({ message: error.message ?? "Unknown error" }))
 
-const useGroupImage = (
-  chatId: string,
-  fallbackData: string,
-  platform: "TELEGRAM" | "DISCORD" = "TELEGRAM"
-) => {
+const useGroupImage = (chatId: string, fallbackData: string, platform: Platform) => {
   const shouldFetch = chatId?.length > 0 && platform === "TELEGRAM"
   const { data } = useSWR(
     shouldFetch ? ["groupImage", chatId] : null,

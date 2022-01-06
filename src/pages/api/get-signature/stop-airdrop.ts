@@ -5,6 +5,7 @@ import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
+import { Platform } from "contract_interactions/types"
 import { getDeployedTokens } from "hooks/useDeployedTokens"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
@@ -12,7 +13,7 @@ import checkParams from "utils/api/checkParams"
 type Body = {
   chainId: number
   serverId: string
-  platform: "DISCORD" | "TELEGRAM"
+  platform: Platform
   address: string
   roleId: string
   tokenAddress: string

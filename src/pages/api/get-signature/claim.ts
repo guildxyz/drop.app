@@ -7,6 +7,7 @@ import { fetchIsGroupMember } from "components/[drop]/ClaimCard/components/Teleg
 import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
+import { Platform } from "contract_interactions/types"
 import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
@@ -14,7 +15,7 @@ import checkParams from "utils/api/checkParams"
 type Body = {
   chainId: number
   serverId: string
-  platform: "DISCORD" | "TELEGRAM"
+  platform: Platform
   address: string
   hashedUserId: string
   roleId: string

@@ -5,6 +5,7 @@ import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
+import { Platform } from "contract_interactions/types"
 import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
@@ -13,7 +14,7 @@ import fetchIsOwner from "utils/fetchIsOwner"
 type Body = {
   chainId: number
   serverId: string
-  platform: "DISCORD" | "TELEGRAM"
+  platform: Platform
   address: string
   roleId: string
   tokenAddress: string

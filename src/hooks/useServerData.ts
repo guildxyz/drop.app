@@ -1,3 +1,4 @@
+import { Platform } from "contract_interactions/types"
 import useSWR from "swr"
 
 export type ServerData = {
@@ -11,10 +12,7 @@ const getServerData = (_: string, serverId: string): Promise<ServerData> =>
     (response) => (response.ok ? response.json() : Promise.reject(Error()))
   )
 
-const useServerData = (
-  serverId: string,
-  platform: "TELEGRAM" | "DISCORD" = "DISCORD"
-): ServerData => {
+const useServerData = (serverId: string, platform: Platform): ServerData => {
   const shouldFetch = serverId?.length > 0 && platform === "DISCORD"
   const { data } = useSWR(
     shouldFetch ? ["serverData", serverId] : null,

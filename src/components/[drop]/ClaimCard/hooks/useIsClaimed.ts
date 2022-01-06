@@ -2,6 +2,7 @@ import { Provider, Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { useDrop } from "components/[drop]/DropProvider"
 import { claims } from "contract_interactions/airdrop"
+import { Platform } from "contract_interactions/types"
 import useUserId from "hooks/useUserId"
 import useSWR from "swr"
 
@@ -9,7 +10,7 @@ const getClaims = (
   _: string,
   chainId: number,
   userId: string,
-  platform: "DISCORD" | "TELEGRAM",
+  platform: Platform,
   roleId: string,
   tokenAddress: string,
   provider: Provider
