@@ -29,7 +29,9 @@ const ServerSelect = (): ReactElement => {
     errors.inviteLink?.message?.length > 0 ? "" : inviteLink
   )
 
-  useEffect(() => setValue("serverId", serverId), [setValue, serverId])
+  useEffect(() => {
+    if (serverId?.length > 0) setValue("serverId", serverId)
+  }, [setValue, serverId])
 
   const isBotAdded = useMemo(
     () => Object.keys(channels ?? {})?.length > 0 && serverId?.length > 0,

@@ -49,7 +49,7 @@ const StartAirdropPage = (): JSX.Element => {
       inviteLink: "",
       serverId: "",
       nfts: [],
-      platform: "DISCORD",
+      platform: "TELEGRAM",
       description: "",
     },
   })
@@ -61,9 +61,9 @@ const StartAirdropPage = (): JSX.Element => {
   )
 
   useEffect(() => {
-    if (query.inviteCode) {
+    if (query.inviteCode)
       methods.setValue("inviteLink", `https://discord.gg/${query.inviteCode}`)
-    }
+    if (query.groupId) methods.setValue("serverId", query.groupId as string)
   }, [query, methods])
 
   if (!account)
