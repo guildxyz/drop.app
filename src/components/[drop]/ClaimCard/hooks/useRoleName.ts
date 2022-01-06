@@ -1,3 +1,4 @@
+import { useDrop } from "components/[drop]/DropProvider"
 import useSWR from "swr"
 
 const getRoleName = (_: string, serverId: string, roleId: string): Promise<string> =>
@@ -5,12 +6,9 @@ const getRoleName = (_: string, serverId: string, roleId: string): Promise<strin
     (response) => (response.ok ? response.json() : Promise.reject(Error()))
   )
 
-// platform parameter is only needed to avoid unnecessary requests from ClaimCard
-const useRoleName = (
-  serverId: string,
-  roleId: string,
-  platform: "TELEGRAM" | "DISCORD" = "DISCORD"
-): string => {
+const useRoleName = (roleId: string): string => {
+  const { serverId, platform } = useDrop()
+
   const shouldFetch =
     serverId?.length > 0 && roleId?.length > 0 && platform === "DISCORD"
 

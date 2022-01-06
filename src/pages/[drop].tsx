@@ -3,89 +3,73 @@ import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
+import DropProvider from "components/[drop]/DropProvider"
+import useCommunityName from "components/[drop]/hooks/useCommunityName"
 import { Chains, RPC } from "connectors"
 import getDropRolesData, {
   DropWithRoles,
 } from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
 import useDropIcon from "hooks/useDropIcon"
-import useGroupName from "hooks/useGroupName"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
-import useServerData from "hooks/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
-import { ReactElement, useMemo } from "react"
+import { ReactElement } from "react"
 import shortenHex from "utils/shortenHex"
 
 type Props = {
   drop: DropWithRoles
-  urlName: string
 }
 
-const DropPage = ({
-  urlName,
-  drop: { roles, tokenAddress, dropName, serverId, platform, platformImage },
-}: Props): ReactElement => {
-  // TODO: Make one hook for all platforms similarly to useDropIcon
-  const { name: serverName } = useServerData(serverId, platform)
-  const groupName = useGroupName(serverId, platform)
-  const dropPlatformName = useMemo(
-    () =>
-      serverName?.length > 0 ? serverName : groupName?.length > 0 ? groupName : "",
-    [serverName, groupName]
-  )
+const DropPage = ({ drop }: Props): ReactElement => {
+  const { roles, tokenAddress, dropName, serverId, platform, platformImage } = drop
 
+  const communityName = useCommunityName(serverId, platform)
   const isAuthenticated = useIsAuthenticated(platform)
   const icon = useDropIcon(serverId, platformImage, platform)
 
   return (
     <Layout title={dropName}>
-      <HStack justifyContent="space-between">
-        <HStack spacing={20}>
-          <HStack spacing={5}>
-            {icon?.length > 0 && (
-              <Circle overflow="hidden">
-                <Image
-                  src={icon}
-                  alt={`Icon of ${dropPlatformName} sever`}
-                  width={40}
-                  height={40}
-                />
-              </Circle>
-            )}
-            <Text>{dropPlatformName}</Text>
+      <DropProvider drop={drop}>
+        <HStack justifyContent="space-between">
+          <HStack spacing={20}>
+            <HStack spacing={5}>
+              {icon?.length > 0 && (
+                <Circle overflow="hidden">
+                  <Image
+                    src={icon}
+                    alt={`Icon of ${communityName} sever`}
+                    width={40}
+                    height={40}
+                  />
+                </Circle>
+              )}
+              <Text>{communityName}</Text>
+            </HStack>
+
+            <HStack>
+              <Text>Contract address:</Text>
+              <Link
+                target="_blank"
+                colorScheme="yellow"
+                href={`${
+                  RPC[process.env.NEXT_PUBLIC_CHAIN].blockExplorerUrls[0]
+                }address/${tokenAddress}`}
+              >
+                {shortenHex(tokenAddress)}
+              </Link>
+            </HStack>
           </HStack>
 
-          <HStack>
-            <Text>Contract address:</Text>
-            <Link
-              target="_blank"
-              colorScheme="yellow"
-              href={`${
-                RPC[process.env.NEXT_PUBLIC_CHAIN].blockExplorerUrls[0]
-              }address/${tokenAddress}`}
-            >
-              {shortenHex(tokenAddress)}
-            </Link>
-          </HStack>
+          {isAuthenticated === false && <AuthenticateButton size="sm" />}
         </HStack>
 
-        {isAuthenticated === false && <AuthenticateButton size="sm" />}
-      </HStack>
-
-      <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-        {Object.entries(roles).map(([roleId, role]) => (
-          <ClaimCard
-            platform={platform}
-            roleId={roleId}
-            role={role}
-            key={roleId}
-            tokenAddress={tokenAddress}
-            serverId={serverId}
-            urlName={urlName}
-          />
-        ))}
-      </Grid>
+        <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+          {Object.entries(roles).map(([roleId, role]) => (
+            <ClaimCard roleId={roleId} role={role} key={roleId} />
+          ))}
+        </Grid>
+      </DropProvider>
     </Layout>
   )
 }
@@ -102,7 +86,7 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
     if (!drop) throw Error()
 
     return {
-      props: { urlName, drop },
+      props: { drop },
       revalidate: 10,
     }
   } catch {

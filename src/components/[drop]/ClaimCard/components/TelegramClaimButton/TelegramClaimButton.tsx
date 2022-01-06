@@ -1,5 +1,6 @@
 import { Box, Button, Tooltip } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
+import { useDrop } from "components/[drop]/DropProvider"
 import useIsActive from "hooks/useIsActive"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useUserId from "hooks/useUserId"
@@ -11,27 +12,18 @@ import useIsGroupMember from "./hooks/useIsGroupMember"
 
 type Props = {
   roleId: string
-  tokenAddress: string
-  serverId: string
-  urlName: string
-  platform: "DISCORD" | "TELEGRAM"
 }
 
-const TelegramClaimButton = ({
-  roleId,
-  tokenAddress,
-  serverId,
-  urlName,
-  platform,
-}: Props) => {
+const TelegramClaimButton = ({ roleId }: Props) => {
+  const { tokenAddress, serverId, urlName, platform } = useDrop()
   const { account } = useWeb3React()
   const { isLoading, response, onSubmit } = useClaim()
   const successfullyClaimed = !!response
-  const isClaimed = useIsClaimed(platform, roleId, tokenAddress)
+  const isClaimed = useIsClaimed(roleId)
   const isAuthenticated = useIsAuthenticated(platform)
-  const isActive = useIsActive(urlName, roleId, tokenAddress)
+  const isActive = useIsActive(roleId)
   const userId = useUserId(platform)
-  const isGroupMember = useIsGroupMember(serverId, userId)
+  const isGroupMember = useIsGroupMember()
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "The drop on this NFT is inactive"]

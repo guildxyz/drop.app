@@ -1,3 +1,5 @@
+import { useDrop } from "components/[drop]/DropProvider"
+import useUserId from "hooks/useUserId"
 import useSWR from "swr"
 
 const fetchIsGroupMember = (
@@ -13,10 +15,12 @@ const fetchIsGroupMember = (
     )
     .catch((error) => Promise.reject({ message: error.message ?? "Unknown error" }))
 
-const useIsGroupMember = (groupId: string, userId: string) => {
-  const shouldFetch = groupId?.length > 0 && userId?.length > 0
+const useIsGroupMember = () => {
+  const { serverId, platform } = useDrop()
+  const userId = useUserId(platform)
+  const shouldFetch = serverId?.length > 0 && userId?.length > 0
   const { data } = useSWR(
-    shouldFetch ? ["isGroupMember", groupId, userId] : null,
+    shouldFetch ? ["isGroupMember", serverId, userId] : null,
     fetchIsGroupMember
   )
 

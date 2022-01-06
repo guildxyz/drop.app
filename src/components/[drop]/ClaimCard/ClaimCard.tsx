@@ -13,6 +13,7 @@ import {
 import { RoleData } from "contract_interactions/types"
 import Image from "next/image"
 import { ReactElement, useMemo } from "react"
+import { useDrop } from "../DropProvider"
 import DiscordClaimButton from "./components/DiscordClaimButton"
 import StopAirdropButton from "./components/StopAirdropButton"
 import TelegramClaimButton from "./components/TelegramClaimButton"
@@ -23,23 +24,13 @@ import useRoleName from "./hooks/useRoleName"
 type Props = {
   roleId: string
   role: RoleData
-  tokenAddress: string
-  serverId: string
-  urlName: string
-  platform: "DISCORD" | "TELEGRAM"
 }
 
-const ClaimCard = ({
-  roleId,
-  role,
-  tokenAddress,
-  serverId,
-  urlName,
-  platform,
-}: Props): ReactElement => {
+const ClaimCard = ({ roleId, role }: Props): ReactElement => {
+  const { tokenAddress, platform } = useDrop()
   const roleData = useRoleData(tokenAddress, platform, roleId, role)
-  const roleName = useRoleName(serverId, roleId, platform)
-  const isDeployer = useIsDeployer(tokenAddress)
+  const roleName = useRoleName(roleId)
+  const isDeployer = useIsDeployer()
   const ClaimButton = useMemo(
     () => (platform === "TELEGRAM" ? TelegramClaimButton : DiscordClaimButton),
     [platform]
@@ -57,15 +48,7 @@ const ClaimCard = ({
       >
         <HStack justifyContent="space-between">
           <Text>{roleName}</Text>
-          {isDeployer && (
-            <StopAirdropButton
-              platform={platform}
-              urlName={urlName}
-              roleId={roleId}
-              serverId={serverId}
-              tokenAddress={tokenAddress}
-            />
-          )}
+          {isDeployer && <StopAirdropButton roleId={roleId} />}
         </HStack>
         <Box
           position="relative"
@@ -98,15 +81,7 @@ const ClaimCard = ({
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
-        <ClaimButton
-          {...{
-            roleId,
-            tokenAddress,
-            serverId,
-            urlName,
-            platform,
-          }}
-        />
+        <ClaimButton roleId={roleId} />
       </VStack>
     </Skeleton>
   )

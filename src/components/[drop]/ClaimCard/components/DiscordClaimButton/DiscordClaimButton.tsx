@@ -1,5 +1,6 @@
 import { Box, Button, Tooltip } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
+import { useDrop } from "components/[drop]/DropProvider"
 import useIsActive from "hooks/useIsActive"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
@@ -13,28 +14,19 @@ import useUserRoles from "../../hooks/useUserRoles"
 
 type Props = {
   roleId: string
-  tokenAddress: string
-  serverId: string
-  urlName: string
-  platform: "DISCORD" | "TELEGRAM"
 }
 
-const DiscordClaimButton = ({
-  roleId,
-  tokenAddress,
-  serverId,
-  urlName,
-  platform,
-}: Props) => {
+const DiscordClaimButton = ({ roleId }: Props) => {
+  const { tokenAddress, serverId, urlName, platform } = useDrop()
   const { account } = useWeb3React()
   const userServers = useServersOfUser()
   const { isLoading, response, onSubmit } = useClaim()
   const successfullyClaimed = !!response
-  const isClaimed = useIsClaimed(platform, roleId, tokenAddress)
-  const roleName = useRoleName(serverId, roleId)
-  const userRoles = useUserRoles(serverId)
+  const isClaimed = useIsClaimed(roleId)
+  const roleName = useRoleName(roleId)
+  const userRoles = useUserRoles()
   const isAuthenticated = useIsAuthenticated(platform)
-  const isActive = useIsActive(urlName, roleId, tokenAddress)
+  const isActive = useIsActive(roleId)
   const canClaim = useMemo(
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
