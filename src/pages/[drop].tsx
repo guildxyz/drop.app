@@ -97,6 +97,7 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
   } catch {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 }
