@@ -1,4 +1,4 @@
-import { Circle, Grid, HStack, Text } from "@chakra-ui/react"
+import { Alert, AlertIcon, Circle, Grid, HStack, Text } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
@@ -11,6 +11,7 @@ import getDropRolesData, {
   DropWithRoles,
 } from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
+import useHasAccess from "hooks/useHasAccess"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
@@ -30,7 +31,10 @@ const DropPage = ({ drop }: Props): ReactElement => {
     platform,
     communityImage,
     communityName: initialCommunityName,
+    hasAccess: initialHasAccess,
   } = drop
+
+  const hasAccess = useHasAccess(serverId, platform, initialHasAccess)
 
   const communityName = useCommunityName(serverId, initialCommunityName, platform)
   const isAuthenticated = useIsAuthenticated(platform)
@@ -72,11 +76,19 @@ const DropPage = ({ drop }: Props): ReactElement => {
           {isAuthenticated === false && <AuthenticateButton size="sm" />}
         </HStack>
 
-        <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-          {Object.entries(roles).map(([roleId, role]) => (
-            <ClaimCard roleId={roleId} role={role} key={roleId} />
-          ))}
-        </Grid>
+        {hasAccess ? (
+          <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+            {Object.entries(roles).map(([roleId, role]) => (
+              <ClaimCard roleId={roleId} role={role} key={roleId} />
+            ))}
+          </Grid>
+        ) : (
+          <Alert mt={10} status="info" alignItems="center">
+            <AlertIcon />
+            It's no longer possible to claim in this drop, as the bot has been kicked
+            from the {platform === "DISCORD" ? "server" : "group"}
+          </Alert>
+        )}
       </DropProvider>
     </Layout>
   )
