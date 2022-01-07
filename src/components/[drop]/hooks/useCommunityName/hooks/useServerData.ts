@@ -12,14 +12,18 @@ const getServerData = (_: string, serverId: string): Promise<ServerData> =>
     (response) => (response.ok ? response.json() : Promise.reject(Error()))
   )
 
-const useServerData = (serverId: string, platform: Platform): ServerData => {
+const useServerData = (
+  serverId: string,
+  fallbackName: string,
+  platform: Platform
+): ServerData => {
   const shouldFetch = serverId?.length > 0 && platform === "DISCORD"
   const { data } = useSWR(
     shouldFetch ? ["serverData", serverId] : null,
     getServerData,
     {
       fallbackData: {
-        name: "",
+        name: fallbackName,
         id: serverId,
         icon: "",
       },

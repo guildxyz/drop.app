@@ -22,11 +22,19 @@ type Props = {
 }
 
 const DropPage = ({ drop }: Props): ReactElement => {
-  const { roles, tokenAddress, dropName, serverId, platform, platformImage } = drop
+  const {
+    roles,
+    tokenAddress,
+    dropName,
+    serverId,
+    platform,
+    communityImage,
+    communityName: initialCommunityName,
+  } = drop
 
-  const communityName = useCommunityName(serverId, platform)
+  const communityName = useCommunityName(serverId, initialCommunityName, platform)
   const isAuthenticated = useIsAuthenticated(platform)
-  const icon = useDropIcon(serverId, platformImage, platform)
+  const icon = useDropIcon(serverId, communityImage, platform)
 
   return (
     <Layout title={dropName}>

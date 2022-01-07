@@ -48,7 +48,8 @@ const NftCard = ({
   const nft = useWatch({ name: `nfts.${nftIndex}` })
   const { errors } = useFormState()
   const serverId = useWatch({ name: "serverId" })
-  const roles = useRoles(serverId)
+  const platform = useWatch({ name: "platform" })
+  const roles = useRoles(serverId, platform)
 
   useEffect(() => {
     if (imageHash.length > 0) setValue(`nfts.${nftIndex}.hash`, imageHash)

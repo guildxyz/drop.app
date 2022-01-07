@@ -1,4 +1,5 @@
 import { Provider } from "@ethersproject/providers"
+import { fetchGroupName } from "components/[drop]/hooks/useCommunityName/hooks/useGroupName"
 import { getServerData } from "components/[drop]/hooks/useCommunityName/hooks/useServerData"
 import { fetchGroupImage } from "components/[drop]/hooks/useDropIcon/hooks/useGroupImage"
 import { getDataOfDrop } from "./airdrop"
@@ -21,11 +22,17 @@ const getDropRolesData = async (
 
   const { platform, serverId } = dropData
 
-  const platformImage = await (platform === "DISCORD"
-    ? getServerData("", serverId).then(
-        ({ id, icon }) => `https://cdn.discordapp.com/icons/${id}/${icon}`
-      )
-    : fetchGroupImage("", serverId).catch(() => ""))
+  const [communityImage, communityName] = await (platform === "DISCORD"
+    ? getServerData("", serverId)
+        .then(({ id, icon, name }) => [
+          `https://cdn.discordapp.com/icons/${id}/${icon}`,
+          name,
+        ])
+        .catch(() => ["", ""])
+    : Promise.all([
+        fetchGroupImage("", serverId).catch(() => ""),
+        fetchGroupName("", serverId).catch(() => ""),
+      ]))
 
   /**
    * TODO:
@@ -51,7 +58,8 @@ const getDropRolesData = async (
     return {
       ...dropData,
       tokenAddress,
-      platformImage,
+      communityImage,
+      communityName,
       roles: Object.fromEntries(
         activeRoles.map((roleId, index) => [roleId, metadatas[index]])
       ),
@@ -71,7 +79,8 @@ const getDropRolesData = async (
   return {
     ...dropData,
     tokenAddress,
-    platformImage,
+    communityImage,
+    communityName,
     roles: { [serverId]: mataData },
   }
 }

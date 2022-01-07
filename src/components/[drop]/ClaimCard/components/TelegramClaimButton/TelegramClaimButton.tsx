@@ -23,7 +23,7 @@ const TelegramClaimButton = ({ roleId }: Props) => {
   const isAuthenticated = useIsAuthenticated(platform)
   const isActive = useIsActive(roleId)
   const userId = useUserId(platform)
-  const isGroupMember = useIsGroupMember()
+  const isGroupMember = useIsGroupMember(serverId, platform)
 
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "The drop on this NFT is inactive"]
