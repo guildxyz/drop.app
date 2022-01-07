@@ -7,6 +7,7 @@ export type Drop = {
   tokenAddress: string
   communityName: string
   communityImage: string
+  hasAccess: boolean
   id?: number
 }
 

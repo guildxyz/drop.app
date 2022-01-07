@@ -1,11 +1,10 @@
 import { Box, Flex, Img, SimpleGrid, Text } from "@chakra-ui/react"
 import Card from "components/common/Card"
 import Link from "components/common/Link"
-import useRoles from "components/start-airdrop/UploadNFTs/hooks/useRoles"
-import useIsGroupMember from "components/[drop]/ClaimCard/components/TelegramClaimButton/hooks/useIsGroupMember"
 import useDropIcon from "components/[drop]/hooks/useDropIcon/useDropIcon"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
+import useHasAccess from "hooks/useHasAccess"
 import { useMemo } from "react"
 
 type Props = {
@@ -15,15 +14,8 @@ type Props = {
 const DropCard = ({ drop }: Props): JSX.Element => {
   // const dropData = useDropWithRoles(drop.urlName, drop)
   const icon = useDropIcon(drop.serverId, drop.communityImage, drop.platform)
-  const roles = useRoles(
-    drop.serverId,
-    drop.platform,
-    Object.fromEntries(
-      Object.entries(drop.roles).map(([id, { name }]) => [id, name])
-    )
-  )
 
-  const isGroupMember = useIsGroupMember(drop.serverId, drop.platform)
+  const hasAccess = useHasAccess(drop.serverId, drop.platform, drop.hasAccess)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
     if (!drop?.roles || Object.entries(drop.roles).length === 0) return []
@@ -34,11 +26,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
     }))
   }, [drop])
 
-  if (
-    (drop.platform === "DISCORD" && Object.keys(roles ?? {}).length <= 0) ||
-    (drop.platform === "TELEGRAM" && isGroupMember === null)
-  )
-    return null
+  if (!hasAccess) return null
 
   return (
     <motion.div whileTap={{ scale: 0.95 }}>

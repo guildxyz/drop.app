@@ -2,6 +2,7 @@ import { Provider } from "@ethersproject/providers"
 import { fetchGroupName } from "components/[drop]/hooks/useCommunityName/hooks/useGroupName"
 import { getServerData } from "components/[drop]/hooks/useCommunityName/hooks/useServerData"
 import { fetchGroupImage } from "components/[drop]/hooks/useDropIcon/hooks/useGroupImage"
+import { fetchHasAccess } from "hooks/useHasAccess"
 import { getDataOfDrop } from "./airdrop"
 import metadata from "./metadata"
 import { Drop, RoleData } from "./types"
@@ -21,6 +22,8 @@ const getDropRolesData = async (
   ])
 
   const { platform, serverId } = dropData
+
+  const hasAccess = await fetchHasAccess("", serverId, platform)
 
   const [communityImage, communityName] = await (platform === "DISCORD"
     ? getServerData("", serverId)
@@ -60,6 +63,7 @@ const getDropRolesData = async (
       tokenAddress,
       communityImage,
       communityName,
+      hasAccess,
       roles: Object.fromEntries(
         activeRoles.map((roleId, index) => [roleId, metadatas[index]])
       ),
@@ -81,6 +85,7 @@ const getDropRolesData = async (
     tokenAddress,
     communityImage,
     communityName,
+    hasAccess,
     roles: { [serverId]: mataData },
   }
 }

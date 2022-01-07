@@ -1,10 +1,17 @@
 import { Platform } from "contract_interactions/types"
+import { fetchHasAccess } from "hooks/useHasAccess"
 import useSWR from "swr"
 import { getServerData } from "../../useCommunityName/hooks/useServerData"
 
 const getServerImage = async (_: string, serverId: string) =>
-  getServerData(_, serverId).then((data) =>
-    data === null ? null : `https://cdn.discordapp.com/icons/${data.id}/${data.icon}`
+  fetchHasAccess("", serverId, "DISCORD").then((hasAccess) =>
+    hasAccess
+      ? getServerData(_, serverId).then((data) =>
+          data === null
+            ? null
+            : `https://cdn.discordapp.com/icons/${data.id}/${data.icon}`
+        )
+      : null
   )
 
 const useServerImage = (

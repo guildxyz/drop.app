@@ -1,11 +1,18 @@
 import { fetchIsGroupMember } from "components/[drop]/ClaimCard/components/TelegramClaimButton/hooks/useIsGroupMember"
 import useUserId from "hooks/useUserId"
 import useSWR from "swr"
+import { fetchHasAccess } from "./useHasAccess"
 
 const fetchGroupsOfUser = (_: string, groupIds: string[], userId: string) =>
   Promise.all(
     groupIds.map((groupId) =>
-      fetchIsGroupMember("", groupId, userId).catch(() => false)
+      fetchHasAccess("", groupId, "TELEGRAM")
+        .then((hasAccess) =>
+          hasAccess
+            ? fetchIsGroupMember("", groupId, userId).catch(() => false)
+            : false
+        )
+        .catch(() => false)
     )
   ).then((results) =>
     Object.fromEntries(groupIds.map((groupId, index) => [groupId, results[index]]))

@@ -70,8 +70,7 @@ const Page = ({ drops }: Props): JSX.Element => {
   const [filteredYourDrops, filteredAllDrops] = useMemo(
     () =>
       [yourDrops, allDrops].map((_) =>
-        // null indicates that the bot has no access
-        _.filter(({ serverId }) => groupsOfUser?.[serverId] !== null).filter(
+        _.filter(
           ({ dropName, serverId: server }) =>
             (SERVER_SEARCH_REGEX.test(searchInput.trim()) &&
               server === searchInput.trim().slice(7)) ||
@@ -80,7 +79,7 @@ const Page = ({ drops }: Props): JSX.Element => {
             new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
         )
       ),
-    [yourDrops, allDrops, searchInput, groupsOfUser]
+    [yourDrops, allDrops, searchInput]
   )
 
   return (
