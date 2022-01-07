@@ -25,7 +25,8 @@ const fetchIsGroupMember = (
 
 const useIsGroupMember = (serverId: string, platform: Platform) => {
   const userId = useUserId(platform)
-  const shouldFetch = serverId?.length > 0 && userId?.length > 0
+  const shouldFetch =
+    serverId?.length > 0 && userId?.length > 0 && platform === "TELEGRAM"
   const { data } = useSWR(
     shouldFetch ? ["isGroupMember", serverId, userId] : null,
     fetchIsGroupMember

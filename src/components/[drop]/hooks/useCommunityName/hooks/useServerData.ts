@@ -9,7 +9,16 @@ export type ServerData = {
 
 const getServerData = (_: string, serverId: string): Promise<ServerData> =>
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/server/${serverId}`).then(
-    (response) => (response.ok ? response.json() : Promise.reject(Error()))
+    (response) =>
+      response
+        .json()
+        .then((body) =>
+          response.ok
+            ? body
+            : body.code === "BOT_IS_NOT_MEMBER"
+            ? null
+            : Promise.reject(body)
+        )
   )
 
 const useServerData = (
@@ -30,6 +39,7 @@ const useServerData = (
       revalidateOnMount: true,
     }
   )
+
   return data
 }
 

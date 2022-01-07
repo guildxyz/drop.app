@@ -3,8 +3,8 @@ import useSWR from "swr"
 import { getServerData } from "../../useCommunityName/hooks/useServerData"
 
 const getServerImage = async (_: string, serverId: string) =>
-  getServerData(_, serverId).then(
-    ({ id, icon }) => `https://cdn.discordapp.com/icons/${id}/${icon}`
+  getServerData(_, serverId).then((data) =>
+    data === null ? null : `https://cdn.discordapp.com/icons/${data.id}/${data.icon}`
   )
 
 const useServerImage = (
