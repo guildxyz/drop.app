@@ -14,7 +14,7 @@ import { useRouter } from "next/router"
 import { useEffect, useMemo, useState } from "react"
 
 const SERVER_SEARCH_REGEX = /^server:[0-9]*$/i
-const GROUP_SEARCH_REGEX = /^group:-[0-9]*$/i
+const GROUP_SEARCH_REGEX = /^group:[0-9]*$/i
 
 type Props = {
   drops: DropWithRoles[]
@@ -72,10 +72,11 @@ const Page = ({ drops }: Props): JSX.Element => {
       [yourDrops, allDrops].map((_) =>
         _.filter(
           ({ dropName, serverId: server }) =>
+            searchInput?.length <= 0 ||
             (SERVER_SEARCH_REGEX.test(searchInput.trim()) &&
               server === searchInput.trim().slice(7)) ||
             (GROUP_SEARCH_REGEX.test(searchInput.trim()) &&
-              server === searchInput.trim().slice(6)) ||
+              server === `-${searchInput.trim().slice(6)}`) ||
             new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
         )
       ),
@@ -134,17 +135,21 @@ const Page = ({ drops }: Props): JSX.Element => {
             </motion.div>
           )}
         </CategorySection>
-        <CategorySection
-          title="All drops"
-          fallbackText={
-            drops?.length
-              ? `No results for ${searchInput}`
-              : "Can't fetch drops right now. Check back later!"
-          }
-        >
-          {filteredAllDrops.length &&
-            filteredAllDrops?.map((drop) => <DropCard key={drop.id} drop={drop} />)}
-        </CategorySection>
+        {filteredYourDrops?.length > 0 && filteredAllDrops?.length <= 0 ? null : (
+          <CategorySection
+            title="All drops"
+            fallbackText={
+              drops?.length
+                ? `No results for ${searchInput}`
+                : "Can't fetch drops right now. Check back later!"
+            }
+          >
+            {filteredAllDrops.length &&
+              filteredAllDrops?.map((drop) => (
+                <DropCard key={drop.id} drop={drop} />
+              ))}
+          </CategorySection>
+        )}
       </VStack>
     </Layout>
   )
