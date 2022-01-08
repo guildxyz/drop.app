@@ -5,7 +5,8 @@ import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import { fetchDiscordID } from "hooks/useDiscordId"
+import { Platform } from "contract_interactions/types"
+import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
 import fetchIsOwner from "utils/fetchIsOwner"
@@ -13,7 +14,7 @@ import fetchIsOwner from "utils/fetchIsOwner"
 type Body = {
   chainId: number
   serverId: string
-  platform: string
+  platform: Platform
   address: string
   roleId: string
   tokenAddress: string
@@ -58,7 +59,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     }
 
     try {
-      const discordId = await fetchDiscordID("discordId", address)
+      const discordId = await fetchUserId("discordId", address, platform)
       const [isOwner] = await Promise.all([
         fetchIsOwner(serverId, discordId),
         fetchRoles("", serverId).then((roles) => {

@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import { Check } from "phosphor-react"
-import { ReactElement, useEffect, useMemo } from "react"
+import { ReactElement, useCallback, useEffect, useMemo } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import useChannels from "./hooks/useChannels"
 
@@ -18,6 +18,7 @@ const INVITE_REGEX = /^https:\/\/discord.gg\/([a-z0-9]+)$/i
 const ServerSelect = (): ReactElement => {
   const { isReady } = useRouter()
   const { register, setValue } = useFormContext()
+  const platform = useWatch({ name: "platform" })
 
   const inviteLink = useWatch<{ inviteLink: string }>({
     name: "inviteLink",
@@ -28,7 +29,9 @@ const ServerSelect = (): ReactElement => {
     errors.inviteLink?.message?.length > 0 ? "" : inviteLink
   )
 
-  useEffect(() => setValue("serverId", serverId), [setValue, serverId])
+  useEffect(() => {
+    if (serverId?.length > 0) setValue("serverId", serverId)
+  }, [setValue, serverId])
 
   const isBotAdded = useMemo(
     () => Object.keys(channels ?? {})?.length > 0 && serverId?.length > 0,
@@ -40,6 +43,20 @@ const ServerSelect = (): ReactElement => {
     [channels, serverId]
   )
 
+  const validateInviteLink = useCallback(
+    async (value) => {
+      if (platform !== "DISCORD") return true
+      if (!INVITE_REGEX.test(value)) return "Not a valid invite"
+      const inviteCode = value.match(INVITE_REGEX)[1]
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
+      )
+      if (!response.ok) return "Not a valid invite"
+      return true
+    },
+    [platform]
+  )
+
   return (
     <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} p={5}>
       <FormControl isInvalid={errors.inviteLink}>
@@ -47,18 +64,8 @@ const ServerSelect = (): ReactElement => {
         <Input
           {...register("inviteLink", {
             disabled: !isReady,
-            required: "This field is required.",
-            validate: async (value) => {
-              if (!INVITE_REGEX.test(value)) return "Not a valid invite"
-              const inviteCode = value.match(
-                /^https:\/\/discord.gg\/([a-z0-9]+)$/i
-              )[1]
-              const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
-              )
-              if (!response.ok) return "Not a valid invite"
-              return true
-            },
+            required: platform === "DISCORD" && "This field is required.",
+            validate: validateInviteLink,
           })}
         />
         <FormErrorMessage>
@@ -96,7 +103,7 @@ const ServerSelect = (): ReactElement => {
         <FormLabel>3. Select channel</FormLabel>
         <Select
           {...register("channel", {
-            required: "Please select a channel",
+            required: platform === "DISCORD" && "Please select a channel",
           })}
         >
           <option value="">Select a channel</option>

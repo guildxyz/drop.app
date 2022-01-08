@@ -28,7 +28,8 @@ const UploadNFTs = (): ReactElement => {
   const { errors, dirtyFields } = useFormState()
   const nfts = useWatch({ name: "nfts" })
   const serverId = useWatch({ name: "serverId" })
-  const roles = useRoles(serverId)
+  const platform = useWatch({ name: "platform" })
+  const roles = useRoles(serverId, platform)
   const [progresses, setProgresses] = useState<Record<string, number>>({})
   const [hashes, setHashes] = useState<Record<string, string>>({})
 

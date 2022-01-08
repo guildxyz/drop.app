@@ -1,6 +1,8 @@
+import { useDrop } from "components/[drop]/DropProvider"
 import useDeployedTokens from "hooks/useDeployedTokens"
 
-const useContractId = (tokenAddress: string): number => {
+const useContractId = (): number => {
+  const { tokenAddress } = useDrop()
   const deployedTokens = useDeployedTokens()
 
   if (deployedTokens === undefined) return undefined

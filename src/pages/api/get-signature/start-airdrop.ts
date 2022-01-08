@@ -5,9 +5,11 @@ import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import { fetchDiscordID } from "hooks/useDiscordId"
+import { Platform } from "contract_interactions/types"
+import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
+import isGroupCreator from "utils/api/isGroupCreator"
 import fetchIsOwner from "utils/fetchIsOwner"
 
 type Body = {
@@ -15,7 +17,7 @@ type Body = {
   serverId: string
   address: string
   url: string
-  platform: string
+  platform: Platform
   roleIds: string[]
   metadata: string[]
 }
@@ -45,13 +47,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       return
     }
 
-    if (platform !== "DISCORD") {
-      res.status(400).json({
-        message: "Only DISCORD is currently supported",
-      })
-      return
-    }
-
     if (["start-airdrop", "dcauth"].includes(url)) {
       res.status(400).json({
         message: "Invalid urlName",
@@ -60,23 +55,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     }
 
     try {
-      const discordId = await fetchDiscordID("", address).catch(() => {
+      const userId = await fetchUserId("", address, platform).catch(() => {
         throw Error("Failed to fetch discord id of user")
       })
-      const isOwner = await fetchIsOwner(serverId, discordId).catch(() => {
-        throw Error("Failed to fetch owner of server")
-      })
-      if (!isOwner) {
-        res.status(400).json({ message: "Not the owner of the server." })
-        return
-      }
-      const roles = await fetchRoles("roles", serverId)
-      const roleIdsOfServer = Object.keys(roles)
-      if (roleIds.some((roleId) => !roleIdsOfServer.includes(roleId))) {
-        res
-          .status(400)
-          .json({ message: "Some role ids are not valid for the server." })
-        return
+      if (platform === "DISCORD") {
+        const isOwner = await fetchIsOwner(serverId, userId).catch(() => {
+          throw Error("Failed to fetch owner of server")
+        })
+        if (!isOwner) {
+          res.status(400).json({ message: "Not the owner of the server." })
+          return
+        }
+        const roles = await fetchRoles("roles", serverId)
+        const roleIdsOfServer = Object.keys(roles)
+        if (roleIds.some((roleId) => !roleIdsOfServer.includes(roleId))) {
+          res
+            .status(400)
+            .json({ message: "Some role ids are not valid for the server." })
+          return
+        }
+      } else if (platform === "TELEGRAM") {
+        const isCreator = await isGroupCreator(serverId, userId).catch(
+          () => undefined
+        )
+
+        if (isCreator === undefined) {
+          res.status(400).json({ message: "The bot is not a member of this group." })
+          return
+        }
+
+        if (!isCreator) {
+          res
+            .status(400)
+            .json({ message: "Only the creator of the group can start drop." })
+          return
+        }
       }
 
       const payload = defaultAbiCoder.encode(

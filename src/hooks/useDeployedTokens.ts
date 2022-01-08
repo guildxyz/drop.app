@@ -7,7 +7,7 @@ const getDeployedTokens = (
   _: string,
   chainId: number,
   address: string,
-  provider: Provider
+  provider?: Provider
 ) => deployedTokens(chainId, address, provider)
 
 const useDeployedTokens = (): string[] => {
@@ -21,4 +21,5 @@ const useDeployedTokens = (): string[] => {
   return data
 }
 
+export { getDeployedTokens }
 export default useDeployedTokens

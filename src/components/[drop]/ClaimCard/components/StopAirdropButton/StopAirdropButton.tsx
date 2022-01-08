@@ -1,28 +1,20 @@
 import CtaButton from "components/common/CtaButton"
-import useIsActive from "hooks/useIsActive"
+import { useDrop } from "components/[drop]/DropProvider"
 import { ReactElement, useMemo } from "react"
+import useIsActive from "../../hooks/useIsActive"
 import useContractId from "./hooks/useContractId"
 import useStopAirdrop from "./hooks/useStopAirdrop"
 
 type Props = {
   roleId: string
-  serverId: string
-  tokenAddress: string
-  urlName: string
-  platform: string
 }
 
-const StopAirdropButton = ({
-  roleId,
-  serverId,
-  tokenAddress,
-  urlName,
-  platform,
-}: Props): ReactElement => {
+const StopAirdropButton = ({ roleId }: Props): ReactElement => {
+  const { serverId, urlName, platform } = useDrop()
   const { isLoading, response, onSubmit } = useStopAirdrop()
   const successfullyStopped = !!response
-  const isActive = useIsActive(urlName, roleId, tokenAddress)
-  const contractId = useContractId(tokenAddress)
+  const isActive = useIsActive(roleId)
+  const contractId = useContractId()
 
   const loadingText = useMemo(() => {
     if (isLoading) return "Stopping airdrop"
@@ -37,9 +29,7 @@ const StopAirdropButton = ({
       size="sm"
       isLoading={isLoading || contractId === undefined}
       loadingText={loadingText}
-      onClick={() =>
-        onSubmit({ serverId, roleId, contractId, urlName, platform: "DISCORD" })
-      }
+      onClick={() => onSubmit({ serverId, roleId, contractId, urlName, platform })}
     >
       {successfullyStopped ? "Success" : "Stop"}
     </CtaButton>

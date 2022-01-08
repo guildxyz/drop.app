@@ -1,10 +1,13 @@
 export type Drop = {
   urlName: string
   dropName: string
-  platform: "DISCORD" | "TELEGRAM"
+  platform: Platform
   serverId: string
   contractId: number
   tokenAddress: string
+  communityName: string
+  communityImage: string
+  hasAccess: boolean
   id?: number
 }
 
@@ -20,3 +23,5 @@ export type RoleData = {
   external_url: string
   attributes: Attribute[]
 }
+
+export type Platform = "DISCORD" | "TELEGRAM"

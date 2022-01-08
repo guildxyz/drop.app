@@ -1,15 +1,18 @@
-import { Circle, Grid, HStack, Text } from "@chakra-ui/react"
+import { Alert, AlertIcon, Circle, Grid, HStack, Text } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
+import DropProvider from "components/[drop]/DropProvider"
+import useCommunityName from "components/[drop]/hooks/useCommunityName/useCommunityName"
+import useDropIcon from "components/[drop]/hooks/useDropIcon/useDropIcon"
 import { Chains, RPC } from "connectors"
 import getDropRolesData, {
   DropWithRoles,
 } from "contract_interactions/getDropRolesData"
 import getDropUrlNames from "contract_interactions/getDropUrlNames"
+import useHasAccess from "hooks/useHasAccess"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
-import useServerData from "hooks/useServerData"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
 import { ReactElement } from "react"
@@ -17,64 +20,76 @@ import shortenHex from "utils/shortenHex"
 
 type Props = {
   drop: DropWithRoles
-  urlName: string
 }
 
-const DropPage = ({
-  urlName,
-  drop: { roles, tokenAddress, dropName, serverId, platform },
-}: Props): ReactElement => {
-  const { name: serverName, id, icon } = useServerData(serverId)
-  const isAuthenticated = useIsAuthenticated()
+const DropPage = ({ drop }: Props): ReactElement => {
+  const {
+    roles,
+    tokenAddress,
+    dropName,
+    serverId,
+    platform,
+    communityImage,
+    communityName: initialCommunityName,
+    hasAccess: initialHasAccess,
+  } = drop
+
+  const hasAccess = useHasAccess(serverId, platform, initialHasAccess)
+
+  const communityName = useCommunityName(serverId, initialCommunityName, platform)
+  const isAuthenticated = useIsAuthenticated(platform)
+  const icon = useDropIcon(serverId, communityImage, platform)
 
   return (
     <Layout title={dropName}>
-      <HStack justifyContent="space-between">
-        <HStack spacing={20}>
-          <HStack spacing={5}>
-            {icon?.length > 0 && (
-              <Circle overflow="hidden">
-                <Image
-                  src={`https://cdn.discordapp.com/icons/${id}/${icon}`}
-                  alt={`Icon of ${serverName} sever`}
-                  width={40}
-                  height={40}
-                />
-              </Circle>
-            )}
-            <Text>{serverName}</Text>
+      <DropProvider drop={drop}>
+        <HStack justifyContent="space-between">
+          <HStack spacing={20}>
+            <HStack spacing={5}>
+              {icon?.length > 0 && (
+                <Circle overflow="hidden">
+                  <Image
+                    src={icon}
+                    alt={`Icon of ${communityName} sever`}
+                    width={40}
+                    height={40}
+                  />
+                </Circle>
+              )}
+              <Text>{communityName}</Text>
+            </HStack>
+
+            <HStack>
+              <Text>Contract address:</Text>
+              <Link
+                target="_blank"
+                colorScheme="yellow"
+                href={`${
+                  RPC[process.env.NEXT_PUBLIC_CHAIN].blockExplorerUrls[0]
+                }address/${tokenAddress}`}
+              >
+                {shortenHex(tokenAddress)}
+              </Link>
+            </HStack>
           </HStack>
 
-          <HStack>
-            <Text>Contract address:</Text>
-            <Link
-              target="_blank"
-              colorScheme="yellow"
-              href={`${
-                RPC[process.env.NEXT_PUBLIC_CHAIN].blockExplorerUrls[0]
-              }address/${tokenAddress}`}
-            >
-              {shortenHex(tokenAddress)}
-            </Link>
-          </HStack>
+          {isAuthenticated === false && <AuthenticateButton size="sm" />}
         </HStack>
 
-        {isAuthenticated === false && <AuthenticateButton size="sm" />}
-      </HStack>
-
-      <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-        {Object.entries(roles).map(([roleId, role]) => (
-          <ClaimCard
-            platform={platform}
-            roleId={roleId}
-            role={role}
-            key={roleId}
-            tokenAddress={tokenAddress}
-            serverId={serverId}
-            urlName={urlName}
-          />
-        ))}
-      </Grid>
+        {hasAccess ? (
+          <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+            {Object.entries(roles).map(([roleId, role]) => (
+              <ClaimCard roleId={roleId} role={role} key={roleId} />
+            ))}
+          </Grid>
+        ) : (
+          <Alert mt={10} status="info" alignItems="center">
+            <AlertIcon />
+            It's no longer possible to claim in this drop, as the bot has been kicked
+            from the {platform === "DISCORD" ? "server" : "group"}
+          </Alert>
+        )}
+      </DropProvider>
     </Layout>
   )
 }
@@ -91,7 +106,7 @@ const getStaticProps: GetStaticProps = async ({ params }) => {
     if (!drop) throw Error()
 
     return {
-      props: { urlName, drop },
+      props: { drop },
       revalidate: 10,
     }
   } catch {

@@ -33,6 +33,7 @@ type Props = {
   progress: number
   imageHash: string
   removeNft: () => void
+  shouldRenderRoleSelect?: boolean
 }
 
 const NftCard = ({
@@ -40,13 +41,15 @@ const NftCard = ({
   progress,
   imageHash,
   removeNft,
+  shouldRenderRoleSelect = true,
 }: Props): ReactElement => {
   const { register, setValue } = useFormContext()
   const nfts = useWatch({ name: "nfts" })
   const nft = useWatch({ name: `nfts.${nftIndex}` })
   const { errors } = useFormState()
   const serverId = useWatch({ name: "serverId" })
-  const roles = useRoles(serverId)
+  const platform = useWatch({ name: "platform" })
+  const roles = useRoles(serverId, platform)
 
   useEffect(() => {
     if (imageHash.length > 0) setValue(`nfts.${nftIndex}.hash`, imageHash)
@@ -163,21 +166,25 @@ const NftCard = ({
             </VStack>
           </FormControl>
 
-          <Divider borderColor="gray.300" />
-          <FormControl isDisabled={!roles}>
-            <FormLabel>Roles to drop to</FormLabel>
-            <Select
-              size="sm"
-              placeholder="Select roles"
-              isMulti
-              onChange={handleSelectChange}
-              options={filteredRoleEntries.map(([id, name]) => ({
-                img: "",
-                label: name,
-                value: id,
-              }))}
-            />
-          </FormControl>
+          {shouldRenderRoleSelect && (
+            <>
+              <Divider borderColor="gray.300" />
+              <FormControl isDisabled={!roles}>
+                <FormLabel>Roles to drop to</FormLabel>
+                <Select
+                  size="sm"
+                  placeholder="Select roles"
+                  isMulti
+                  onChange={handleSelectChange}
+                  options={filteredRoleEntries.map(([id, name]) => ({
+                    img: "",
+                    label: name,
+                    value: id,
+                  }))}
+                />
+              </FormControl>
+            </>
+          )}
         </VStack>
       </Card>
     </CardMotionWrapper>

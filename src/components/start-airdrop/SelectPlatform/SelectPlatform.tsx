@@ -6,7 +6,8 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { DiscordLogo, TelegramLogo } from "phosphor-react"
-import { useController, useFormContext } from "react-hook-form"
+import { useController, useFormState } from "react-hook-form"
+import GroupSelect from "./components/GroupSelect"
 import PlatformOption from "./components/PlatformOption"
 import ServerSelect from "./components/ServerSelect"
 
@@ -15,9 +16,10 @@ const options = [
     value: "TELEGRAM",
     color: "TELEGRAM",
     title: "Telegram",
-    description: "",
+    description: "Drop to the members of your group",
     icon: TelegramLogo,
-    disabled: "Coming soon",
+    disabled: false,
+    children: <GroupSelect />,
   },
   {
     value: "DISCORD",
@@ -31,13 +33,9 @@ const options = [
 ]
 
 const SelectPlatform = () => {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext()
+  const { errors } = useFormState()
 
   const { field } = useController({
-    control,
     name: "platform",
     rules: { required: "You must pick a realm for your guild" },
   })
@@ -61,10 +59,13 @@ const SelectPlatform = () => {
         borderColor="blackAlpha.300"
         divider={<StackDivider />}
       >
-        {options.map((option) => {
-          const radio = getRadioProps({ value: option.value })
-          return <PlatformOption key={option.value} {...radio} {...option} />
-        })}
+        {options.map((option) => (
+          <PlatformOption
+            key={option.value}
+            {...getRadioProps({ value: option.value })}
+            {...option}
+          />
+        ))}
       </VStack>
 
       <FormErrorMessage>{errors?.platform?.message}</FormErrorMessage>

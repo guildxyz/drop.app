@@ -27,10 +27,16 @@ enum DropCenterAddresses {
 }
 
 const defaultProviders = {
-  GOERLI: new InfuraProvider("goerli", process.env.INFURA_ID),
-  POLYGON: new JsonRpcProvider(
-    `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
-  ),
+  ...(process.env.INFURA_ID?.length > 0
+    ? { GOERLI: new InfuraProvider("goerli", process.env.INFURA_ID) }
+    : {}),
+  ...(process.env.ALCHEMY_ID?.length > 0
+    ? {
+        POLYGON: new JsonRpcProvider(
+          `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`
+        ),
+      }
+    : {}),
 }
 
 const getDropCenterContract = (chainId: number, provider: Provider): Contract =>

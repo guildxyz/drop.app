@@ -1,3 +1,4 @@
+import { Platform } from "contract_interactions/types"
 import useSWRImmutable from "swr/immutable"
 
 const fetchRoles = (_: string, serverId: string): Promise<Record<string, string>> =>
@@ -6,12 +7,17 @@ const fetchRoles = (_: string, serverId: string): Promise<Record<string, string>
       response.ok ? response.json() : Promise.reject(Error("Failed to fetch roles"))
   )
 
-const useRoles = (serverId: string, _shouldFetch = true): Record<string, string> => {
+const useRoles = (
+  serverId: string,
+  platform: Platform,
+  fallbackData?: Record<string, string>
+): Record<string, string> => {
   const shouldFetch =
-    typeof serverId === "string" && serverId.length > 0 && _shouldFetch
+    typeof serverId === "string" && serverId.length > 0 && platform === "DISCORD"
   const { data } = useSWRImmutable(
     shouldFetch ? ["roles", serverId] : null,
-    fetchRoles
+    fetchRoles,
+    { fallbackData }
   )
   return data
 }

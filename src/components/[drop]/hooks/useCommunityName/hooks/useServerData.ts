@@ -1,3 +1,4 @@
+import { Platform } from "contract_interactions/types"
 import useSWR from "swr"
 
 export type ServerData = {
@@ -8,24 +9,39 @@ export type ServerData = {
 
 const getServerData = (_: string, serverId: string): Promise<ServerData> =>
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/server/${serverId}`).then(
-    (response) => (response.ok ? response.json() : Promise.reject(Error()))
+    (response) =>
+      response
+        .json()
+        .then((body) =>
+          response.ok
+            ? body
+            : body.code === "BOT_IS_NOT_MEMBER"
+            ? null
+            : Promise.reject(body)
+        )
   )
 
-const useServerData = (serverId: string): ServerData => {
-  const shouldFetch = serverId?.length > 0
+const useServerData = (
+  serverId: string,
+  fallbackName: string,
+  platform: Platform
+): ServerData => {
+  const shouldFetch = serverId?.length > 0 && platform === "DISCORD"
   const { data } = useSWR(
     shouldFetch ? ["serverData", serverId] : null,
     getServerData,
     {
       fallbackData: {
-        name: "",
+        name: fallbackName,
         id: serverId,
         icon: "",
       },
       revalidateOnMount: true,
     }
   )
+
   return data
 }
 
+export { getServerData }
 export default useServerData

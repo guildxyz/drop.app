@@ -1,5 +1,5 @@
 import useSWR from "swr"
-import useDiscordId from "./useDiscordId"
+import useUserId from "./useUserId"
 
 const getServersOfUser = (_: string, userId: string): Promise<string[]> =>
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/servers/${userId}`).then(
@@ -7,12 +7,12 @@ const getServersOfUser = (_: string, userId: string): Promise<string[]> =>
   )
 
 const useServersOfUser = (): string[] => {
-  const userId = useDiscordId()
+  const discordId = useUserId("DISCORD")
 
-  const shouldFetch = userId?.length > 0
+  const shouldFetch = discordId?.length > 0
 
   const { data } = useSWR(
-    shouldFetch ? ["serversOfUser", userId] : null,
+    shouldFetch ? ["serversOfUser", discordId] : null,
     getServersOfUser
   )
 

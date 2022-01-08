@@ -1,6 +1,7 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import startAirdrop from "contract_interactions/startAirdrop"
+import { Platform } from "contract_interactions/types"
 import useSubmit from "hooks/useSubmit"
 import useToast from "hooks/useToast"
 import { useRouter } from "next/router"
@@ -31,7 +32,7 @@ export type StartAirdropData = {
   inviteLink: string
   serverId: string
   nfts: NftField[]
-  platform: "DISCORD"
+  platform: Platform
   description: string
 }
 

@@ -1,5 +1,6 @@
+import { useDrop } from "components/[drop]/DropProvider"
 import useSWRImmutable from "swr/immutable"
-import useDiscordId from "../../../../hooks/useDiscordId"
+import useUserId from "../../../../hooks/useUserId"
 
 const fetchUserRoles = (
   _: string,
@@ -12,16 +13,13 @@ const fetchUserRoles = (
     res.ok ? res.json() : Promise.reject(Error("Failed to fetch roles"))
   )
 
-const useUserRoles = (
-  serverId: string,
-  userId?: string
-): Array<Record<string, string>> => {
-  const userIdOfConnectedWallet = useDiscordId()
-  const discordId = userId ? userId : userIdOfConnectedWallet
-  const shouldFetch = discordId?.length > 0 && serverId?.length > 0
+const useUserRoles = (): Array<Record<string, string>> => {
+  const { serverId, platform } = useDrop()
+  const userId = useUserId(platform)
+  const shouldFetch = userId?.length > 0 && serverId?.length > 0
 
   const { data } = useSWRImmutable(
-    shouldFetch ? ["userRoles", discordId, serverId] : null,
+    shouldFetch ? ["userRoles", userId, serverId] : null,
     fetchUserRoles
   )
 

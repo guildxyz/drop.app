@@ -5,14 +5,15 @@ import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
-import { fetchDiscordID } from "hooks/useDiscordId"
+import { Platform } from "contract_interactions/types"
+import { getDeployedTokens } from "hooks/useDeployedTokens"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
 
 type Body = {
   chainId: number
   serverId: string
-  platform: string
+  platform: Platform
   address: string
   roleId: string
   tokenAddress: string
@@ -48,12 +49,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     }
 
     try {
-      const [discordId] = await Promise.all([
-        fetchDiscordID("discordId", address),
-        fetchRoles("", serverId).then((roles) => {
-          if (!(roleId in roles)) {
-            throw Error("Not valid role of server")
-          }
+      await Promise.all([
+        platform === "DISCORD"
+          ? fetchRoles("", serverId).then((roles) => {
+              if (!(roleId in roles)) throw Error("Not valid role of server")
+            })
+          : new Promise<void>((resolve) => resolve()),
+        getDeployedTokens("", chainId, address).then((deployedTokens) => {
+          if (!deployedTokens.includes(tokenAddress))
+            throw Error("Only the deployer can stop the drop")
         }),
       ])
 

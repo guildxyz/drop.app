@@ -9,7 +9,9 @@ const getActiveRoles = async (
   tokenAddress: string,
   provider?: Provider
 ): Promise<string[]> => {
-  const roleIds = await fetchRoles("", serverId).then((roles) => Object.keys(roles))
+  const roleIds = await fetchRoles("", serverId)
+    .then((roles) => Object.keys(roles))
+    .catch(() => [])
 
   // TDOO: Multicall?
   /* const requests = roleIds.map((roleId, index) => ({

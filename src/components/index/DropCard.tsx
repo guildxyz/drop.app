@@ -1,9 +1,10 @@
 import { Box, Flex, Img, SimpleGrid, Text } from "@chakra-ui/react"
 import Card from "components/common/Card"
 import Link from "components/common/Link"
+import useDropIcon from "components/[drop]/hooks/useDropIcon/useDropIcon"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
-import useServerData from "hooks/useServerData"
+import useHasAccess from "hooks/useHasAccess"
 import { useMemo } from "react"
 
 type Props = {
@@ -12,7 +13,9 @@ type Props = {
 
 const DropCard = ({ drop }: Props): JSX.Element => {
   // const dropData = useDropWithRoles(drop.urlName, drop)
-  const { id, icon } = useServerData(drop.serverId)
+  const icon = useDropIcon(drop.serverId, drop.communityImage, drop.platform)
+
+  const hasAccess = useHasAccess(drop.serverId, drop.platform, drop.hasAccess)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
     if (!drop?.roles || Object.entries(drop.roles).length === 0) return []
@@ -22,6 +25,8 @@ const DropCard = ({ drop }: Props): JSX.Element => {
       tokenName: roleData.name,
     }))
   }, [drop])
+
+  if (!hasAccess) return null
 
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
@@ -77,14 +82,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               borderColor="white"
               overflow="hidden"
             >
-              <Img
-                src={
-                  icon
-                    ? `https://cdn.discordapp.com/icons/${id}/${icon}`
-                    : "/svg/discord-logo.svg"
-                }
-                objectFit="cover"
-              />
+              <Img src={icon} objectFit="cover" />
             </Box>
             <Text
               as="span"

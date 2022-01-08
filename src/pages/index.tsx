@@ -6,11 +6,15 @@ import { Chains } from "connectors"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import getDrops from "contract_interactions/getDrops"
 import { motion } from "framer-motion"
+import useGroupsOfUser from "hooks/useGroupsOfUser"
 import useServersOfUser from "hooks/useServersOfUser"
 import { GetStaticProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+
+const SERVER_SEARCH_REGEX = /^server:[0-9]*$/i
+const GROUP_SEARCH_REGEX = /^group:[0-9]*$/i
 
 type Props = {
   drops: DropWithRoles[]
@@ -18,18 +22,40 @@ type Props = {
 
 const Page = ({ drops }: Props): JSX.Element => {
   const router = useRouter()
-  const serverId = router.query.serverId as string
-  const [searchInput, setSeacrhInput] = useState<string>(
-    serverId?.length > 0 ? `server:${serverId}` : ""
-  )
+
+  const [searchInput, setSearchInput] = useState<string>("")
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.serverId) setSearchInput(`server:${router.query.serverId}`)
+      else if (router.query.groupId) setSearchInput(`group:${router.query.groupId}`)
+    }
+  }, [router])
 
   const serversOfUser = useServersOfUser()
 
-  const [yourDrops, allDrops] = useMemo(
+  const groupIds = useMemo(
+    () => [
+      ...new Set(
+        drops
+          .filter((drop) => drop.platform === "TELEGRAM")
+          .map((drop) => drop.serverId)
+      ),
+    ],
+    [drops]
+  )
+
+  const groupsOfUser = useGroupsOfUser(groupIds)
+
+  const [yourDrops, allDrops] = useMemo<[DropWithRoles[], DropWithRoles[]]>(
     () =>
       drops.reduce(
         (acc, airdrop) => {
-          if (serversOfUser?.includes(airdrop.serverId)) {
+          if (
+            (airdrop.platform === "DISCORD" &&
+              serversOfUser?.includes(airdrop.serverId)) ||
+            (airdrop.platform === "TELEGRAM" && groupsOfUser?.[airdrop.serverId])
+          ) {
             acc[0].push(airdrop)
           } else {
             acc[1].push(airdrop)
@@ -38,17 +64,21 @@ const Page = ({ drops }: Props): JSX.Element => {
         },
         [[], []]
       ),
-    [drops, serversOfUser]
+    [drops, serversOfUser, groupsOfUser]
   )
 
   const [filteredYourDrops, filteredAllDrops] = useMemo(
     () =>
       [yourDrops, allDrops].map((_) =>
-        _.filter(({ dropName, serverId: server }) => {
-          if (/^server:[0-9]{18}$/.test(searchInput.trim()))
-            return server === searchInput.trim().slice(7)
-          return new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
-        })
+        _.filter(
+          ({ dropName, serverId: server }) =>
+            searchInput?.length <= 0 ||
+            (SERVER_SEARCH_REGEX.test(searchInput.trim()) &&
+              server === searchInput.trim().slice(7)) ||
+            (GROUP_SEARCH_REGEX.test(searchInput.trim()) &&
+              server === `-${searchInput.trim().slice(6)}`) ||
+            new RegExp(searchInput.toLowerCase()).test(dropName?.toLowerCase())
+        )
       ),
     [yourDrops, allDrops, searchInput]
   )
@@ -58,7 +88,7 @@ const Page = ({ drops }: Props): JSX.Element => {
       <VStack alignItems="left" spacing={10}>
         <Input
           value={searchInput}
-          onChange={({ target: { value } }) => setSeacrhInput(value)}
+          onChange={({ target: { value } }) => setSearchInput(value)}
           maxW="lg"
           type="text"
           placeholder="Search drops"
@@ -105,17 +135,21 @@ const Page = ({ drops }: Props): JSX.Element => {
             </motion.div>
           )}
         </CategorySection>
-        <CategorySection
-          title="All drops"
-          fallbackText={
-            drops?.length
-              ? `No results for ${searchInput}`
-              : "Can't fetch drops right now. Check back later!"
-          }
-        >
-          {filteredAllDrops.length &&
-            filteredAllDrops?.map((drop) => <DropCard key={drop.id} drop={drop} />)}
-        </CategorySection>
+        {filteredYourDrops?.length > 0 && filteredAllDrops?.length <= 0 ? null : (
+          <CategorySection
+            title="All drops"
+            fallbackText={
+              drops?.length
+                ? `No results for ${searchInput}`
+                : "Can't fetch drops right now. Check back later!"
+            }
+          >
+            {filteredAllDrops.length &&
+              filteredAllDrops?.map((drop) => (
+                <DropCard key={drop.id} drop={drop} />
+              ))}
+          </CategorySection>
+        )}
       </VStack>
     </Layout>
   )

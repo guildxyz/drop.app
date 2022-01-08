@@ -8,7 +8,7 @@ import {
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { contractOfDrop } from "contract_interactions/dropCenter"
-import { ReactElement, useEffect } from "react"
+import { ReactElement, useCallback, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import slugify from "utils/slugify"
 
@@ -22,6 +22,19 @@ const NameInput = (): ReactElement => {
 
   useEffect(() => setValue("urlName", slugify(nftName)), [nftName, setValue])
 
+  const validateName = useCallback(
+    async (value) => {
+      const urlName = slugify(value)
+      if (["start-airdrop", "dcauth"].includes(urlName)) {
+        return "Invalid name"
+      }
+      return contractOfDrop(chainId, urlName, library).then(
+        (tokenAddress) => tokenAddress === ZERO_ADDRESS || "Drop already exists"
+      )
+    },
+    [chainId, library]
+  )
+
   return (
     <VStack w="sm" alignItems="start">
       <HStack spacing={2} alignItems="start">
@@ -32,16 +45,7 @@ const NameInput = (): ReactElement => {
             placeholder="Name"
             {...register("assetData.NFT.name", {
               required: "This field is required",
-              validate: async (value) => {
-                const urlName = slugify(value)
-                if (["start-airdrop", "dcauth"].includes(urlName)) {
-                  return "Invalid name"
-                }
-                return contractOfDrop(chainId, urlName, library).then(
-                  (tokenAddress) =>
-                    tokenAddress === ZERO_ADDRESS || "Drop already exists"
-                )
-              },
+              validate: validateName,
             })}
           />
           <FormErrorMessage>

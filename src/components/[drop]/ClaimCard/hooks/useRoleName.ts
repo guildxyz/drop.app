@@ -1,3 +1,4 @@
+import { useDrop } from "components/[drop]/DropProvider"
 import useSWR from "swr"
 
 const getRoleName = (_: string, serverId: string, roleId: string): Promise<string> =>
@@ -5,8 +6,11 @@ const getRoleName = (_: string, serverId: string, roleId: string): Promise<strin
     (response) => (response.ok ? response.json() : Promise.reject(Error()))
   )
 
-const useRoleName = (serverId: string, roleId: string): string => {
-  const shouldFetch = serverId?.length > 0 && roleId?.length > 0
+const useRoleName = (roleId: string): string => {
+  const { serverId, platform } = useDrop()
+
+  const shouldFetch =
+    serverId?.length > 0 && roleId?.length > 0 && platform === "DISCORD"
 
   const { data } = useSWR(
     shouldFetch ? ["roleName", serverId, roleId] : null,

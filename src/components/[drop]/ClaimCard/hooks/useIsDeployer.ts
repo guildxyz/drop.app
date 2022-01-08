@@ -1,6 +1,8 @@
+import { useDrop } from "components/[drop]/DropProvider"
 import useDeployedTokens from "hooks/useDeployedTokens"
 
-const useIsDeployer = (tokenAddress: string): boolean => {
+const useIsDeployer = (): boolean => {
+  const { tokenAddress } = useDrop()
   const deployedToken = useDeployedTokens()
   return deployedToken?.includes(tokenAddress)
 }
