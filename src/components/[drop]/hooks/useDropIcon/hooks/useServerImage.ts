@@ -7,9 +7,9 @@ const getServerImage = async (_: string, serverId: string) =>
   fetchHasAccess("", serverId, "DISCORD").then((hasAccess) =>
     hasAccess
       ? getServerData(_, serverId).then((data) =>
-          data === null
-            ? null
-            : `https://cdn.discordapp.com/icons/${data.id}/${data.icon}`
+          data?.icon?.length > 0
+            ? `https://cdn.discordapp.com/icons/${data.id}/${data.icon}`
+            : null
         )
       : null
   )

@@ -28,7 +28,7 @@ const getDropRolesData = async (
   const [communityImage, communityName] = await (platform === "DISCORD"
     ? getServerData("", serverId)
         .then(({ id, icon, name }) => [
-          `https://cdn.discordapp.com/icons/${id}/${icon}`,
+          icon?.length > 0 ? `https://cdn.discordapp.com/icons/${id}/${icon}` : null,
           name,
         ])
         .catch(() => ["", ""])
