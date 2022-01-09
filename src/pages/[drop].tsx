@@ -52,23 +52,13 @@ const DropPage = ({ drop }: Props): ReactElement => {
   const icon = useDropIcon(serverId, communityImage, platform)
 
   // Not using useCallback here, since there is a possible 'null' return value, indicating no alert message
-  const DropAlert = useMemo(() => {
+  const dropAlert = useMemo(() => {
     if (!hasAccess)
-      return () => (
-        <Alert mt={10} status="info" alignItems="center">
-          <AlertIcon />
-          It's no longer possible to claim in this drop, since the bot has been
-          kicked from the {platform === "DISCORD" ? "server" : "group"}
-        </Alert>
-      )
+      return `It's no longer possible to claim in this drop, since the bot has been kicked from the ${
+        platform === "DISCORD" ? "server" : "group"
+      }`
     if (platform === "DISCORD" && Object.keys(rolesForEmptyCheck ?? {}).length <= 0)
-      return () => (
-        <Alert mt={10} status="info" alignItems="center">
-          <AlertIcon />
-          It's no longer possible to claim in this drop, since the roles associated
-          with this drop have been deleted on this server
-        </Alert>
-      )
+      return "It's no longer possible to claim in this drop, since the roles associated with this drop have been deleted on this server"
     return null
   }, [hasAccess, platform, rolesForEmptyCheck])
 
@@ -108,14 +98,17 @@ const DropPage = ({ drop }: Props): ReactElement => {
           {isAuthenticated === false && <AuthenticateButton size="sm" />}
         </HStack>
 
-        {DropAlert === null ? (
+        {dropAlert === null ? (
           <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
             {Object.entries(roles).map(([roleId, role]) => (
               <ClaimCard roleId={roleId} role={role} key={roleId} />
             ))}
           </Grid>
         ) : (
-          <DropAlert />
+          <Alert mt={10} status="info" alignItems="center">
+            <AlertIcon />
+            {dropAlert}
+          </Alert>
         )}
       </DropProvider>
     </Layout>
