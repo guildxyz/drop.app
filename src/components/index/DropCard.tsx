@@ -37,14 +37,29 @@ const DropCard = ({ drop }: Props): JSX.Element => {
 
   const rolesForEmptyCheck = useRoles(serverId, platform, rolesForEmptyCheckFallback)
 
-  const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
-    if (!roles || Object.entries(roles).length === 0) return []
+  const imageGrid = useMemo((): Array<{ imageHash: string; roleName: string }> => {
+    const roleValues = Object.values(roles || {})
+    if (!roles || roleValues.length === 0) return []
 
-    return Object.values(roles).map((roleData) => ({
-      imageHash: roleData.image.split("/").pop(),
-      tokenName: roleData.name,
+    const uniqueImageHashes = [
+      ...new Set(roleValues.map((role) => role.image.split("/").pop())),
+    ]
+
+    return uniqueImageHashes.map((imageHash) => ({
+      imageHash,
+      roleName:
+        roleValues.find((role) => role.image.split("/").pop() === imageHash)?.name ??
+        "",
     }))
   }, [roles])
+
+  const imageGridColumns = useMemo(
+    () =>
+      imageGrid.length <= 3
+        ? imageGrid.length
+        : Math.floor(Math.min(6, imageGrid.length) / 2),
+    [imageGrid]
+  )
 
   if (!hasAccess || Object.keys(rolesForEmptyCheck ?? {}).length <= 0) return null
 
@@ -70,14 +85,14 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               top={0}
               left={0}
               width="full"
-              gridTemplateColumns={`repeat(${imageGrid.length}, 1fr)`}
+              gridTemplateColumns={`repeat(${imageGridColumns}, 1fr)`}
               gap={0}
             >
               {imageGrid.map((role, i) => (
                 <Flex key={i} width="full" height={imageGrid.length <= 3 ? 28 : 14}>
                   <Img
                     src={`https://ipfs.fleek.co/ipfs/${role.imageHash}`}
-                    alt={`Image of ${role.tokenName} role`}
+                    alt={`Image of ${role.roleName} role`}
                     width="full"
                     height="full"
                     objectFit="cover"
