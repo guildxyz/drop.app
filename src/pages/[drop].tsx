@@ -2,6 +2,7 @@ import { Alert, AlertIcon, Circle, Grid, HStack, Text } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
+import useRoles from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import ClaimCard from "components/[drop]/ClaimCard"
 import DropProvider from "components/[drop]/DropProvider"
 import useCommunityName from "components/[drop]/hooks/useCommunityName/useCommunityName"
@@ -15,7 +16,7 @@ import useHasAccess from "hooks/useHasAccess"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
-import { ReactElement } from "react"
+import { ReactElement, useMemo } from "react"
 import shortenHex from "utils/shortenHex"
 
 type Props = {
@@ -34,11 +35,42 @@ const DropPage = ({ drop }: Props): ReactElement => {
     hasAccess: initialHasAccess,
   } = drop
 
+  const rolesForEmptyCheckFallback = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(roles).map(([roleId, roleData]) => [roleId, roleData.name])
+      ),
+    [roles]
+  )
+
+  const rolesForEmptyCheck = useRoles(serverId, platform, rolesForEmptyCheckFallback)
+
   const hasAccess = useHasAccess(serverId, platform, initialHasAccess)
 
   const communityName = useCommunityName(serverId, initialCommunityName, platform)
   const isAuthenticated = useIsAuthenticated(platform)
   const icon = useDropIcon(serverId, communityImage, platform)
+
+  // Not using useCallback here, since there is a possible 'null' return value, indicating no alert message
+  const DropAlert = useMemo(() => {
+    if (!hasAccess)
+      return () => (
+        <Alert mt={10} status="info" alignItems="center">
+          <AlertIcon />
+          It's no longer possible to claim in this drop, since the bot has been
+          kicked from the {platform === "DISCORD" ? "server" : "group"}
+        </Alert>
+      )
+    if (platform === "DISCORD" && Object.keys(rolesForEmptyCheck ?? {}).length <= 0)
+      return () => (
+        <Alert mt={10} status="info" alignItems="center">
+          <AlertIcon />
+          It's no longer possible to claim in this drop, since the roles associated
+          with this drop have been deleted on this server
+        </Alert>
+      )
+    return null
+  }, [hasAccess, platform, rolesForEmptyCheck])
 
   return (
     <Layout title={dropName}>
@@ -76,18 +108,14 @@ const DropPage = ({ drop }: Props): ReactElement => {
           {isAuthenticated === false && <AuthenticateButton size="sm" />}
         </HStack>
 
-        {hasAccess ? (
+        {DropAlert === null ? (
           <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
             {Object.entries(roles).map(([roleId, role]) => (
               <ClaimCard roleId={roleId} role={role} key={roleId} />
             ))}
           </Grid>
         ) : (
-          <Alert mt={10} status="info" alignItems="center">
-            <AlertIcon />
-            It's no longer possible to claim in this drop, as the bot has been kicked
-            from the {platform === "DISCORD" ? "server" : "group"}
-          </Alert>
+          <DropAlert />
         )}
       </DropProvider>
     </Layout>

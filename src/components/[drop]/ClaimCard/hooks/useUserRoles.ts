@@ -6,14 +6,14 @@ const fetchUserRoles = (
   _: string,
   discordId: string,
   serverId: string
-): Promise<Array<Record<string, string>>> =>
+): Promise<Record<string, string>> =>
   fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_API}/ranks/${discordId}/${serverId}`
   ).then((res) =>
     res.ok ? res.json() : Promise.reject(Error("Failed to fetch roles"))
   )
 
-const useUserRoles = (): Array<Record<string, string>> => {
+const useUserRoles = (): Record<string, string> => {
   const { serverId, platform } = useDrop()
   const userId = useUserId(platform)
   const shouldFetch = userId?.length > 0 && serverId?.length > 0

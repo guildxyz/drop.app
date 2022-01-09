@@ -1,6 +1,7 @@
 import { Box, Flex, Img, SimpleGrid, Text } from "@chakra-ui/react"
 import Card from "components/common/Card"
 import Link from "components/common/Link"
+import useRoles from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import useDropIcon from "components/[drop]/hooks/useDropIcon/useDropIcon"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
@@ -12,26 +13,45 @@ type Props = {
 }
 
 const DropCard = ({ drop }: Props): JSX.Element => {
-  // const dropData = useDropWithRoles(drop.urlName, drop)
-  const icon = useDropIcon(drop.serverId, drop.communityImage, drop.platform)
+  const {
+    serverId,
+    communityImage,
+    platform,
+    hasAccess: hasAccessFallback,
+    urlName,
+    roles,
+    dropName,
+  } = drop
 
-  const hasAccess = useHasAccess(drop.serverId, drop.platform, drop.hasAccess)
+  const icon = useDropIcon(serverId, communityImage, platform)
+
+  const hasAccess = useHasAccess(serverId, platform, hasAccessFallback)
+
+  const rolesForEmptyCheckFallback = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(roles).map(([roleId, roleData]) => [roleId, roleData.name])
+      ),
+    [roles]
+  )
+
+  const rolesForEmptyCheck = useRoles(serverId, platform, rolesForEmptyCheckFallback)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; tokenName: string }> => {
-    if (!drop?.roles || Object.entries(drop.roles).length === 0) return []
+    if (!roles || Object.entries(roles).length === 0) return []
 
-    return Object.values(drop.roles).map((roleData) => ({
+    return Object.values(roles).map((roleData) => ({
       imageHash: roleData.image.split("/").pop(),
       tokenName: roleData.name,
     }))
-  }, [drop])
+  }, [roles])
 
-  if (!hasAccess) return null
+  if (!hasAccess || Object.keys(rolesForEmptyCheck ?? {}).length <= 0) return null
 
   return (
     <motion.div whileTap={{ scale: 0.95 }}>
       <Link
-        href={`/${drop.urlName}`}
+        href={`/${urlName}`}
         borderRadius="2xl"
         w="full"
         _hover={{ textDecor: "none" }}
@@ -93,7 +113,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
               maxW="full"
               isTruncated
             >
-              {drop.dropName}
+              {dropName}
             </Text>
 
             {/* <GridItem colSpan={2}>
