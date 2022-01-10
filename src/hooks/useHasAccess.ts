@@ -19,7 +19,7 @@ const useHasAccess = (
   const { data } = useSWR(
     shouldFetch ? ["hasAccess", communityId, platform] : null,
     fetchHasAccess,
-    { fallbackData }
+    { fallbackData, revalidateOnMount: true }
   )
 
   return data

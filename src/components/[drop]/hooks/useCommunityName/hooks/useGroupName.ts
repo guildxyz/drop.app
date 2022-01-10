@@ -11,7 +11,7 @@ const useGroupName = (chatId: string, fallbackData: string, platform: Platform) 
   const { data } = useSWR(
     shouldFetch ? ["groupName", chatId] : null,
     fetchGroupName,
-    { fallbackData }
+    { fallbackData, revalidateOnMount: true }
   )
   return data
 }
