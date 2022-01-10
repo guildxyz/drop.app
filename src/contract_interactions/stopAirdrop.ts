@@ -1,10 +1,6 @@
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import { StopAirdropData } from "components/[drop]/ClaimCard/components/StopAirdropButton/hooks/useStopAirdrop"
-import {
-  contractsByDeployer,
-  numOfDeployedContracts,
-  stopAirdrop as airdropStopAirdrop,
-} from "./airdrop"
+import { numOfDeployedContracts, stopAirdrop as airdropStopAirdrop } from "./airdrop"
 import stopAirdropSignature from "./utils/signatures/stopAirdrop"
 
 export type StoppedAirdrop = {
@@ -17,18 +13,11 @@ const stopAirdrop = async (
   chainId: number,
   account: string,
   signer: JsonRpcSigner,
-  { serverId, urlName, roleId, contractId, platform }: StopAirdropData,
+  { serverId, urlName, roleId, contractId, platform, tokenAddress }: StopAirdropData,
   provider?: Provider
 ): Promise<StoppedAirdrop> => {
   const numberOfTokens = await numOfDeployedContracts(chainId, account, provider)
   if (contractId >= numberOfTokens) throw new Error("Invalid token contract")
-
-  const tokenAddress = await contractsByDeployer(
-    chainId,
-    account,
-    contractId,
-    provider
-  )
 
   const signature = await stopAirdropSignature(
     chainId,
@@ -36,7 +25,8 @@ const stopAirdrop = async (
     platform,
     account,
     roleId,
-    tokenAddress
+    tokenAddress,
+    contractId
   )
 
   try {

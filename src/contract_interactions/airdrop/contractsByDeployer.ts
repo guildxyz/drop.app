@@ -4,9 +4,9 @@ import { getAirdropContract } from "contracts"
 const contractsByDeployer = (
   chainId: number,
   address: string,
-  index: number,
+  contractId: number,
   provider?: Provider
 ): Promise<string> =>
-  getAirdropContract(chainId, provider).contractsByDeployer(address, index)
+  getAirdropContract(chainId, provider).contractsByDeployer(address, contractId)
 
 export default contractsByDeployer

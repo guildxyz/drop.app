@@ -11,6 +11,7 @@ export type StopAirdropData = {
   contractId: number
   urlName: string
   platform: string
+  tokenAddress: string
 }
 
 const useStopAirdrop = () => {
