@@ -1,6 +1,6 @@
 import { Platform } from "contract_interactions/types"
 import useSWR from "swr"
-import { getServerData } from "./useCommunityName/hooks/useServerData"
+import { getServerData } from "./useCommunityName"
 
 const fetchGroupImage = (chatId: string) =>
   fetch(
@@ -19,9 +19,9 @@ const fetchDropIcon = (_: string, serverId: string, platform: Platform) =>
 
 const useDropIcon = (
   serverId: string,
-  fallbackData: string,
   platform: Platform,
-  hasAccess: boolean
+  hasAccess: boolean,
+  fallbackData: string
 ) => {
   const shouldFetch = hasAccess && serverId?.length > 0 && platform?.length > 0
 

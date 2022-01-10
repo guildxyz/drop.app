@@ -1,6 +1,8 @@
 import { Provider } from "@ethersproject/providers"
-import { fetchGroupName } from "components/[drop]/hooks/useCommunityName/hooks/useGroupName"
-import { getServerData } from "components/[drop]/hooks/useCommunityName/hooks/useServerData"
+import {
+  fetchGroupName,
+  getServerData,
+} from "components/[drop]/hooks/useCommunityName"
 import { fetchGroupImage } from "components/[drop]/hooks/useDropIcon"
 import { fetchHasAccess } from "hooks/useHasAccess"
 import { getDataOfDrop } from "./airdrop"
@@ -34,7 +36,7 @@ const getDropRolesData = async (
         .catch(() => ["", ""])
     : Promise.all([
         fetchGroupImage(serverId).catch(() => ""),
-        fetchGroupName("", serverId).catch(() => ""),
+        fetchGroupName(serverId).catch(() => ""),
       ]))
 
   /**
