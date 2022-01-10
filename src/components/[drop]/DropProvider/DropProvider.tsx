@@ -23,10 +23,15 @@ const DropProvider = ({ drop, children }: PropsWithChildren<Props>) => {
     hasAccess: initialHasAccess,
   } = drop
 
-  // useDropIcon and useCommunityName could be just 1-1 SWR hook (instead of each calling two others for the two platforms)?
-  const communityImage = useDropIcon(serverId, initialCommunityImage, platform)
-  const communityName = useCommunityName(serverId, initialCommunityName, platform)
   const hasAccess = useHasAccess(serverId, platform, initialHasAccess)
+  // useDropIcon and useCommunityName could be just 1-1 SWR hook (instead of each calling two others for the two platforms)?
+  const communityImage = useDropIcon(
+    serverId,
+    initialCommunityImage,
+    platform,
+    hasAccess
+  )
+  const communityName = useCommunityName(serverId, initialCommunityName, platform)
   const roles = useRolesData(serverId, tokenAddress, platform, urlName, initialRoles)
 
   return (
