@@ -8,7 +8,7 @@ export type ServerData = {
 }
 
 const getServerData = (_: string, serverId: string): Promise<ServerData> =>
-  fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/server/${serverId}`).then(
+  fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/discord/server/${serverId}`).then(
     (response) =>
       response
         .json()

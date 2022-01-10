@@ -8,7 +8,7 @@ const fetchUserRoles = (
   serverId: string
 ): Promise<Record<string, string>> =>
   fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_API}/ranks/${discordId}/${serverId}`
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/discord/roles/${discordId}/${serverId}`
   ).then((res) =>
     res.ok ? res.json() : Promise.reject(Error("Failed to fetch roles"))
   )

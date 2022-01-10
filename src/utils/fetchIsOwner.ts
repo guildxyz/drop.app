@@ -1,6 +1,6 @@
 const fetchIsOwner = (serverId: string, discordId: string): Promise<boolean> =>
   fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_API}/owner/${serverId}/${discordId}`
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/discord/owner/${serverId}/${discordId}`
   ).then((response) =>
     response.ok
       ? response.json()

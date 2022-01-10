@@ -14,7 +14,9 @@ const fallbackData = {
 
 const getChannels = (_: string, invite: string) =>
   fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_API}/channels/${invite.split("/").at(-1)}`
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/discord/channels/${invite
+      .split("/")
+      .at(-1)}`
   ).then((response) => (response.ok ? response.json() : fallbackData))
 
 const useChannels = (invite: string): Channels => {

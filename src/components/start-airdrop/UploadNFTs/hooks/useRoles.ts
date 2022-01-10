@@ -2,7 +2,7 @@ import { Platform } from "contract_interactions/types"
 import useSWRImmutable from "swr/immutable"
 
 const fetchRoles = (_: string, serverId: string): Promise<Record<string, string>> =>
-  fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/ranks/${serverId}`).then(
+  fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/discord/roles/${serverId}`).then(
     (response) =>
       response.ok ? response.json() : Promise.reject(Error("Failed to fetch roles"))
   )

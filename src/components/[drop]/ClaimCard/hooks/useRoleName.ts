@@ -2,9 +2,9 @@ import { useDrop } from "components/[drop]/DropProvider"
 import useSWR from "swr"
 
 const getRoleName = (_: string, serverId: string, roleId: string): Promise<string> =>
-  fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/role/${serverId}/${roleId}`).then(
-    (response) => (response.ok ? response.json() : Promise.reject(Error()))
-  )
+  fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/discord/role/${serverId}/${roleId}`
+  ).then((response) => (response.ok ? response.json() : Promise.reject(Error())))
 
 const useRoleName = (roleId: string): string => {
   const { serverId, platform } = useDrop()

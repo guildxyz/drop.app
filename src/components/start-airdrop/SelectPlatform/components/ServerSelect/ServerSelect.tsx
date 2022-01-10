@@ -49,7 +49,7 @@ const ServerSelect = (): ReactElement => {
       if (!INVITE_REGEX.test(value)) return "Not a valid invite"
       const inviteCode = value.match(INVITE_REGEX)[1]
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API}/verifyinvite/${inviteCode}`
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/discord/verify-invite/${inviteCode}`
       )
       if (!response.ok) return "Not a valid invite"
       return true
