@@ -1,12 +1,12 @@
 import { Box, Flex, Img, SimpleGrid, Text } from "@chakra-ui/react"
 import Card from "components/common/Card"
 import Link from "components/common/Link"
-import useRoles from "components/start-airdrop/UploadNFTs/hooks/useRoles"
 import useDropIcon from "components/[drop]/hooks/useDropIcon/useDropIcon"
 import { DropWithRoles } from "contract_interactions/getDropRolesData"
 import { motion } from "framer-motion"
 import useHasAccess from "hooks/useHasAccess"
 import { useMemo } from "react"
+import useRolesData from "./hooks/useRolesData"
 
 type Props = {
   drop: DropWithRoles
@@ -19,28 +19,16 @@ const DropCard = ({ drop }: Props): JSX.Element => {
     platform,
     hasAccess: hasAccessFallback,
     urlName,
-    roles,
+    roles: rolesInitial,
     dropName,
+    tokenAddress,
   } = drop
 
   const icon = useDropIcon(serverId, communityImage, platform)
 
   const hasAccess = useHasAccess(serverId, platform, hasAccessFallback)
 
-  const rolesForEmptyCheckFallback = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(roles).map(([roleId, roleData]) => [roleId, roleData.name])
-      ),
-    [roles]
-  )
-
-  const rolesForEmptyCheck = useRoles(
-    serverId,
-    platform,
-    true,
-    rolesForEmptyCheckFallback
-  )
+  const roles = useRolesData(serverId, tokenAddress, platform, urlName, rolesInitial)
 
   const imageGrid = useMemo((): Array<{ imageHash: string; roleName: string }> => {
     const roleValues = Object.values(roles || {})
@@ -66,7 +54,7 @@ const DropCard = ({ drop }: Props): JSX.Element => {
     [imageGrid]
   )
 
-  if (!hasAccess || Object.keys(rolesForEmptyCheck ?? {}).length <= 0) return null
+  if (!hasAccess || Object.keys(roles ?? {}).length <= 0) return null
 
   return (
     <motion.div whileTap={{ scale: 0.95 }}>

@@ -21,7 +21,7 @@ const useRoles = (
   const { data } = useSWRImmutable(
     shouldFetch ? ["roles", serverId] : null,
     fetchRoles,
-    { fallbackData }
+    { fallbackData, revalidateOnMount: true }
   )
   return data
 }
