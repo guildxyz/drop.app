@@ -10,10 +10,14 @@ const fetchRoles = (_: string, serverId: string): Promise<Record<string, string>
 const useRoles = (
   serverId: string,
   platform: Platform,
+  shouldFetchProp = true,
   fallbackData?: Record<string, string>
 ): Record<string, string> => {
   const shouldFetch =
-    typeof serverId === "string" && serverId.length > 0 && platform === "DISCORD"
+    typeof serverId === "string" &&
+    serverId.length > 0 &&
+    platform === "DISCORD" &&
+    shouldFetchProp
   const { data } = useSWRImmutable(
     shouldFetch ? ["roles", serverId] : null,
     fetchRoles,

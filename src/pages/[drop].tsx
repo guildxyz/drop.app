@@ -43,7 +43,12 @@ const DropPage = ({ drop }: Props): ReactElement => {
     [roles]
   )
 
-  const rolesForEmptyCheck = useRoles(serverId, platform, rolesForEmptyCheckFallback)
+  const rolesForEmptyCheck = useRoles(
+    serverId,
+    platform,
+    true,
+    rolesForEmptyCheckFallback
+  )
 
   const hasAccess = useHasAccess(serverId, platform, initialHasAccess)
 

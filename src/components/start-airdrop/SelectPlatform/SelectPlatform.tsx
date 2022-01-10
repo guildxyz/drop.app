@@ -6,7 +6,13 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { DiscordLogo, TelegramLogo } from "phosphor-react"
-import { useController, useFormState } from "react-hook-form"
+import { useEffect } from "react"
+import {
+  useController,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from "react-hook-form"
 import GroupSelect from "./components/GroupSelect"
 import PlatformOption from "./components/PlatformOption"
 import ServerSelect from "./components/ServerSelect"
@@ -33,11 +39,12 @@ const options = [
 ]
 
 const SelectPlatform = () => {
+  const { setValue, clearErrors } = useFormContext()
   const { errors } = useFormState()
 
   const { field } = useController({
     name: "platform",
-    rules: { required: "You must pick a realm for your guild" },
+    rules: { required: "You must pick a platform for your drop" },
   })
 
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -47,6 +54,15 @@ const SelectPlatform = () => {
   })
 
   const group = getRootProps()
+
+  const platform = useWatch({ name: "platform" })
+
+  useEffect(() => {
+    clearErrors(["serverId", "inviteLink", "channel"])
+    setValue("serverId", "")
+    setValue("inviteLink", "")
+    setValue("channel", "")
+  }, [setValue, clearErrors, platform])
 
   return (
     <FormControl isRequired isInvalid={errors?.platform}>

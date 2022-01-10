@@ -35,7 +35,12 @@ const DropCard = ({ drop }: Props): JSX.Element => {
     [roles]
   )
 
-  const rolesForEmptyCheck = useRoles(serverId, platform, rolesForEmptyCheckFallback)
+  const rolesForEmptyCheck = useRoles(
+    serverId,
+    platform,
+    true,
+    rolesForEmptyCheckFallback
+  )
 
   const imageGrid = useMemo((): Array<{ imageHash: string; roleName: string }> => {
     const roleValues = Object.values(roles || {})
