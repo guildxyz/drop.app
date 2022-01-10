@@ -62,6 +62,7 @@ const useStartAirdrop = () => {
       status: "error",
       title: "Start failed",
       description:
+        error.message ||
         "Failed to start airdrop, please double check your gas prices and try again",
     })
   }
