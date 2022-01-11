@@ -8,22 +8,17 @@ const authenticate = async (
   signature: string,
   platform: Platform
 ): Promise<void> => {
-  const hashedId = await hashId(id)
-  const authResponse = await (platform === "DISCORD"
-    ? fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/auth`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ discordId: id, signature, discordIdHash: hashedId }),
-      })
-    : fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/telegram/auth`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, signature, hash: hashedId }),
-      }))
+  const hash = await hashId(id)
+  const authResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/${platform.toLowerCase()}/auth`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, signature, hash }),
+    }
+  )
 
   if (!authResponse.ok) {
     const errorBody = await authResponse.json()

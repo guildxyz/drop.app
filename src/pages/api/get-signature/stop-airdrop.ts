@@ -3,10 +3,10 @@ import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
 import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
+import { fetchContractByDeployer } from "components/[drop]/ClaimCard/hooks/useContractByDeployer"
 import { Chains } from "connectors"
 import { AirdropAddresses } from "contracts"
 import { Platform } from "contract_interactions/types"
-import { getDeployedTokens } from "hooks/useDeployedTokens"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
 
@@ -17,9 +17,11 @@ type Body = {
   address: string
   roleId: string
   tokenAddress: string
+  contractId: number
 }
 
 const REQUIRED_BODY = [
+  { key: "contractId", type: "number" },
   { key: "chainId", type: "number" },
   { key: "serverId", type: "string" },
   { key: "platform", type: "string" },
@@ -33,8 +35,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     const paramsCorrect = checkParams(req, res, REQUIRED_BODY)
     if (!paramsCorrect) return
 
-    const { chainId, serverId, platform, address, roleId, tokenAddress }: Body =
-      req.body
+    const {
+      chainId,
+      serverId,
+      platform,
+      address,
+      roleId,
+      tokenAddress,
+      contractId,
+    }: Body = req.body
     // Is there a deployed airdrop contract on the chain
     if (!AirdropAddresses[Chains[chainId]]) {
       res.status(400).json({
@@ -55,10 +64,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
               if (!(roleId in roles)) throw Error("Not valid role of server")
             })
           : new Promise<void>((resolve) => resolve()),
-        getDeployedTokens("", chainId, address).then((deployedTokens) => {
-          if (!deployedTokens.includes(tokenAddress))
-            throw Error("Only the deployer can stop the drop")
-        }),
+        fetchContractByDeployer("", chainId, address, contractId).then(
+          (contractAddress) => {
+            if (contractAddress !== tokenAddress)
+              throw Error("Only the deployer can stop the drop")
+          }
+        ),
       ])
 
       const payload = defaultAbiCoder.encode(

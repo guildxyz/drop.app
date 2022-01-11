@@ -4,7 +4,8 @@ const stopAirdropSignature = (
   platform: string,
   account: string,
   roleId: string,
-  tokenAddress: string
+  tokenAddress: string,
+  contractId: number
 ): Promise<string> =>
   fetch("/api/get-signature/stop-airdrop", {
     method: "POST",
@@ -16,6 +17,7 @@ const stopAirdropSignature = (
       address: account,
       roleId,
       tokenAddress,
+      contractId,
     }),
   }).then((response) =>
     response.json().then((body) => {
