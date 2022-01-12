@@ -55,7 +55,7 @@ const DropPage = () => {
         <HStack spacing={20}>
           <HStack spacing={5}>
             {communityImage?.length > 0 && (
-              <Circle overflow="hidden">
+              <Circle overflow="hidden" bgColor="gray.300">
                 <Image
                   src={communityImage}
                   alt={`Icon of ${communityName} sever`}
