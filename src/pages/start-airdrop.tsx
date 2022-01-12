@@ -12,7 +12,6 @@ import UploadNFTs from "components/start-airdrop/UploadNFTs"
 import UploadSingle from "components/start-airdrop/UploadNFTs/UploadSingle"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
 import { useRouter } from "next/router"
-import { useEffect } from "react"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
 
 const uploadSection = {
@@ -30,7 +29,7 @@ const uploadSection = {
 
 const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
-  const { query } = useRouter()
+  const router = useRouter()
 
   const methods = useForm({
     shouldFocusError: true,
@@ -48,7 +47,7 @@ const StartAirdropPage = (): JSX.Element => {
       inviteLink: "",
       serverId: "",
       nfts: [],
-      platform: "TELEGRAM",
+      platform: "",
       description: "",
     },
   })
@@ -58,12 +57,6 @@ const StartAirdropPage = (): JSX.Element => {
   useWarnIfUnsavedChanges(
     methods.formState?.isDirty && !methods.formState.isSubmitted
   )
-
-  useEffect(() => {
-    if (query.inviteCode)
-      methods.setValue("inviteLink", `https://discord.gg/${query.inviteCode}`)
-    if (query.groupId) methods.setValue("serverId", query.groupId as string)
-  }, [query, methods])
 
   if (!account)
     return (

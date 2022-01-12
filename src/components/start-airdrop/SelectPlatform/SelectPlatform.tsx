@@ -40,7 +40,7 @@ const options = [
 
 const SelectPlatform = () => {
   const { setValue, clearErrors } = useFormContext()
-  const { errors } = useFormState()
+  const { errors, dirtyFields } = useFormState()
 
   const { field } = useController({
     name: "platform",
@@ -58,11 +58,13 @@ const SelectPlatform = () => {
   const platform = useWatch({ name: "platform" })
 
   useEffect(() => {
-    clearErrors(["serverId", "inviteLink", "channel"])
-    setValue("serverId", "")
-    setValue("inviteLink", "")
-    setValue("channel", "")
-  }, [setValue, clearErrors, platform])
+    if (dirtyFields.platform) {
+      clearErrors(["serverId", "inviteLink", "channel"])
+      setValue("serverId", "")
+      setValue("inviteLink", "")
+      setValue("channel", "")
+    }
+  }, [setValue, clearErrors, platform, dirtyFields])
 
   return (
     <FormControl isRequired isInvalid={errors?.platform}>

@@ -6,12 +6,25 @@ import {
   Grid,
   Input,
 } from "@chakra-ui/react"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 
 const GroupSelect = () => {
+  const router = useRouter()
   const { errors } = useFormState()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const platform = useWatch({ name: "platform" })
+
+  const [fromQuery, setFromQuery] = useState<string>("")
+  useEffect(() => {
+    if (router.isReady && router.query.groupId)
+      setFromQuery(router.query.groupId as string)
+  }, [setFromQuery, router])
+  useEffect(() => {
+    setValue("platform", "TELEGRAM")
+    setValue("serverId", fromQuery)
+  }, [setValue, fromQuery])
 
   return (
     <Grid gridTemplateColumns="repeat(2, 1fr)" gap={5} p={5}>

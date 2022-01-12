@@ -9,13 +9,14 @@ import {
 } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import { Check } from "phosphor-react"
-import { ReactElement, useCallback, useEffect, useMemo } from "react"
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import useChannels from "./hooks/useChannels"
 
 const INVITE_REGEX = /^https:\/\/discord.gg\/([a-z0-9]+)$/i
 
 const ServerSelect = (): ReactElement => {
+  const router = useRouter()
   const { isReady } = useRouter()
   const { register, setValue } = useFormContext()
   const platform = useWatch({ name: "platform" })
@@ -56,6 +57,16 @@ const ServerSelect = (): ReactElement => {
     },
     [platform]
   )
+
+  const [fromQuery, setFromQuery] = useState<string>("")
+  useEffect(() => {
+    if (router.isReady && router.query.inviteCode)
+      setFromQuery(router.query.inviteCode as string)
+  }, [setFromQuery, router])
+  useEffect(() => {
+    setValue("platform", "DISCORD")
+    setValue("inviteLink", `https://discord.gg/${fromQuery}`)
+  }, [setValue, fromQuery])
 
   return (
     <Grid gridTemplateColumns="repeat(3, 1fr)" gap={5} p={5}>
