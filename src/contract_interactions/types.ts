@@ -11,6 +11,19 @@ export type Drop = {
   id?: number
 }
 
+export type ERC20Drop = {
+  urlName: string
+  dropName: string
+  platform: Platform
+  serverId: string
+  tokenAddress: string
+  ownerAddress: string
+  communityName: string
+  communityImage: string
+  hasAccess: boolean
+  id?: number
+}
+
 export type Attribute = {
   trait_type: string
   value: string

@@ -3,6 +3,7 @@ import { InfuraProvider, JsonRpcProvider, Provider } from "@ethersproject/provid
 import { Chains, RPC } from "connectors"
 import AIRDROP_ABI from "static/abis/airdrop.json"
 import DROPCENTER_ABI from "static/abis/dropcenter.json"
+import ERC20_AIRDROP_ABI from "static/abis/erc20drop.json"
 import ROLE_TOKEN_ABI from "static/abis/roletoken.json"
 
 const multicallConfigs = {
@@ -24,6 +25,11 @@ enum AirdropAddresses {
 enum DropCenterAddresses {
   GOERLI = "0x168a261420baF5A33db4464a7Ca94D257FCA2305",
   POLYGON = "0x9941Dedc9714fffDD90A3b1A7bDa30BE2b523882",
+}
+
+enum ERC20AirdropAddresses {
+  GOERLI = "0x7FF92e7e78395ED4f164fD016998f0058487B3d6",
+  POLYGON = "",
 }
 
 const defaultProviders = {
@@ -53,6 +59,13 @@ const getAirdropContract = (chainId: number, provider: Provider): Contract =>
     provider ?? defaultProviders[Chains[chainId]]
   )
 
+const getERC20AirdropContract = (chainId: number, provider: Provider): Contract =>
+  new Contract(
+    ERC20AirdropAddresses[Chains[chainId]],
+    ERC20_AIRDROP_ABI,
+    provider ?? defaultProviders[Chains[chainId]]
+  )
+
 const getTokenContract = (
   chainId: number,
   tokenAddress: string,
@@ -70,4 +83,5 @@ export {
   getTokenContract,
   getAirdropContract,
   getDropCenterContract,
+  getERC20AirdropContract,
 }
