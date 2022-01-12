@@ -81,7 +81,9 @@ const DropPage = () => {
           </HStack>
         </HStack>
 
-        {isAuthenticated === false && <AuthenticateButton size="sm" />}
+        {isAuthenticated === false && (
+          <AuthenticateButton platform={platform} size="sm" />
+        )}
       </HStack>
 
       {dropAlert === null ? (

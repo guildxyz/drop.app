@@ -1,17 +1,21 @@
 import { useWeb3React } from "@web3-react/core"
 import CtaButton from "components/common/CtaButton"
+import { Platform } from "contract_interactions/types"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import usePersonalSign from "hooks/usePersonalSign"
 import { ReactElement, useMemo } from "react"
-import { useWatch } from "react-hook-form"
 import { mutate } from "swr"
+import { Rest } from "types"
 import TelegramAuthButton, { TelegramUser } from "../TelegramAuthButton"
 import useAuth from "./hooks/useAuth"
 import authenticate from "./hooks/useAuth/utils/authenticate"
 
-const AuthenticateButton = (props: Record<string, string>): ReactElement => {
+type Props = {
+  platform: Platform
+} & Rest
+
+const AuthenticateButton = ({ platform, ...rest }: Props): ReactElement => {
   const { account } = useWeb3React()
-  const platform = useWatch({ name: "platform" })
   const isAuthenticated = useIsAuthenticated(platform)
   const { isSigning, callbackWithSign } = usePersonalSign()
 
@@ -52,7 +56,7 @@ const AuthenticateButton = (props: Record<string, string>): ReactElement => {
       isLoading={isLoading || isSigning}
       loadingText={loadingText}
       onClick={callbackWithSign(onAuthenticate)}
-      {...props}
+      {...rest}
     >
       Authenticate
     </CtaButton>

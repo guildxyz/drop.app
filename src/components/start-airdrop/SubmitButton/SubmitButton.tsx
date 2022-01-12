@@ -27,7 +27,7 @@ const SubmitButton = (): ReactElement => {
   // if (!triedEager || (!!account && isAuthenticated === undefined))
   //   return <LoadingButton />
 
-  if (!isAuthenticated) return <AuthenticateButton />
+  if (!isAuthenticated) return <AuthenticateButton platform={platform} />
 
   return (
     <CtaButton
