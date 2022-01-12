@@ -5,13 +5,15 @@ import { getServerData } from "./useCommunityName"
 const fetchGroupImage = (chatId: string) =>
   fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_API}/telegram/chat-avatar/${chatId}`
-  ).then((response) => response.json().then((body) => (response.ok ? body : "")))
+  ).then((response) =>
+    response.json().then((body) => (response.ok ? body : "/svg/telegram-logo.svg"))
+  )
 
 const fetchServerImage = async (serverId: string) =>
   getServerData("", serverId).then((data) =>
     data?.icon?.length > 0
       ? `https://cdn.discordapp.com/icons/${data.id}/${data.icon}`
-      : null
+      : "/svg/discord-logo.svg"
   )
 
 const fetchDropIcon = (_: string, serverId: string, platform: Platform) =>

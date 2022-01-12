@@ -99,7 +99,12 @@ const DropCard = (): JSX.Element => {
               borderColor="white"
               overflow="hidden"
             >
-              <Img src={communityImage} objectFit="cover" />
+              <Img
+                src={communityImage}
+                objectFit="cover"
+                width="full"
+                height="full"
+              />
             </Box>
             <Text
               as="span"
