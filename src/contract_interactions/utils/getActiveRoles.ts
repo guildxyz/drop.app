@@ -1,5 +1,5 @@
 import { Provider } from "@ethersproject/providers"
-import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
+import { fetchRoles } from "components/start-airdrop/NFTSections/components/Uploaders/hooks/useRoles"
 import isActive from "contract_interactions/airdrop/isActive"
 
 const getActiveRoles = async (

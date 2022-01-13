@@ -6,10 +6,11 @@ import { useController } from "react-hook-form"
 const assetRadioData = [
   {
     value: "NFT",
+    displayText: "NFT",
   },
   {
-    value: "Token",
-    disabled: true,
+    value: "TOKEN",
+    displayText: "Token",
   },
 ]
 
@@ -26,9 +27,9 @@ const SelectAsset = (): ReactElement => {
   return (
     <Grid gridTemplateColumns="1fr" gap={10}>
       <Grid gridTemplateColumns="repeat(4, 1fr)" gap={5} {...getRootProps()}>
-        {assetRadioData.map((props) => (
-          <RadioButton key={props.value} {...getRadioProps(props)}>
-            <Text fontWeight="medium">{props.value}</Text>
+        {assetRadioData.map(({ value, displayText }) => (
+          <RadioButton key={value} {...getRadioProps({ value })}>
+            <Text fontWeight="medium">{displayText}</Text>
           </RadioButton>
         ))}
       </Grid>

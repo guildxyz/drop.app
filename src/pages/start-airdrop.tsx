@@ -4,32 +4,17 @@ import { DevTool } from "@hookform/devtools"
 import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Section from "components/common/Section"
-import NameInput from "components/start-airdrop/NameInput"
+import NFTSections from "components/start-airdrop/NFTSections"
 import SelectAsset from "components/start-airdrop/SelectAsset"
 import SelectPlatform from "components/start-airdrop/SelectPlatform"
 import SubmitButton from "components/start-airdrop/SubmitButton"
-import UploadNFTs from "components/start-airdrop/UploadNFTs"
-import UploadSingle from "components/start-airdrop/UploadNFTs/UploadSingle"
+import TokenSections from "components/start-airdrop/TokenSections"
 import useWarnIfUnsavedChanges from "hooks/useWarnIfUnsavedChanges"
-import { useRouter } from "next/router"
+import { useMemo } from "react"
 import { FormProvider, useForm, useWatch } from "react-hook-form"
-
-const uploadSection = {
-  TELEGRAM: (
-    <Section title="Upload your NFT">
-      <UploadSingle />
-    </Section>
-  ),
-  DISCORD: (
-    <Section title="Upload your NFTs">
-      <UploadNFTs />
-    </Section>
-  ),
-}
 
 const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
-  const router = useRouter()
 
   const methods = useForm({
     shouldFocusError: true,
@@ -43,20 +28,32 @@ const StartAirdropPage = (): JSX.Element => {
           name: "",
           symbol: "",
         },
+        TOKEN: {
+          name: "",
+          symbol: "",
+          initialBalance: "",
+        },
       },
       inviteLink: "",
       serverId: "",
       nfts: [],
       platform: "",
       description: "",
+      tokenRewards: {},
     },
   })
 
-  const platform = useWatch({ name: "platform", control: methods.control })
+  const assetType = useWatch({ name: "assetType", control: methods.control })
 
   useWarnIfUnsavedChanges(
     methods.formState?.isDirty && !methods.formState.isSubmitted
   )
+
+  const AssetSections = useMemo(() => {
+    if (assetType === "NFT") return () => <NFTSections />
+    if (assetType === "TOKEN") return () => <TokenSections />
+    return null
+  }, [assetType])
 
   if (!account)
     return (
@@ -82,11 +79,7 @@ const StartAirdropPage = (): JSX.Element => {
             <SelectAsset />
           </Section>
 
-          {uploadSection[platform]}
-
-          <Section title="Set NFT collection name and symbol">
-            <NameInput />
-          </Section>
+          <AssetSections />
 
           <Flex width="full" justifyContent="end">
             <SubmitButton />

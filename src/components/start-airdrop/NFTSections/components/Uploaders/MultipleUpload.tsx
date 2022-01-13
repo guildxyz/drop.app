@@ -23,7 +23,7 @@ import AddNftButton from "./components/AddNftButton"
 import NftCard from "./components/NftCard"
 import useRoles from "./hooks/useRoles"
 
-const UploadNFTs = (): ReactElement => {
+const MultipleUpload = (): ReactElement => {
   const { trigger, setError, clearErrors } = useFormContext()
   const { errors, dirtyFields } = useFormState()
   const nfts = useWatch({ name: "nfts" })
@@ -137,4 +137,4 @@ const UploadNFTs = (): ReactElement => {
   )
 }
 
-export default UploadNFTs
+export default MultipleUpload

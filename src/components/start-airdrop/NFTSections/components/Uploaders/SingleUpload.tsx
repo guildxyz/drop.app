@@ -7,7 +7,7 @@ import ipfsUpload from "utils/ipfsUpload"
 import AddNftButton from "./components/AddNftButton"
 import NftCard from "./components/NftCard"
 
-const UploadSingle = (): ReactElement => {
+const SingleUpload = (): ReactElement => {
   const { setValue } = useFormContext()
   const { errors } = useFormState()
   const [progress, setProgress] = useState<number>(0)
@@ -90,4 +90,4 @@ const UploadSingle = (): ReactElement => {
   )
 }
 
-export default UploadSingle
+export default SingleUpload
