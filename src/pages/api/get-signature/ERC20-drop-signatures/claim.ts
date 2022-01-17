@@ -1,0 +1,131 @@
+import { defaultAbiCoder } from "@ethersproject/abi"
+import { arrayify } from "@ethersproject/bytes"
+import { keccak256 } from "@ethersproject/keccak256"
+import { Wallet } from "@ethersproject/wallet"
+import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
+import { fetchIsGroupMember } from "components/[drop]/ClaimCard/components/TelegramClaimButton/hooks/useIsGroupMember"
+import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
+import { Chains } from "connectors"
+import { ERC20AirdropAddresses } from "contracts"
+import { Platform } from "contract_interactions/types"
+import { fetchUserId } from "hooks/useUserId"
+import type { NextApiRequest, NextApiResponse } from "next"
+import checkParams from "utils/api/checkParams"
+
+type Body = {
+  chainId: number
+  urlName: string
+  serverId: string
+  platform: Platform
+  address: string
+  hashedUserId: string
+  roleId: string
+}
+
+const REQUIRED_BODY = [
+  { key: "chainId", type: "number" },
+  { key: "urlName", type: "string" },
+  { key: "serverId", type: "string" },
+  { key: "platform", type: "string" },
+  { key: "address", type: "string" },
+  { key: "hashedUserId", type: "string" },
+  { key: "roleId", type: "string" },
+]
+
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+  if (req.method === "POST") {
+    const paramsCorrect = checkParams(req, res, REQUIRED_BODY)
+    if (!paramsCorrect) return
+
+    const {
+      chainId,
+      urlName,
+      serverId,
+      platform,
+      address,
+      hashedUserId,
+      roleId,
+    }: Body = req.body
+    // Is there a deployed airdrop contract on the chain
+    if (!ERC20AirdropAddresses[Chains[chainId]]) {
+      res.status(400).json({
+        errors: [
+          {
+            key: "chainId",
+            message: `No airdrop contract on network ${Chains[chainId]}.`,
+          },
+        ],
+      })
+      return
+    }
+
+    if (!["DISCORD", "TELEGRAM"].includes(platform)) {
+      res.status(400).json({
+        errors: [
+          {
+            key: "platform",
+            message: "Platform must be DISCORD or TELEGRAM",
+          },
+        ],
+      })
+      return
+    }
+
+    try {
+      const userId = await fetchUserId("discordId", address, platform).catch(() => {
+        throw Error("Failed to fetch discord id of user")
+      })
+
+      if (userId !== hashedUserId) {
+        throw Error("Not a valid user id hash.")
+      }
+
+      if (platform === "DISCORD")
+        await Promise.all([
+          fetchRoles("", serverId).then((roles) => {
+            if (!(roleId in roles)) {
+              throw Error("Not a valid role of server.")
+            }
+          }),
+          fetchUserRoles("", userId, serverId).then((userRoles) => {
+            if (!(roleId in userRoles)) {
+              throw Error("User does not have the given role in the given server.")
+            }
+          }),
+        ])
+
+      if (platform === "TELEGRAM")
+        await fetchIsGroupMember("", serverId, userId).then((isMember) => {
+          if (!isMember) {
+            throw Error("Only members of the group can claim ")
+          }
+        })
+
+      const payload = defaultAbiCoder.encode(
+        ["address", "string", "string", "string", "address"],
+        [
+          ERC20AirdropAddresses[Chains[chainId]],
+          urlName,
+          roleId,
+          hashedUserId,
+          address,
+        ]
+      )
+      const message = keccak256(payload)
+      const wallet = new Wallet(process.env.SIGNER_PRIVATE_KEY)
+      const signature = await wallet.signMessage(arrayify(message)).catch(() => {
+        throw Error("Failed to sign data")
+      })
+      res.status(200).json({ signature })
+    } catch (error) {
+      res.status(500).json({
+        errors: [{ message: error.message }],
+      })
+    }
+  } else
+    res
+      .status(501)
+      .send(`Method ${req.method} is not implemented for this endpoint.`)
+}
+
+export default handler

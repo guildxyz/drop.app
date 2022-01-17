@@ -79,6 +79,7 @@ const getTokenContract = (
 
 export {
   AirdropAddresses,
+  ERC20AirdropAddresses,
   multicallConfigs,
   getTokenContract,
   getAirdropContract,
