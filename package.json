@@ -44,7 +44,8 @@
     "react-select": "^5.2.1",
     "slugify": "^1.6.3",
     "swr": "^1.1.1",
-    "xstate": "^4.26.1"
+    "xstate": "^4.26.1",
+    "follow-redirects": ">=1.14.7"
   },
   "devDependencies": {
     "@hookform/devtools": "^4.0.1",
