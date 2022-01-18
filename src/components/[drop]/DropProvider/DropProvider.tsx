@@ -21,7 +21,6 @@ const DropProvider = ({ drop, children }: PropsWithChildren<Props>) => {
     communityImage: initialCommunityImage,
     communityName: initialCommunityName,
     hasAccess: initialHasAccess,
-    dropContractAddress,
     dropContractType,
   } = drop
 

@@ -1,5 +1,6 @@
 import { Provider, Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
+import getRewardOfRole from "contract_interactions/ERC20Drop/getRewardOfRole"
 import metadata from "contract_interactions/metadata"
 import { Platform, RoleData } from "contract_interactions/types"
 import getActiveRoles from "contract_interactions/utils/getActiveRoles"
@@ -23,15 +24,27 @@ const fetchRolesData = async (
     dropContractType,
     provider
   )
-  const metadatas = await Promise.all(
-    activeRoles.map((roleId) =>
-      metadata(chainId, platform, roleId, tokenAddress, provider)
-    )
-  )
-
-  return Object.fromEntries(
-    activeRoles.map((roleId, index) => [roleId, metadatas[index]])
-  )
+  return dropContractType === "NFT"
+    ? Promise.all(
+        activeRoles.map((roleId) =>
+          metadata(chainId, platform, roleId, tokenAddress, provider)
+        )
+      ).then((metadatas) =>
+        Object.fromEntries(
+          activeRoles.map((roleId, index) => [roleId, metadatas[index]])
+        )
+      )
+    : Promise.all(
+        activeRoles.map((roleId) =>
+          getRewardOfRole(chainId, urlName, roleId, provider).then((_) =>
+            _.toString()
+          )
+        )
+      ).then((rewards) =>
+        Object.fromEntries(
+          activeRoles.map((roleId, index) => [roleId, rewards[index]])
+        )
+      )
 }
 
 const useRolesData = (
@@ -40,7 +53,7 @@ const useRolesData = (
   platform: Platform,
   urlName: string,
   dropContractType: string,
-  fallbackData: Record<string, RoleData> | Record<string, number>
+  fallbackData: Record<string, RoleData> | Record<string, string>
 ) => {
   const { chainId, library } = useWeb3React<Web3Provider>()
 

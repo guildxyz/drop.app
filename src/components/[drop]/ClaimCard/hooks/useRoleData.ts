@@ -18,16 +18,16 @@ const getRoleData = (
 ) =>
   dropContractType === "NFT"
     ? metadata(chainId, platform, roleId, tokenAddress, provider)
-    : getRewardOfRole(chainId, urlName, roleId, provider)
+    : getRewardOfRole(chainId, urlName, roleId, provider).then((_) => _.toString())
 
-const useRoleData = (roleId: string, fallbackData?: RoleData): RoleData | number => {
+const useRoleData = (roleId: string, fallbackData?: RoleData): RoleData | string => {
   const { chainId, library } = useWeb3React<Web3Provider>()
   const { tokenAddress, platform, dropContractType, urlName } = useDrop()
 
   const shouldFetch =
     platform?.length > 0 && roleId?.length > 0 && tokenAddress?.length > 0
 
-  const { data } = useSWR<RoleData | number>(
+  const { data } = useSWR<RoleData | string>(
     shouldFetch
       ? [
           "roleData",

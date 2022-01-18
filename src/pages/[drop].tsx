@@ -3,7 +3,9 @@ import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
 import ClaimCard from "components/[drop]/ClaimCard"
+import DropBalance from "components/[drop]/DropBalance"
 import DropProvider, { useDrop } from "components/[drop]/DropProvider"
+import ERC20Claim from "components/[drop]/ERC20Claim"
 import { Chains, RPC } from "connectors"
 import getDropRolesData, {
   DropWithRoles,
@@ -34,6 +36,7 @@ const DropPage = () => {
     communityImage,
     communityName,
     hasAccess,
+    dropContractType,
   } = useDrop()
 
   const isAuthenticated = useIsAuthenticated(platform)
@@ -51,7 +54,7 @@ const DropPage = () => {
 
   return (
     <Layout title={dropName}>
-      <HStack justifyContent="space-between">
+      <HStack justifyContent="space-between" alignItems="center">
         <HStack spacing={20}>
           <HStack spacing={5}>
             {communityImage?.length > 0 && (
@@ -81,17 +84,22 @@ const DropPage = () => {
           </HStack>
         </HStack>
 
+        {dropContractType === "ERC20" && <DropBalance />}
         {isAuthenticated === false && (
           <AuthenticateButton platform={platform} size="sm" />
         )}
       </HStack>
 
       {dropAlert === null ? (
-        <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
-          {Object.entries(roles).map(([roleId, role]) => (
-            <ClaimCard roleId={roleId} role={role} key={roleId} />
-          ))}
-        </Grid>
+        dropContractType === "NFT" ? (
+          <Grid mt={20} gridTemplateColumns="repeat(3, 1fr)" gap={5}>
+            {Object.entries(roles).map(([roleId, role]) => (
+              <ClaimCard roleId={roleId} role={role} key={roleId} />
+            ))}
+          </Grid>
+        ) : (
+          <ERC20Claim />
+        )
       ) : (
         <Alert mt={10} status="info" alignItems="center">
           <AlertIcon />

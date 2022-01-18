@@ -16,7 +16,7 @@ import getActiveRoles from "./utils/getActiveRoles"
 import getTokenAddress from "./utils/getTokenAddress"
 
 export type DropWithRoles = Drop & {
-  roles: Record<string, RoleData> | Record<string, number>
+  roles: Record<string, RoleData> | Record<string, string>
 }
 
 const getDropRolesData = async (
@@ -80,7 +80,9 @@ const getDropRolesData = async (
         )
       : Promise.all(
           activeRoles.map((roleId) =>
-            getRewardOfRole(chainId, urlName, roleId, provider)
+            getRewardOfRole(chainId, urlName, roleId, provider).then((_) =>
+              _.toString()
+            )
           )
         ).then((rewards) =>
           Object.fromEntries(
@@ -107,7 +109,7 @@ const getDropRolesData = async (
         [serverId]: data,
       }))
     : getRewardOfRole(chainId, urlName, serverId, provider).then((reward) => ({
-        [serverId]: +reward,
+        [serverId]: reward.toString(),
       })))
 
   return {

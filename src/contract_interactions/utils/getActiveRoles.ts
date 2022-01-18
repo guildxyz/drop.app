@@ -33,7 +33,7 @@ const getActiveRoles = async (
         )
       : roleIds.map((roleId) =>
           getRewardOfRole(chainId, urlName, roleId, provider).then(
-            (reward) => reward > 0
+            (reward) => !reward.isZero()
           )
         )
   )

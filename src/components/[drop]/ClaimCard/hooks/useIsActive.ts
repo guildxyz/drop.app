@@ -17,7 +17,7 @@ const getIsActive = async (
   dropContractType === "NFT"
     ? isActive(chainId, urlName, roleId, tokenAddress, provider)
     : getRewardOfRole(chainId, urlName, roleId, provider).then(
-        (reward) => reward > 0
+        (reward) => !reward.isZero()
       )
 
 const useIsActive = (roleId: string): boolean => {
