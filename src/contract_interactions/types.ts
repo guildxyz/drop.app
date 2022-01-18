@@ -10,6 +10,7 @@ export type Drop = {
   hasAccess: boolean
   dropContractAddress: string
   dropContractType: string
+  ownerAddress?: string
 }
 
 export type Attribute = {

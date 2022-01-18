@@ -1,4 +1,5 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider"
+import { BigNumber } from "@ethersproject/bignumber"
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import { getAirdropContract } from "contracts"
 
@@ -14,8 +15,8 @@ const startAirdropWithNewToken = (
   channelId: string,
   tokenName: string,
   tokenSymbol: string,
-  startingBalance: number,
-  rewards: number[],
+  startingBalance: BigNumber,
+  rewards: BigNumber[],
   provider?: Provider
 ): Promise<TransactionResponse> =>
   getAirdropContract(chainId, "ERC20", provider)

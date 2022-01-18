@@ -1,4 +1,5 @@
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
+import { parseEther } from "@ethersproject/units"
 import { StartAirdropData } from "components/start-airdrop/SubmitButton/hooks/useStartAirdrop"
 import startAirdropWithNewToken from "./ERC20Drop/startAirdropWithNewToken"
 import startTokenAirdropSignature from "./utils/signatures/startTokenAirdrop"
@@ -22,12 +23,18 @@ const startTokenAirdrop = async (
   const serverId = platform === "TELEGRAM" ? `-${formServerId}` : formServerId
 
   const roleIds =
-    platform === "DISCORD" ? Object.keys(tokenRewards.DISCORD) : [serverId]
+    platform === "DISCORD"
+      ? Object.entries(tokenRewards.DISCORD)
+          .filter(([, reward]) => !Number.isNaN(reward))
+          .map(([roleId]) => roleId)
+      : [serverId]
 
   const rewards =
     platform === "DISCORD"
       ? Object.values(tokenRewards.DISCORD)
-      : [tokenRewards.TELEGRAM]
+          .filter((reward) => !Number.isNaN(reward))
+          .map((reward) => parseEther(reward.toString()))
+      : [parseEther(tokenRewards.TELEGRAM.toString())]
 
   const signature = await startTokenAirdropSignature(
     chainId,
@@ -53,7 +60,7 @@ const startTokenAirdrop = async (
     platform === "TELEGRAM" ? serverId : channel,
     assetData.TOKEN.name,
     assetData.TOKEN.symbol,
-    assetData.TOKEN.initialBalance,
+    parseEther(assetData.TOKEN.initialBalance.toString()),
     rewards,
     provider
   )

@@ -79,7 +79,9 @@ const RoleRewards = () => {
                     height="full"
                     type="number"
                     placeholder="0"
-                    {...register(`tokenRewards.DISCORD.${roleId}`)}
+                    {...register(`tokenRewards.DISCORD.${roleId}`, {
+                      valueAsNumber: true,
+                    })}
                   />
 
                   <NumberInputStepper>

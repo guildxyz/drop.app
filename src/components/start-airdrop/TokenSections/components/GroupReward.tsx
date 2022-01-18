@@ -20,6 +20,7 @@ const GroupReward = () => {
           type="number"
           placeholder="100000"
           {...register("tokenRewards.TELEGRAM", {
+            valueAsNumber: true,
             required:
               assetType === "TOKEN" &&
               platform === "TELEGRAM" &&

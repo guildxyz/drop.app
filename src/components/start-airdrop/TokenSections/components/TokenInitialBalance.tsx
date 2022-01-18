@@ -19,6 +19,7 @@ const TokenInitialBalance = () => {
           type="number"
           placeholder="100000"
           {...register("assetData.TOKEN.initialBalance", {
+            valueAsNumber: true,
             required: assetType === "TOKEN" && "This field is required",
           })}
         />
