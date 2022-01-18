@@ -5,9 +5,9 @@ import { Drop } from "contract_interactions/types"
 const getDataOfDrop = (
   chainId: number,
   urlName: string,
-  provider?: Provider
+  provider: Provider
 ): Promise<Drop> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .dropsByUrl(urlName)
     .then(([dropName, platform, serverId, contractId]) => ({
       dropName,

@@ -4,23 +4,34 @@ import {
   getServerData,
 } from "components/[drop]/hooks/useCommunityName"
 import { fetchGroupImage } from "components/[drop]/hooks/useDropIcon"
+import { getContractType } from "contracts"
 import { fetchHasAccess } from "hooks/useHasAccess"
-import { getDataOfDrop } from "./airdrop"
+import { getDataOfDrop as getNFTDropData } from "./airdrop"
+import { contractOfDrop } from "./dropCenter"
+import getERC20DropData from "./ERC20Drop/getDataOfDrop"
+import getRewardOfRole from "./ERC20Drop/getRewardOfRole"
 import metadata from "./metadata"
 import { Drop, RoleData } from "./types"
 import getActiveRoles from "./utils/getActiveRoles"
 import getTokenAddress from "./utils/getTokenAddress"
 
-export type DropWithRoles = Drop & { roles: Record<string, RoleData> }
+export type DropWithRoles = Drop & {
+  roles: Record<string, RoleData> | Record<string, number>
+}
 
 const getDropRolesData = async (
   chainId: number,
   urlName: string,
   provider?: Provider
 ): Promise<DropWithRoles> => {
+  const dropContractAddress = await contractOfDrop(chainId, urlName, provider)
+  const dropContractType = getContractType(dropContractAddress)
+
   const [dropData, tokenAddress] = await Promise.all([
-    getDataOfDrop(chainId, urlName, provider),
-    getTokenAddress(chainId, urlName, provider),
+    dropContractType === "NFT"
+      ? getNFTDropData(chainId, urlName, provider)
+      : getERC20DropData(chainId, urlName, provider),
+    getTokenAddress(chainId, urlName, dropContractType, provider),
   ])
 
   const { platform, serverId } = dropData
@@ -53,6 +64,7 @@ const getDropRolesData = async (
       urlName,
       serverId,
       tokenAddress,
+      dropContractType,
       provider
     )
     const metadatas = await Promise.all(
@@ -66,6 +78,8 @@ const getDropRolesData = async (
       communityImage,
       communityName,
       hasAccess,
+      dropContractAddress,
+      dropContractType,
       roles: Object.fromEntries(
         activeRoles.map((roleId, index) => [roleId, metadatas[index]])
       ),
@@ -74,13 +88,13 @@ const getDropRolesData = async (
 
   // Fetching for telegram
 
-  const mataData = await metadata(
-    chainId,
-    platform,
-    serverId,
-    tokenAddress,
-    provider
-  )
+  const roles = await (dropContractType === "NFT"
+    ? metadata(chainId, platform, serverId, tokenAddress, provider).then((data) => ({
+        [serverId]: data,
+      }))
+    : getRewardOfRole(chainId, urlName, serverId, provider).then((reward) => ({
+        [serverId]: +reward,
+      })))
 
   return {
     ...dropData,
@@ -88,7 +102,9 @@ const getDropRolesData = async (
     communityImage,
     communityName,
     hasAccess,
-    roles: { [serverId]: mataData },
+    dropContractAddress,
+    dropContractType,
+    roles,
   }
 }
 

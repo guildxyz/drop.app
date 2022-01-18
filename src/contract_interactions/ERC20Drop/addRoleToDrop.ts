@@ -1,6 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider"
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
-import { getERC20AirdropContract } from "contracts"
+import { getAirdropContract } from "contracts"
 
 const addRoleToDrop = (
   chainId: number,
@@ -12,7 +12,7 @@ const addRoleToDrop = (
   channelId: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
-  getERC20AirdropContract(chainId, provider)
+  getAirdropContract(chainId, "ERC20", provider)
     .connect(signer)
     .addRoleToDrop(signature, urlName, roleId, reward, channelId)
 

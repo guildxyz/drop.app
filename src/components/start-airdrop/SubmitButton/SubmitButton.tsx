@@ -21,6 +21,7 @@ const SubmitButton = (): ReactElement => {
   const { onSubmit, isLoading } = useStartAirdrop()
   // const { triedEager } = useContext(Web3Connection)
   const nfts = useWatch({ name: "nfts" })
+  const assetType = useWatch({ name: "assetType" })
 
   const { handleSubmit, setError } = useFormContext()
 
@@ -38,7 +39,7 @@ const SubmitButton = (): ReactElement => {
       isLoading={isLoading}
       loadingText="Starting airdrop"
       onClick={(event) => {
-        if (nfts.length <= 0) {
+        if (assetType === "NFT" && nfts.length <= 0) {
           setError("nfts", {
             message: platformNFTError[platform] ?? "Unknown validation error",
           })

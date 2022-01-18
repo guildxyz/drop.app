@@ -7,7 +7,7 @@ const metadata = (
   platform: string,
   roleId: string,
   tokenAddress: string,
-  provider?: Provider
+  provider: Provider
 ): Promise<RoleData> =>
   getMetadataOfRole(chainId, platform, roleId, tokenAddress, provider).then(
     (metadataHash) =>

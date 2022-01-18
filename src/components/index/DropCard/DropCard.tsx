@@ -17,9 +17,11 @@ const WrappedDropCard = ({ drop }: Props) => (
 )
 
 const DropCard = (): JSX.Element => {
-  const { hasAccess, urlName, roles, dropName, communityImage } = useDrop()
+  const { hasAccess, urlName, roles, dropName, communityImage, dropContractType } =
+    useDrop()
 
   const imageGrid = useMemo((): Array<{ imageHash: string; roleName: string }> => {
+    if (dropContractType === "ERC20") return null
     const roleValues = Object.values(roles || {})
     if (!roles || roleValues.length === 0) return []
 
@@ -33,15 +35,14 @@ const DropCard = (): JSX.Element => {
         roleValues.find((role) => role.image.split("/").pop() === imageHash)?.name ??
         "",
     }))
-  }, [roles])
+  }, [roles, dropContractType])
 
-  const imageGridColumns = useMemo(
-    () =>
-      imageGrid.length <= 3
-        ? imageGrid.length
-        : Math.floor(Math.min(6, imageGrid.length) / 2),
-    [imageGrid]
-  )
+  const imageGridColumns = useMemo(() => {
+    if (!imageGrid) return 0
+    return imageGrid.length <= 3
+      ? imageGrid.length
+      : Math.floor(Math.min(6, imageGrid.length) / 2)
+  }, [imageGrid])
 
   if (!hasAccess || Object.keys(roles ?? {}).length <= 0) return null
 
@@ -70,7 +71,7 @@ const DropCard = (): JSX.Element => {
               gridTemplateColumns={`repeat(${imageGridColumns}, 1fr)`}
               gap={0}
             >
-              {imageGrid.map((role, i) => (
+              {imageGrid?.map((role, i) => (
                 <Flex key={i} width="full" height={imageGrid.length <= 3 ? 28 : 14}>
                   <Img
                     src={`https://ipfs.fleek.co/ipfs/${role.imageHash}`}

@@ -7,7 +7,7 @@ const numOfDeployedContracts = (
   address: string,
   provider?: Provider
 ): Promise<number> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .numOfDeployedContracts(address)
     .then((_: BigNumber) => +_)
 

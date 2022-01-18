@@ -4,12 +4,12 @@ import { getAirdropContract } from "contracts"
 const getTokenAddress = async (
   chainId: number,
   urlName: string,
-  provider?: Provider
+  dropType: string,
+  provider: Provider
 ): Promise<string> => {
-  const tokenContract = getAirdropContract(chainId, provider)
-
-  const eventFilter = tokenContract.filters.NewAirdrop(urlName)
-  const [event] = await tokenContract.queryFilter(eventFilter)
+  const contract = getAirdropContract(chainId, dropType, provider)
+  const eventFilter = contract.filters.NewAirdrop(urlName)
+  const [event] = await contract.queryFilter(eventFilter)
   return event.args.tokenAddress
 }
 

@@ -29,6 +29,7 @@ const RadioButton = ({
           px={5}
           py={3}
           textAlign="center"
+          backgroundColor="white"
         >
           {children}
         </Box>

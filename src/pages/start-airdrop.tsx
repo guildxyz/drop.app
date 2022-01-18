@@ -16,6 +16,45 @@ import { FormProvider, useForm, useWatch } from "react-hook-form"
 const StartAirdropPage = (): JSX.Element => {
   const { account } = useWeb3React()
 
+  /*
+  TODO: consider switching to thos form structure
+  
+  const methods = useForm({
+    shouldFocusError: true,
+    mode: "all",
+    defaultValues: {
+      urlName: "",
+      assetType: "NFT",
+      platform: "",
+      DISCORD: {
+        channel: "",
+        inviteLink: "",
+        serverId: "",
+        nfts: [],
+        tokenRewards: {}
+      },
+      TELEGRAM: {
+        nft: {
+          ... // NFT defaults
+        },
+        tokenReward: ""
+      },
+      assetData: {
+        NFT: {
+          name: "",
+          symbol: "",
+          description: "",
+        },
+        TOKEN: {
+          name: "",
+          symbol: "",
+          initialBalance: "",
+        },
+      },
+    },
+  })
+  */
+
   const methods = useForm({
     shouldFocusError: true,
     mode: "all",
@@ -27,6 +66,7 @@ const StartAirdropPage = (): JSX.Element => {
         NFT: {
           name: "",
           symbol: "",
+          description: "",
         },
         TOKEN: {
           name: "",
@@ -38,8 +78,10 @@ const StartAirdropPage = (): JSX.Element => {
       serverId: "",
       nfts: [],
       platform: "",
-      description: "",
-      tokenRewards: {},
+      tokenRewards: {
+        DISCORD: {},
+        TELEGRAM: "",
+      },
     },
   })
 

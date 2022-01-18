@@ -99,7 +99,7 @@ const Page = ({ drops }: Props): JSX.Element => {
         >
           {filteredYourDrops?.length ? (
             filteredYourDrops
-              .map((drop) => <DropCard key={drop.id} drop={drop} />)
+              .map((drop) => <DropCard key={drop.urlName} drop={drop} />)
               .concat(
                 <motion.div whileTap={{ scale: 0.95 }}>
                   <Link href="/start-airdrop" passHref>
@@ -146,7 +146,7 @@ const Page = ({ drops }: Props): JSX.Element => {
           >
             {filteredAllDrops.length &&
               filteredAllDrops?.map((drop) => (
-                <DropCard key={drop.id} drop={drop} />
+                <DropCard key={drop.urlName} drop={drop} />
               ))}
           </CategorySection>
         )}

@@ -1,5 +1,5 @@
 import { Provider } from "@ethersproject/providers"
-import { getERC20AirdropContract } from "contracts"
+import { getAirdropContract } from "contracts"
 
 const isClaimed = (
   chainId: number,
@@ -8,7 +8,7 @@ const isClaimed = (
   roleId: string,
   provider?: Provider
 ): Promise<boolean> =>
-  getERC20AirdropContract(chainId, provider)
+  getAirdropContract(chainId, "ERC20", provider)
     .claimed(urlName, roleId, userId)
     .catch(() => {
       throw new Error("Failed to read claimed drops")

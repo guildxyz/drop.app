@@ -7,6 +7,9 @@ const contractsByDeployer = (
   contractId: number,
   provider?: Provider
 ): Promise<string> =>
-  getAirdropContract(chainId, provider).contractsByDeployer(address, contractId)
+  getAirdropContract(chainId, "NFT", provider).contractsByDeployer(
+    address,
+    contractId
+  )
 
 export default contractsByDeployer

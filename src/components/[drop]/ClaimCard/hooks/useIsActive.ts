@@ -1,6 +1,7 @@
 import { Provider, Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { useDrop } from "components/[drop]/DropProvider"
+import { getAirdropContract } from "contracts"
 import isActive from "contract_interactions/airdrop/isActive"
 import useSWR from "swr"
 
@@ -10,11 +11,18 @@ const getIsActive = async (
   urlName: string,
   roleId: string,
   tokenAddress: string,
-  provider: Provider
-) => isActive(chainId, urlName, roleId, tokenAddress, provider)
+  provider: Provider,
+  dropContractType: string
+) =>
+  isActive(
+    urlName,
+    roleId,
+    tokenAddress,
+    getAirdropContract(chainId, dropContractType, provider)
+  )
 
 const useIsActive = (roleId: string): boolean => {
-  const { urlName, tokenAddress } = useDrop()
+  const { urlName, tokenAddress, dropContractType } = useDrop()
   const { chainId, library } = useWeb3React<Web3Provider>()
 
   const shouldFetch =
@@ -22,7 +30,15 @@ const useIsActive = (roleId: string): boolean => {
 
   const { data } = useSWR(
     shouldFetch
-      ? ["isActive", chainId, urlName, roleId, tokenAddress, library]
+      ? [
+          "isActive",
+          chainId,
+          urlName,
+          roleId,
+          tokenAddress,
+          library,
+          dropContractType,
+        ]
       : null,
     getIsActive
   )

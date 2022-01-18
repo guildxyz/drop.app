@@ -1,5 +1,6 @@
 import Section from "components/common/Section"
 import { useWatch } from "react-hook-form"
+import Description from "./components/Description"
 import NameInput from "./components/NameInput"
 import MultipleUpload from "./components/Uploaders/MultipleUpload"
 import SingleUpload from "./components/Uploaders/SingleUpload"
@@ -22,8 +23,12 @@ const NFTSections = () => {
     <>
       <Section {...nftUploadSection?.[platform]} />
 
-      <Section title="Set NFT collection name and symbol">
+      <Section title="NFT collection name and symbol">
         <NameInput />
+      </Section>
+
+      <Section title="Description">
+        <Description />
       </Section>
     </>
   )

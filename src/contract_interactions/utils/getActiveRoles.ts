@@ -1,13 +1,15 @@
 import { Provider } from "@ethersproject/providers"
 import { fetchRoles } from "components/start-airdrop/NFTSections/components/Uploaders/hooks/useRoles"
 import isActive from "contract_interactions/airdrop/isActive"
+import getRewardOfRole from "contract_interactions/ERC20Drop/getRewardOfRole"
 
 const getActiveRoles = async (
   chainId: number,
   urlName: string,
   serverId: string,
   tokenAddress: string,
-  provider?: Provider
+  dropType: string,
+  provider: Provider
 ): Promise<string[]> => {
   const roleIds = await fetchRoles("", serverId)
     .then((roles) => Object.keys(roles))
@@ -25,9 +27,15 @@ const getActiveRoles = async (
   } = await aggregate(requests, multicallConfigs[Chains[chainId]]) */
 
   const actives = await Promise.all(
-    roleIds.map((roleId) =>
-      isActive(chainId, urlName, roleId, tokenAddress, provider)
-    )
+    dropType === "NFT"
+      ? roleIds.map((roleId) =>
+          isActive(chainId, urlName, roleId, tokenAddress, provider)
+        )
+      : roleIds.map((roleId) =>
+          getRewardOfRole(chainId, urlName, roleId, provider).then(
+            (reward) => reward > 0
+          )
+        )
   )
 
   return roleIds.filter((_, index) => !!actives[index])

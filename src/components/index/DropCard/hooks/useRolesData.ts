@@ -12,13 +12,15 @@ const fetchRolesData = async (
   serverId: string,
   tokenAddress: string,
   provider: Provider,
-  platform: Platform
+  platform: Platform,
+  dropContractType: string
 ) => {
   const activeRoles = await getActiveRoles(
     chainId,
     urlName,
     serverId,
     tokenAddress,
+    dropContractType,
     provider
   )
   const metadatas = await Promise.all(
@@ -37,7 +39,8 @@ const useRolesData = (
   tokenAddress: string,
   platform: Platform,
   urlName: string,
-  fallbackData: Record<string, RoleData>
+  dropContractType: string,
+  fallbackData: Record<string, RoleData> | Record<string, number>
 ) => {
   const { chainId, library } = useWeb3React<Web3Provider>()
 
@@ -45,11 +48,21 @@ const useRolesData = (
     serverId?.length > 0 &&
     tokenAddress?.length > 0 &&
     platform === "DISCORD" &&
-    urlName?.length > 0
+    urlName?.length > 0 &&
+    dropContractType?.length > 0
 
   const { data } = useSWR(
     shouldFetch
-      ? ["roleData", chainId, urlName, serverId, tokenAddress, library, platform]
+      ? [
+          "roleData",
+          chainId,
+          urlName,
+          serverId,
+          tokenAddress,
+          library,
+          platform,
+          dropContractType,
+        ]
       : null,
     fetchRolesData,
     { fallbackData, revalidateOnMount: true }

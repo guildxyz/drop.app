@@ -1,6 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider"
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
-import { getERC20AirdropContract } from "contracts"
+import { getAirdropContract } from "contracts"
 
 const stopAirdrop = (
   chainId: number,
@@ -8,6 +8,6 @@ const stopAirdrop = (
   urlName: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
-  getERC20AirdropContract(chainId, provider).connect(signer).stopAirdrop(urlName)
+  getAirdropContract(chainId, "ERC20", provider).connect(signer).stopAirdrop(urlName)
 
 export default stopAirdrop

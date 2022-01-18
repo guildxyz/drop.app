@@ -6,9 +6,9 @@ const isActive = (
   urlName: string,
   roleId: string,
   tokenAddress: string,
-  provider?: Provider
+  provider: Provider
 ): Promise<boolean> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .active(urlName, roleId, tokenAddress)
     .catch(() => {
       throw new Error("Failed to read active NFTs")

@@ -8,20 +8,8 @@ export type Drop = {
   communityName: string
   communityImage: string
   hasAccess: boolean
-  id?: number
-}
-
-export type ERC20Drop = {
-  urlName: string
-  dropName: string
-  platform: Platform
-  serverId: string
-  tokenAddress: string
-  ownerAddress: string
-  communityName: string
-  communityImage: string
-  hasAccess: boolean
-  id?: number
+  dropContractAddress: string
+  dropContractType: string
 }
 
 export type Attribute = {

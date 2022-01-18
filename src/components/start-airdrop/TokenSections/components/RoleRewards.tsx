@@ -57,14 +57,14 @@ const RoleRewards = () => {
       </Collapse>
       <Grid templateColumns="repeat(3, 1fr)" gap={5}>
         {Object.entries(roles ?? {}).map(([roleId, roleName]) => (
-          <Card key={roleId} backgroundColor="primary.100" borderRadius="md">
+          <Card key={roleId} backgroundColor="white" borderRadius="md">
             <FormControl
               width="full"
               height="full"
-              isInvalid={!!errors?.assetData?.TOKEN?.initialBalance}
+              isInvalid={!!errors?.tokenRewards?.DISCORD?.[roleId]}
             >
               <Grid templateColumns="repeat(2, 1fr)" alignItems="center">
-                <FormLabel marginX={5} marginY={3} fontWeight="semibold">
+                <FormLabel marginX={5} marginY={3}>
                   {roleName}
                 </FormLabel>
 
@@ -72,11 +72,14 @@ const RoleRewards = () => {
                   <NumberInputField
                     borderLeftRadius={0}
                     borderRightRadius="md"
+                    borderTopWidth={0}
+                    borderRightWidth={0}
+                    borderBottomWidth={0}
                     width="full"
                     height="full"
                     type="number"
                     placeholder="0"
-                    {...register(`tokenRewards.${roleId}`)}
+                    {...register(`tokenRewards.DISCORD.${roleId}`)}
                   />
 
                   <NumberInputStepper>
@@ -90,7 +93,7 @@ const RoleRewards = () => {
                 </NumberInput>
 
                 <FormErrorMessage>
-                  {errors?.assetData?.TOKEN?.initialBalance?.message}
+                  {errors?.tokenRewards?.DISCORD?.[roleId]?.message}
                 </FormErrorMessage>
               </Grid>
             </FormControl>

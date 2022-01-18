@@ -1,5 +1,6 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { Provider } from "@ethersproject/providers"
-import { getERC20AirdropContract } from "contracts"
+import { getAirdropContract } from "contracts"
 
 const getDropBalance = (
   chainId: number,
@@ -7,8 +8,9 @@ const getDropBalance = (
   roleId: string,
   provider?: Provider
 ): Promise<number> =>
-  getERC20AirdropContract(chainId, provider)
+  getAirdropContract(chainId, "ERC20", provider)
     .rewardOfRole(urlName, roleId)
+    .then((_: BigNumber) => +_)
     .catch(() => {
       throw new Error("Failed to read reward of role")
     })

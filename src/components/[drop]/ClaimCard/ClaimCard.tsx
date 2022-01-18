@@ -27,8 +27,8 @@ type Props = {
 }
 
 const ClaimCard = ({ roleId, role }: Props): ReactElement => {
-  const { tokenAddress, platform } = useDrop()
-  const roleData = useRoleData(tokenAddress, platform, roleId, role)
+  const { platform } = useDrop()
+  const roleData = useRoleData(roleId, role)
   const roleName = useRoleName(roleId)
   const isDeployer = useIsDeployer()
   const ClaimButton = useMemo(

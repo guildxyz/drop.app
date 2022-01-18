@@ -10,7 +10,7 @@ const stopAirdrop = (
   roleId: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .connect(signer)
     .stopAirdrop(signature, urlName, roleId)
 

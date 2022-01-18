@@ -9,7 +9,7 @@ const claims = (
   tokenAddress: string,
   provider?: Provider
 ): Promise<boolean> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .claims(userId, platform, roleId, tokenAddress)
     .catch(() => {
       throw new Error("Failed to read claimed NFTs")

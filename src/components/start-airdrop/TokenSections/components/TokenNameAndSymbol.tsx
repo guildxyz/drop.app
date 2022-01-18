@@ -2,20 +2,20 @@ import { FormControl, FormErrorMessage, HStack, Input } from "@chakra-ui/react"
 import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import { contractOfDrop } from "contract_interactions/dropCenter"
-import { ReactElement, useCallback, useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { useFormContext, useFormState, useWatch } from "react-hook-form"
 import slugify from "utils/slugify"
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-const NameInput = (): ReactElement => {
-  const { chainId, library } = useWeb3React<Web3Provider>()
-  const { setValue, register } = useFormContext()
+const TokenNameAndSymbol = () => {
+  const { register, setValue } = useFormContext()
   const { errors } = useFormState()
-  const nftName = useWatch({ name: "assetData.NFT.name" })
+  const { chainId, library } = useWeb3React<Web3Provider>()
   const assetType = useWatch({ name: "assetType" })
+  const tokenName = useWatch({ name: "assetData.TOKEN.name" })
 
-  useEffect(() => setValue("urlName", slugify(nftName)), [nftName, setValue])
+  useEffect(() => setValue("urlName", slugify(tokenName)), [tokenName, setValue])
 
   const validateName = useCallback(
     async (value) => {
@@ -31,36 +31,38 @@ const NameInput = (): ReactElement => {
   )
 
   return (
-    <HStack spacing={2} alignItems="start">
-      <FormControl isInvalid={!!errors?.assetData?.NFT?.name}>
+    <HStack alignItems="start">
+      <FormControl width="xl" isInvalid={!!errors?.assetData?.TOKEN?.name}>
         <Input
           size="lg"
           type="text"
           placeholder="Name"
-          {...register("assetData.NFT.name", {
-            required: assetType === "NFT" && "This field is required",
+          {...register("assetData.TOKEN.name", {
+            required: assetType === "TOKEN" && "This field is required",
             validate: validateName,
           })}
         />
-        <FormErrorMessage>{errors?.assetData?.NFT?.name?.message}</FormErrorMessage>
+        <FormErrorMessage>
+          {errors?.assetData?.TOKEN?.name?.message}
+        </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={!!errors?.assetData?.NFT?.symbol}>
+      <FormControl isInvalid={!!errors?.assetData?.TOKEN?.symbol}>
         <Input
+          width="24"
           size="lg"
-          maxWidth="24"
           type="text"
           placeholder="SYMBL"
-          {...register("assetData.NFT.symbol", {
-            required: assetType === "NFT" && "This field is required",
+          {...register("assetData.TOKEN.symbol", {
+            required: assetType === "TOKEN" && "This field is required",
           })}
         />
         <FormErrorMessage>
-          {errors?.assetData?.NFT?.symbol?.message}
+          {errors?.assetData?.TOKEN?.symbol?.message}
         </FormErrorMessage>
       </FormControl>
     </HStack>
   )
 }
 
-export default NameInput
+export default TokenNameAndSymbol

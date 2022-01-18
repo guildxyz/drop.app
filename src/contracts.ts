@@ -17,19 +17,30 @@ const multicallConfigs = {
   },
 }
 
-enum AirdropAddresses {
-  GOERLI = "0x907EdE6fBa76fCdf2CD44dd26807837965ab47e0",
-  POLYGON = "0xb68b287E6341F39053348Bfa81C800eaE6257C33",
+const AirdropAddresses = {
+  NFT: {
+    GOERLI: "0x907EdE6fBa76fCdf2CD44dd26807837965ab47e0",
+    POLYGON: "0xb68b287E6341F39053348Bfa81C800eaE6257C33",
+  },
+  ERC20: {
+    GOERLI: "0x7FF92e7e78395ED4f164fD016998f0058487B3d6",
+    POLYGON: "",
+  },
 }
 
-enum DropCenterAddresses {
-  GOERLI = "0x168a261420baF5A33db4464a7Ca94D257FCA2305",
-  POLYGON = "0x9941Dedc9714fffDD90A3b1A7bDa30BE2b523882",
+const AirdropAbis = {
+  NFT: AIRDROP_ABI,
+  ERC20: ERC20_AIRDROP_ABI,
 }
 
-enum ERC20AirdropAddresses {
-  GOERLI = "0x7FF92e7e78395ED4f164fD016998f0058487B3d6",
-  POLYGON = "",
+const getContractType = (address: string) =>
+  Object.keys(AirdropAddresses).find((dropType) =>
+    Object.values(AirdropAddresses[dropType]).includes(address)
+  )
+
+const DropCenterAddresses = {
+  GOERLI: "0x168a261420baF5A33db4464a7Ca94D257FCA2305",
+  POLYGON: "0x9941Dedc9714fffDD90A3b1A7bDa30BE2b523882",
 }
 
 const defaultProviders = {
@@ -45,24 +56,21 @@ const defaultProviders = {
     : {}),
 }
 
-const getDropCenterContract = (chainId: number, provider: Provider): Contract =>
+const getDropCenterContract = (chainId: number, provider?: Provider): Contract =>
   new Contract(
     DropCenterAddresses[Chains[chainId]],
     DROPCENTER_ABI,
     provider ?? defaultProviders[Chains[chainId]]
   )
 
-const getAirdropContract = (chainId: number, provider: Provider): Contract =>
+const getAirdropContract = (
+  chainId: number,
+  dropType: string,
+  provider?: Provider
+): Contract =>
   new Contract(
-    AirdropAddresses[Chains[chainId]],
-    AIRDROP_ABI,
-    provider ?? defaultProviders[Chains[chainId]]
-  )
-
-const getERC20AirdropContract = (chainId: number, provider: Provider): Contract =>
-  new Contract(
-    ERC20AirdropAddresses[Chains[chainId]],
-    ERC20_AIRDROP_ABI,
+    AirdropAddresses[dropType][Chains[chainId]],
+    AirdropAbis[dropType],
     provider ?? defaultProviders[Chains[chainId]]
   )
 
@@ -79,10 +87,9 @@ const getTokenContract = (
 
 export {
   AirdropAddresses,
-  ERC20AirdropAddresses,
   multicallConfigs,
   getTokenContract,
   getAirdropContract,
   getDropCenterContract,
-  getERC20AirdropContract,
+  getContractType,
 }

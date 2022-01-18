@@ -17,7 +17,7 @@ const startAirdrop = (
   channelId: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .connect(signer)
     .startAirdrop(
       signature,

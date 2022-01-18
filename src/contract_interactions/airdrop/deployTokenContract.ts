@@ -9,7 +9,7 @@ const deployTokenContract = async (
   tokenSymbol: string,
   provider?: Provider
 ): Promise<TransactionResponse> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .connect(signer)
     .deployTokenContract(tokenName, tokenSymbol)
 

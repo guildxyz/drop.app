@@ -6,8 +6,12 @@ const getMetadataOfRole = (
   platform: string,
   roleId: string,
   tokenAddress: string,
-  provider?: Provider
+  provider: Provider
 ): Promise<string> =>
-  getAirdropContract(chainId, provider).metadata(platform, roleId, tokenAddress)
+  getAirdropContract(chainId, "NFT", provider).metadata(
+    platform,
+    roleId,
+    tokenAddress
+  )
 
 export default getMetadataOfRole

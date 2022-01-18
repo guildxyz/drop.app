@@ -12,7 +12,7 @@ const grant = (
   contractId: number,
   provider?: Provider
 ): Promise<TransactionResponse> =>
-  getAirdropContract(chainId, provider)
+  getAirdropContract(chainId, "NFT", provider)
     .connect(signer)
     .grant(signature, platform, roleId, recieverAddress, contractId)
 

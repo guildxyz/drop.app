@@ -49,6 +49,7 @@ const NftCard = ({
   const { errors } = useFormState()
   const serverId = useWatch({ name: "serverId" })
   const platform = useWatch({ name: "platform" })
+  const assetType = useWatch({ name: "assetType" })
   const roles = useRoles(serverId, platform)
 
   useEffect(() => {
@@ -119,7 +120,7 @@ const NftCard = ({
                 placeholder="name"
                 size="sm"
                 {...register(`nfts.${nftIndex}.name`, {
-                  required: "Please give a name for this NFT",
+                  required: assetType === "NFT" && "Please give a name for this NFT",
                 })}
               />
               <FormErrorMessage>

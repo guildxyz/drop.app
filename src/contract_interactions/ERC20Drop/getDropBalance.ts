@@ -1,12 +1,12 @@
 import { Provider } from "@ethersproject/providers"
-import { getERC20AirdropContract } from "contracts"
+import { getAirdropContract } from "contracts"
 
 const getDropBalance = (
   chainId: number,
   urlName: string,
   provider?: Provider
 ): Promise<number> =>
-  getERC20AirdropContract(chainId, provider)
+  getAirdropContract(chainId, "ERC20", provider)
     .balanceOfDrops(urlName)
     .catch(() => {
       throw new Error("Failed to read drop balance")

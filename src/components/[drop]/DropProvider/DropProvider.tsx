@@ -21,6 +21,8 @@ const DropProvider = ({ drop, children }: PropsWithChildren<Props>) => {
     communityImage: initialCommunityImage,
     communityName: initialCommunityName,
     hasAccess: initialHasAccess,
+    dropContractAddress,
+    dropContractType,
   } = drop
 
   const hasAccess = useHasAccess(serverId, platform, initialHasAccess)
@@ -39,7 +41,14 @@ const DropProvider = ({ drop, children }: PropsWithChildren<Props>) => {
     initialCommunityName
   )
 
-  const roles = useRolesData(serverId, tokenAddress, platform, urlName, initialRoles)
+  const roles = useRolesData(
+    serverId,
+    tokenAddress,
+    platform,
+    urlName,
+    dropContractType,
+    initialRoles
+  )
 
   return (
     <DropContext.Provider

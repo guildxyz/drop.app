@@ -1,10 +1,13 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
 import startAirdrop from "contract_interactions/startAirdrop"
+import startTokenAirdrop from "contract_interactions/startTokenAirdrop"
 import { Platform } from "contract_interactions/types"
 import useSubmit from "hooks/useSubmit"
 import useToast from "hooks/useToast"
 import { useRouter } from "next/router"
+import { useCallback, useMemo } from "react"
+import { useWatch } from "react-hook-form"
 
 export type NftField = {
   file: File
@@ -19,33 +22,59 @@ export type NftField = {
   preview: string
 }
 
+// TODO update this type
 export type StartAirdropData = {
   urlName: string
   channel: string
-  assetType: "NFT" | "TOKEN" | "ERC1155"
+  assetType: "NFT" | "TOKEN"
   assetData: {
     NFT: {
       name: string
       symbol: string
+      description: string
+    }
+    TOKEN: {
+      name: string
+      symbol: string
+      initialBalance: number
     }
   }
   inviteLink: string
   serverId: string
   nfts: NftField[]
   platform: Platform
-  description: string
+  tokenRewards: {
+    DISCORD: Record<string, number>
+    TELEGRAM: number
+  }
 }
 
 const useStartAirdrop = () => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
   const router = useRouter()
   const toast = useToast()
+  const assetType = useWatch({ name: "assetType" })
 
-  const fetch = async (data: StartAirdropData) => {
-    console.log(data)
+  const airdropStarter = useMemo(() => {
+    if (assetType === "NFT") return startAirdrop
+    if (assetType === "TOKEN") return startTokenAirdrop
+    return null
+  }, [assetType])
 
-    return startAirdrop(chainId, account, library.getSigner(account), data, library)
-  }
+  const fetch = useCallback(
+    async (data: StartAirdropData) => {
+      console.log(data)
+
+      return airdropStarter?.(
+        chainId,
+        account,
+        library.getSigner(account),
+        data,
+        library
+      )
+    },
+    [chainId, account, library, airdropStarter]
+  )
 
   const onSuccess = (urlName: string) => {
     toast({

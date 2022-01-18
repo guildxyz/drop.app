@@ -2,9 +2,9 @@ import { defaultAbiCoder } from "@ethersproject/abi"
 import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
-import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
+import { fetchRoles } from "components/start-airdrop/NFTSections/components/Uploaders/hooks/useRoles"
 import { Chains } from "connectors"
-import { ERC20AirdropAddresses } from "contracts"
+import { AirdropAddresses } from "contracts"
 import { Platform } from "contract_interactions/types"
 import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
@@ -37,7 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 
     const { chainId, serverId, address, url, platform, roleIds }: Body = req.body
 
-    if (!ERC20AirdropAddresses[Chains[chainId]]) {
+    if (!AirdropAddresses.ERC20[Chains[chainId]]) {
       res.status(400).json({
         message: `No airdrop contract on network ${Chains[chainId]}.`,
       })
@@ -92,7 +92,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "string", "string[]", "address"],
         [
-          ERC20AirdropAddresses[Chains[chainId]],
+          AirdropAddresses.ERC20[Chains[chainId]],
           platform,
           serverId,
           url,

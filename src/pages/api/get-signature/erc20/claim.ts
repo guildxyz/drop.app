@@ -2,11 +2,11 @@ import { defaultAbiCoder } from "@ethersproject/abi"
 import { arrayify } from "@ethersproject/bytes"
 import { keccak256 } from "@ethersproject/keccak256"
 import { Wallet } from "@ethersproject/wallet"
-import { fetchRoles } from "components/start-airdrop/UploadNFTs/hooks/useRoles"
+import { fetchRoles } from "components/start-airdrop/NFTSections/components/Uploaders/hooks/useRoles"
 import { fetchIsGroupMember } from "components/[drop]/ClaimCard/components/TelegramClaimButton/hooks/useIsGroupMember"
 import { fetchUserRoles } from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import { Chains } from "connectors"
-import { ERC20AirdropAddresses } from "contracts"
+import { AirdropAddresses } from "contracts"
 import { Platform } from "contract_interactions/types"
 import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       roleId,
     }: Body = req.body
     // Is there a deployed airdrop contract on the chain
-    if (!ERC20AirdropAddresses[Chains[chainId]]) {
+    if (!AirdropAddresses.ERC20[Chains[chainId]]) {
       res.status(400).json({
         errors: [
           {
@@ -104,7 +104,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
       const payload = defaultAbiCoder.encode(
         ["address", "string", "string", "string", "address"],
         [
-          ERC20AirdropAddresses[Chains[chainId]],
+          AirdropAddresses.ERC20[Chains[chainId]],
           urlName,
           roleId,
           hashedUserId,

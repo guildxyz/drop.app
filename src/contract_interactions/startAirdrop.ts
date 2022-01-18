@@ -22,10 +22,10 @@ const startAirdrop = async (
     platform,
     nfts: formNfts,
     assetData,
-    description,
   } = data
 
   const serverId = platform === "TELEGRAM" ? `-${formServerId}` : formServerId
+
   const nfts =
     platform === "TELEGRAM"
       ? formNfts.map((nft) => ({ ...nft, roles: nft.roles.map((id) => `-${id}`) }))
@@ -37,7 +37,7 @@ const startAirdrop = async (
 
     return JSON.stringify({
       name: nft.name,
-      description,
+      description: assetData.NFT.description,
       image: `ipfs://${nft.hash}`,
       external_url: `https://drop.app/nft/${
         AirdropAddresses[Chains[chainId]]
