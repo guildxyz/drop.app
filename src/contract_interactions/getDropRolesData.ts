@@ -67,11 +67,27 @@ const getDropRolesData = async (
       dropContractType,
       provider
     )
-    const metadatas = await Promise.all(
-      activeRoles.map((roleId) =>
-        metadata(chainId, platform, roleId, tokenAddress, provider)
-      )
-    )
+
+    const roles = await (dropContractType === "NFT"
+      ? Promise.all(
+          activeRoles.map((roleId) =>
+            metadata(chainId, platform, roleId, tokenAddress, provider)
+          )
+        ).then((metadatas) =>
+          Object.fromEntries(
+            activeRoles.map((roleId, index) => [roleId, metadatas[index]])
+          )
+        )
+      : Promise.all(
+          activeRoles.map((roleId) =>
+            getRewardOfRole(chainId, urlName, roleId, provider)
+          )
+        ).then((rewards) =>
+          Object.fromEntries(
+            activeRoles.map((roleId, index) => [roleId, rewards[index]])
+          )
+        ))
+
     return {
       ...dropData,
       tokenAddress,
@@ -80,9 +96,7 @@ const getDropRolesData = async (
       hasAccess,
       dropContractAddress,
       dropContractType,
-      roles: Object.fromEntries(
-        activeRoles.map((roleId, index) => [roleId, metadatas[index]])
-      ),
+      roles,
     }
   }
 

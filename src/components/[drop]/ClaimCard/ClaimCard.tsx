@@ -57,30 +57,34 @@ const ClaimCard = ({ roleId, role }: Props): ReactElement => {
           borderRadius={10}
           overflow="hidden"
         >
-          <Image
-            src={`https://ipfs.fleek.co/ipfs/${roleData?.image?.split("/").pop()}`}
-            alt={`Image of ${"ROLE NAME"} role`}
-            layout="fill"
-            objectFit="cover"
-          />
+          {typeof roleData !== "number" && (
+            <Image
+              src={`https://ipfs.fleek.co/ipfs/${roleData?.image?.split("/").pop()}`}
+              alt={`Image of ${"ROLE NAME"} role`}
+              layout="fill"
+              objectFit="cover"
+            />
+          )}
         </Box>
-        <Accordion allowMultiple>
-          <AccordionItem border="none">
-            <AccordionButton>
-              <HStack width="full" justifyContent="space-between">
-                <Text>{roleData?.name}</Text>
-                <AccordionIcon />
-              </HStack>
-            </AccordionButton>
-            <AccordionPanel pb={4}>
-              {roleData?.attributes.map(({ trait_type, value }) => (
-                <Text key={`${trait_type}-${value}`}>
-                  {trait_type}: {value}
-                </Text>
-              ))}
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
+        {typeof roleData !== "number" && (
+          <Accordion allowMultiple>
+            <AccordionItem border="none">
+              <AccordionButton>
+                <HStack width="full" justifyContent="space-between">
+                  <Text>{roleData?.name}</Text>
+                  <AccordionIcon />
+                </HStack>
+              </AccordionButton>
+              <AccordionPanel pb={4}>
+                {roleData?.attributes.map(({ trait_type, value }) => (
+                  <Text key={`${trait_type}-${value}`}>
+                    {trait_type}: {value}
+                  </Text>
+                ))}
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        )}
         <ClaimButton roleId={roleId} />
       </VStack>
     </Skeleton>
