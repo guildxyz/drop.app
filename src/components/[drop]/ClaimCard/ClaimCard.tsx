@@ -57,7 +57,7 @@ const ClaimCard = ({ roleId, role }: Props): ReactElement => {
           borderRadius={10}
           overflow="hidden"
         >
-          {typeof roleData !== "number" && (
+          {typeof roleData !== "string" && (
             <Image
               src={`https://ipfs.fleek.co/ipfs/${roleData?.image?.split("/").pop()}`}
               alt={`Image of ${"ROLE NAME"} role`}
@@ -66,7 +66,7 @@ const ClaimCard = ({ roleId, role }: Props): ReactElement => {
             />
           )}
         </Box>
-        {typeof roleData !== "number" && (
+        {typeof roleData !== "string" && (
           <Accordion allowMultiple>
             <AccordionItem border="none">
               <AccordionButton>
