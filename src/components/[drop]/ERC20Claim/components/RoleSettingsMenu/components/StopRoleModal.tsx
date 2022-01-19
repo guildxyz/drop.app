@@ -9,7 +9,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react"
 import useRoleName from "components/[drop]/ClaimCard/hooks/useRoleName"
-import useStopTokenDropForRole from "../hooks/useStopTokenDropForRole"
+import useEditRoleReward from "../hooks/useEditRoleReward"
 
 type Props = {
   isOpen: boolean
@@ -19,7 +19,7 @@ type Props = {
 
 const StopRoleModal = ({ isOpen, onClose, roleId }: Props) => {
   const roleName = useRoleName(roleId)
-  const { onSubmit, isLoading } = useStopTokenDropForRole(roleId)
+  const { onSubmit, isLoading } = useEditRoleReward(roleId, onClose)
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

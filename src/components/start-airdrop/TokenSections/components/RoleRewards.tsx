@@ -3,30 +3,20 @@ import {
   AlertIcon,
   chakra,
   Collapse,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Grid,
   HStack,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Spinner,
   Text,
 } from "@chakra-ui/react"
-import Card from "components/common/Card"
 import useRoles from "components/start-airdrop/NFTSections/components/Uploaders/hooks/useRoles"
-import { CaretDown, CaretUp } from "phosphor-react"
-import { useFormContext, useFormState, useWatch } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
+import RoleRewardCard from "./RoleRewardCard"
 
 const RoleRewards = () => {
   const serverId = useWatch({ name: "serverId" })
   const platform = useWatch({ name: "platform" })
   const roles = useRoles(serverId, platform)
-  const { trigger, register } = useFormContext()
-  const { errors } = useFormState()
+  const { trigger } = useFormContext()
 
   if (!roles && serverId.length > 0)
     return (
@@ -57,49 +47,7 @@ const RoleRewards = () => {
       </Collapse>
       <Grid templateColumns="repeat(3, 1fr)" gap={5}>
         {Object.entries(roles ?? {}).map(([roleId, roleName]) => (
-          <Card key={roleId} backgroundColor="white" borderRadius="md">
-            <FormControl
-              width="full"
-              height="full"
-              isInvalid={!!errors?.tokenRewards?.DISCORD?.[roleId]}
-            >
-              <Grid templateColumns="repeat(2, 1fr)" alignItems="center">
-                <FormLabel marginX={5} marginY={3}>
-                  {roleName}
-                </FormLabel>
-
-                <NumberInput min={0} size="lg" height="full">
-                  <NumberInputField
-                    borderLeftRadius={0}
-                    borderRightRadius="md"
-                    borderTopWidth={0}
-                    borderRightWidth={0}
-                    borderBottomWidth={0}
-                    width="full"
-                    height="full"
-                    type="number"
-                    placeholder="0"
-                    {...register(`tokenRewards.DISCORD.${roleId}`, {
-                      valueAsNumber: true,
-                    })}
-                  />
-
-                  <NumberInputStepper>
-                    <NumberIncrementStepper borderTopRightRadius="md">
-                      <CaretUp />
-                    </NumberIncrementStepper>
-                    <NumberDecrementStepper borderBottomRightRadius="md">
-                      <CaretDown />
-                    </NumberDecrementStepper>
-                  </NumberInputStepper>
-                </NumberInput>
-
-                <FormErrorMessage>
-                  {errors?.tokenRewards?.DISCORD?.[roleId]?.message}
-                </FormErrorMessage>
-              </Grid>
-            </FormControl>
-          </Card>
+          <RoleRewardCard key={roleId} roleId={roleId} roleName={roleName} />
         ))}
       </Grid>
     </>

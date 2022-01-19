@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  HStack,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
-  Tooltip,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Box, Button, HStack, Text, Tooltip } from "@chakra-ui/react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { formatEther } from "@ethersproject/units"
 import { useWeb3React } from "@web3-react/core"
@@ -21,10 +9,9 @@ import useUserRoles from "components/[drop]/ClaimCard/hooks/useUserRoles"
 import useTokenSymbol from "components/[drop]/DropBalance/hooks/useTokenSymbol"
 import { useDrop } from "components/[drop]/DropProvider"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
-import { Gear } from "phosphor-react"
 import { useMemo } from "react"
 import useIsTokenClaimed from "../hooks/useIsTokenClaimed"
-import StopRoleModal from "./StopRoleModal"
+import RoleSettingsMenu from "./RoleSettingsMenu"
 
 type Props = {
   roleId: string
@@ -55,7 +42,7 @@ const RoleRewardCard = ({ roleId, reward }: Props) => {
     if (!canClaim) return ["No Permission", `You don't have the role '${roleName}'`]
     if (isClaimed || successfullyClaimed)
       return ["Claimed", "You already claimed for this role"]
-    return [`Claim ${+formatEther(reward)} ${symbol || "SYMBL"}`, null]
+    return [`Claim ${formatEther(reward)} ${symbol || "SYMBL"}`, null]
   }, [
     isClaimed,
     successfullyClaimed,
@@ -69,12 +56,6 @@ const RoleRewardCard = ({ roleId, reward }: Props) => {
   ])
 
   const isDisabled = typeof tooltipLabel === "string"
-
-  const {
-    isOpen: isStopModalOpen,
-    onOpen: onStopModalOpen,
-    onClose: onStopModalClose,
-  } = useDisclosure()
 
   return (
     <Card p={5}>
@@ -94,28 +75,7 @@ const RoleRewardCard = ({ roleId, reward }: Props) => {
               </Button>
             </Box>
           </Tooltip>
-          {isOwner && (
-            <>
-              <Menu>
-                <MenuButton
-                  p={3}
-                  as={IconButton}
-                  colorScheme="gray"
-                  icon={<Gear size={25} weight="regular" />}
-                  aria-label="Role settings"
-                />
-                <MenuList>
-                  <MenuItem onClick={onStopModalOpen}>Stop</MenuItem>
-                  <MenuItem>Edit reward</MenuItem>
-                </MenuList>
-              </Menu>
-              <StopRoleModal
-                isOpen={isStopModalOpen}
-                onClose={onStopModalClose}
-                roleId={roleId}
-              />
-            </>
-          )}
+          {isOwner && <RoleSettingsMenu roleId={roleId} />}
         </HStack>
       </HStack>
     </Card>

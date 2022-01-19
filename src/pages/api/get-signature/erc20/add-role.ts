@@ -57,7 +57,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
         }
         const roles = await fetchRoles("roles", serverId)
         const roleIdsOfServer = Object.keys(roles)
-        if (roleIdsOfServer.includes(roleId)) {
+        if (!roleIdsOfServer.includes(roleId)) {
           res.status(400).json({ message: "Role id is not valid for the server." })
           return
         }

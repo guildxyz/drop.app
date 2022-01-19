@@ -1,4 +1,5 @@
 import { Alert, AlertIcon, Circle, Grid, HStack, Text } from "@chakra-ui/react"
+import { useWeb3React } from "@web3-react/core"
 import Layout from "components/common/Layout"
 import Link from "components/common/Link"
 import AuthenticateButton from "components/start-airdrop/SubmitButton/components/AuthenticateButton"
@@ -6,6 +7,7 @@ import ClaimCard from "components/[drop]/ClaimCard"
 import DropBalance from "components/[drop]/DropBalance"
 import DropProvider, { useDrop } from "components/[drop]/DropProvider"
 import ERC20Claim from "components/[drop]/ERC20Claim"
+import DropSettingsMenu from "components/[drop]/ERC20Claim/components/DropSettingsMenu"
 import { Chains, RPC } from "connectors"
 import getDropRolesData, {
   DropWithRoles,
@@ -28,6 +30,7 @@ const WrappedDropPage = ({ drop }: Props): ReactElement => (
 )
 
 const DropPage = () => {
+  const { account } = useWeb3React()
   const {
     roles,
     tokenAddress,
@@ -37,7 +40,10 @@ const DropPage = () => {
     communityName,
     hasAccess,
     dropContractType,
+    ownerAddress,
   } = useDrop()
+
+  const isOwner = ownerAddress === account
 
   const isAuthenticated = useIsAuthenticated(platform)
 
@@ -84,7 +90,11 @@ const DropPage = () => {
           </HStack>
         </HStack>
 
-        {dropContractType === "ERC20" && <DropBalance />}
+        {dropContractType === "ERC20" && (
+          <HStack>
+            <DropBalance /> {isOwner && <DropSettingsMenu />}
+          </HStack>
+        )}
         {isAuthenticated === false && (
           <AuthenticateButton platform={platform} size="sm" />
         )}

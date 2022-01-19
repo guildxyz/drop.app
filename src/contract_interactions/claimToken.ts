@@ -1,6 +1,7 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider"
 import { JsonRpcSigner, Provider } from "@ethersproject/providers"
 import { ClaimData } from "components/[drop]/ClaimCard/hooks/useClaim"
+import { mutate } from "swr"
 import tokenAirdropClaim from "./ERC20Drop/claim"
 import claimTokenSignature from "./utils/signatures/claimToken"
 
@@ -32,6 +33,7 @@ const claimToken = async (
       provider
     )
     const receipt = await tx.wait()
+    await mutate(["contractBalance", chainId, urlName, provider])
     return receipt
   } catch (error) {
     console.error(error)

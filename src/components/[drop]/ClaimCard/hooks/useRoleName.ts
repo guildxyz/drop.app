@@ -6,7 +6,7 @@ const getRoleName = (_: string, serverId: string, roleId: string): Promise<strin
     `${process.env.NEXT_PUBLIC_BACKEND_API}/discord/role/${serverId}/${roleId}`
   ).then((response) => (response.ok ? response.json() : Promise.reject(Error())))
 
-const useRoleName = (roleId: string): string => {
+const useRoleName = (roleId: string, fallbackData?: string): string => {
   const { serverId, platform } = useDrop()
 
   const shouldFetch =
@@ -14,7 +14,8 @@ const useRoleName = (roleId: string): string => {
 
   const { data } = useSWR(
     shouldFetch ? ["roleName", serverId, roleId] : null,
-    getRoleName
+    getRoleName,
+    { fallbackData, revalidateOnMount: true }
   )
 
   return data

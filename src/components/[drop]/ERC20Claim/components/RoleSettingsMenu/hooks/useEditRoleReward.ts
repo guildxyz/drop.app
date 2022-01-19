@@ -8,11 +8,24 @@ import useToast from "hooks/useToast"
 import { useCallback } from "react"
 import { mutate } from "swr"
 
-const useStopTokenDropForRole = (roleId: string) => {
+const useEditRoleReward = (roleId: string, onClose: () => void) => {
   const { chainId, library, account } = useWeb3React<Web3Provider>()
   const { urlName, serverId, tokenAddress, platform, dropContractType } = useDrop()
   const toast = useToast()
   const roleName = useRoleName(roleId)
+
+  const onSuccess = useCallback(
+    (newReward) =>
+      toast({
+        status: "success",
+        title: newReward === 0 ? "Stopped" : "Updated",
+        description:
+          newReward === 0
+            ? `Drop successfully stopped for role "${roleName}"`
+            : `Role "${roleName}" successfully updated`,
+      }),
+    [toast, roleName]
+  )
 
   const fetcher = useCallback(
     async ({ newReward }) => {
@@ -35,7 +48,9 @@ const useStopTokenDropForRole = (roleId: string) => {
         platform,
         dropContractType,
       ])
-      return tx
+      onSuccess(newReward)
+      onClose()
+      return newReward
     },
     [
       chainId,
@@ -47,17 +62,9 @@ const useStopTokenDropForRole = (roleId: string) => {
       tokenAddress,
       platform,
       dropContractType,
+      onSuccess,
+      onClose,
     ]
-  )
-
-  const onSuccess = useCallback(
-    () =>
-      toast({
-        status: "success",
-        title: "Stopped",
-        description: `Drop successfully stopped for role "${roleName}"`,
-      }),
-    [toast, roleName]
   )
 
   const onError = useCallback(
@@ -72,7 +79,7 @@ const useStopTokenDropForRole = (roleId: string) => {
     [toast]
   )
 
-  return useSubmit(fetcher, { onSuccess, onError })
+  return useSubmit(fetcher, { onError })
 }
 
-export default useStopTokenDropForRole
+export default useEditRoleReward
