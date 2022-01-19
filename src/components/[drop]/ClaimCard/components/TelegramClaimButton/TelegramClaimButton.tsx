@@ -2,7 +2,6 @@ import { Box, Button, Tooltip } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
 import { useDrop } from "components/[drop]/DropProvider"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
-import useUserId from "hooks/useUserId"
 import { Check } from "phosphor-react"
 import { useMemo } from "react"
 import useClaim from "../../hooks/useClaim"
@@ -15,14 +14,13 @@ type Props = {
 }
 
 const TelegramClaimButton = ({ roleId }: Props) => {
-  const { tokenAddress, serverId, urlName, platform } = useDrop()
+  const { serverId, platform } = useDrop()
   const { account } = useWeb3React()
   const { isLoading, response, onSubmit } = useClaim()
   const successfullyClaimed = !!response
   const isClaimed = useIsClaimed(roleId)
   const isAuthenticated = useIsAuthenticated(platform)
   const isActive = useIsActive(roleId)
-  const userId = useUserId(platform)
   const isGroupMember = useIsGroupMember(serverId, platform)
 
   const [buttonText, tooltipLabel] = useMemo(() => {
@@ -52,16 +50,7 @@ const TelegramClaimButton = ({ roleId }: Props) => {
           }
           w="full"
           colorScheme="yellow"
-          onClick={() =>
-            onSubmit({
-              roleId,
-              serverId,
-              tokenAddress,
-              urlName,
-              userId,
-              platform,
-            })
-          }
+          onClick={() => onSubmit(roleId)}
         >
           {buttonText}
         </Button>

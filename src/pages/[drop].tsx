@@ -48,7 +48,7 @@ const DropPage = () => {
         platform === "DISCORD" ? "server" : "group"
       }`
     if (platform === "DISCORD" && Object.keys(roles ?? {}).length <= 0)
-      return "It's no longer possible to claim in this drop, since the roles associated with this drop have been deleted on this server"
+      return "It's no longer possible to claim in this drop, since the roles associated with this drop have been deleted on this server or there are no active roles"
     return null
   }, [hasAccess, platform, roles])
 

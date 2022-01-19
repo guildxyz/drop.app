@@ -1,12 +1,12 @@
 import { Tag, Tooltip } from "@chakra-ui/react"
 import { useDrop } from "../DropProvider"
-import useContractBalance from "./hooks/useContractBalance"
+import useDropBalance from "./hooks/useDropBalance"
 import useTokenSymbol from "./hooks/useTokenSymbol"
 
 const DropBalance = () => {
   const { tokenAddress } = useDrop()
   const symbol = useTokenSymbol(tokenAddress)
-  const balance = useContractBalance()
+  const balance = useDropBalance()
 
   return (
     <Tooltip label="Remaining claimable supply">

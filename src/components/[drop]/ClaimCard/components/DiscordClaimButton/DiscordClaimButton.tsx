@@ -3,7 +3,6 @@ import { useWeb3React } from "@web3-react/core"
 import { useDrop } from "components/[drop]/DropProvider"
 import useIsAuthenticated from "hooks/useIsAuthenticated"
 import useServersOfUser from "hooks/useServersOfUser"
-import useUserId from "hooks/useUserId"
 import { Check } from "phosphor-react"
 import { useMemo } from "react"
 import useClaim from "../../hooks/useClaim"
@@ -17,7 +16,7 @@ type Props = {
 }
 
 const DiscordClaimButton = ({ roleId }: Props) => {
-  const { tokenAddress, serverId, urlName, platform } = useDrop()
+  const { serverId, platform } = useDrop()
   const { account } = useWeb3React()
   const userServers = useServersOfUser()
   const { isLoading, response, onSubmit } = useClaim()
@@ -31,7 +30,6 @@ const DiscordClaimButton = ({ roleId }: Props) => {
     () => Object.keys(userRoles ?? {}).includes(roleId),
     [userRoles, roleId]
   )
-  const userId = useUserId(platform)
   const [buttonText, tooltipLabel] = useMemo(() => {
     if (!isActive) return ["Claim", "This role is inactive in this drop"]
     if (!account) return ["Claim", "Connect your wallet to claim"]
@@ -64,16 +62,7 @@ const DiscordClaimButton = ({ roleId }: Props) => {
           }
           w="full"
           colorScheme="yellow"
-          onClick={() =>
-            onSubmit({
-              roleId,
-              serverId,
-              tokenAddress,
-              urlName,
-              userId,
-              platform,
-            })
-          }
+          onClick={() => onSubmit(roleId)}
         >
           {buttonText}
         </Button>

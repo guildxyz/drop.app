@@ -41,7 +41,7 @@ const AuthenticateButton = ({ platform, ...rest }: Props): ReactElement => {
               addressSignedMessage,
               platform
             )
-            await mutate(["userId", account, "DISCORD"])
+            await mutate(["userId", account, "TELEGRAM"])
           }
         )}
       />
@@ -55,7 +55,7 @@ const AuthenticateButton = ({ platform, ...rest }: Props): ReactElement => {
       size="lg"
       isLoading={isLoading || isSigning}
       loadingText={loadingText}
-      onClick={callbackWithSign(onAuthenticate)}
+      onClick={onAuthenticate}
       {...rest}
     >
       Authenticate

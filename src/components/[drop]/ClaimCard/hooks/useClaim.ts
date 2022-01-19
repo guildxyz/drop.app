@@ -1,8 +1,12 @@
 import type { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React } from "@web3-react/core"
+import { useDrop } from "components/[drop]/DropProvider"
 import claim from "contract_interactions/claim"
+import erc20Claim from "contract_interactions/claimToken"
 import useSubmit from "hooks/useSubmit"
 import useToast from "hooks/useToast"
+import useUserId from "hooks/useUserId"
+import { useMemo } from "react"
 
 export type ClaimData = {
   serverId: string
@@ -15,10 +19,24 @@ export type ClaimData = {
 
 const useClaim = () => {
   const { chainId, account, library } = useWeb3React<Web3Provider>()
+  const { tokenAddress, serverId, urlName, platform, dropContractType } = useDrop()
+  const userId = useUserId(platform)
   const toast = useToast()
 
-  const fetcher = async (data: ClaimData) =>
-    claim(chainId, account, library.getSigner(account), data, library)
+  const claimFunction = useMemo(() => {
+    if (dropContractType === "NFT") return claim
+    if (dropContractType === "ERC20") return erc20Claim
+    return null
+  }, [dropContractType])
+
+  const fetcher = async (roleId: string) =>
+    claimFunction?.(
+      chainId,
+      account,
+      library.getSigner(account),
+      { roleId, tokenAddress, serverId, urlName, platform, userId },
+      library
+    )
 
   const onSuccess = () =>
     toast({

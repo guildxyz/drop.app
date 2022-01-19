@@ -62,7 +62,7 @@ const useStartAirdrop = () => {
   }, [assetType])
 
   const fetch = useCallback(
-    async (data: StartAirdropData) => {
+    (data: StartAirdropData) => {
       console.log(data)
 
       return airdropStarter?.(

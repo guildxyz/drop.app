@@ -1,6 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import usePersonalSign from "hooks/usePersonalSign"
-import useSubmit from "hooks/useSubmit"
+import { useSubmitWithSign } from "hooks/useSubmit"
 import { useRef } from "react"
 import { mutate } from "swr"
 import { UserData } from "utils/fetchUserData"
@@ -8,7 +7,6 @@ import authenticate from "./utils/authenticate"
 import handleMessage from "./utils/handleMessage"
 
 const useAuth = () => {
-  const { addressSignedMessage } = usePersonalSign()
   const { account } = useWeb3React()
   const authWindow = useRef<Window>(null)
   const listener = useRef<(event: MessageEvent) => void>()
@@ -45,7 +43,7 @@ const useAuth = () => {
     authWindow.current.close()
   }
 
-  const fetcher = async () => {
+  const fetcher = async ({ addressSignedMessage }) => {
     openWindow()
     const { id } = await new Promise<UserData>((resolve, reject) => {
       listener.current = handleMessage(resolve, reject)
@@ -57,7 +55,11 @@ const useAuth = () => {
     return true
   }
 
-  const { isLoading, onSubmit: onAuthenticate, response } = useSubmit(fetcher)
+  const {
+    isLoading,
+    onSubmit: onAuthenticate,
+    response,
+  } = useSubmitWithSign(fetcher)
   const isSuccess = !!response
 
   return {
