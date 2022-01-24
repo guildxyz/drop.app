@@ -1,12 +1,12 @@
 import {
-  IconButton,
+  Button,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   useDisclosure,
 } from "@chakra-ui/react"
-import { Gear } from "phosphor-react"
+import { Plus } from "phosphor-react"
 import AddRolesModal from "./components/AddRolesModal"
 
 const DropSettingsMenu = () => {
@@ -20,14 +20,17 @@ const DropSettingsMenu = () => {
     <>
       <Menu>
         <MenuButton
-          p={3}
-          as={IconButton}
-          colorScheme="gray"
-          icon={<Gear size={25} weight="regular" />}
+          size="sm"
+          as={Button}
+          colorScheme="yellow"
           aria-label="Role settings"
-        />
+        >
+          Drop Settings
+        </MenuButton>
         <MenuList>
-          <MenuItem onClick={onAddRolesModalOpen}>Add roles</MenuItem>
+          <MenuItem icon={<Plus />} onClick={onAddRolesModalOpen}>
+            Add roles
+          </MenuItem>
         </MenuList>
       </Menu>
       <AddRolesModal isOpen={isAddRolesModalOpen} onClose={onAddRolesModalClose} />

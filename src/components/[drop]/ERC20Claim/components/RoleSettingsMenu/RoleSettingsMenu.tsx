@@ -6,7 +6,7 @@ import {
   MenuList,
   useDisclosure,
 } from "@chakra-ui/react"
-import { Gear } from "phosphor-react"
+import { Gear, PauseCircle, PencilSimpleLine } from "phosphor-react"
 import EditRoleRewardModal from "./components/EditRoleRewardModal"
 import StopRoleModal from "./components/StopRoleModal"
 
@@ -34,12 +34,25 @@ const RoleSettingsMenu = ({ roleId }: Props) => {
           p={3}
           as={IconButton}
           colorScheme="gray"
-          icon={<Gear size={25} weight="regular" />}
+          icon={<Gear size={20} weight="regular" />}
           aria-label="Role settings"
+          variant="ghost"
         />
         <MenuList>
-          <MenuItem onClick={onStopModalOpen}>Stop</MenuItem>
-          <MenuItem onClick={onEditModalOpen}>Edit reward</MenuItem>
+          <MenuItem
+            icon={<PencilSimpleLine size={20} weight="light" />}
+            onClick={onEditModalOpen}
+          >
+            Edit reward
+          </MenuItem>
+          <MenuItem
+            icon={<PauseCircle size={20} weight="light" />}
+            color="red"
+            _hover={{ backgroundColor: "rgba(255, 0, 0, 0.1)" }}
+            onClick={onStopModalOpen}
+          >
+            Stop
+          </MenuItem>
         </MenuList>
       </Menu>
       <StopRoleModal

@@ -9,6 +9,7 @@ import { Platform } from "contract_interactions/types"
 import { fetchUserId } from "hooks/useUserId"
 import type { NextApiRequest, NextApiResponse } from "next"
 import checkParams from "utils/api/checkParams"
+import isGroupCreator from "utils/api/isGroupCreator"
 import fetchIsOwner from "utils/fetchIsOwner"
 
 type Body = {
@@ -62,8 +63,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
           return
         }
       } else if (platform === "TELEGRAM") {
-        res.status(400).json({ message: "Roles can't be added to a Telegram drop" })
-        return
+        const isOwner = await isGroupCreator(serverId, userId)
+        if (!isOwner) {
+          res
+            .status(400)
+            .json({ message: "Only the creator of the group can add roles" })
+          return
+        }
+
+        if (roleId !== serverId) {
+          res
+            .status(400)
+            .json({ message: "Role ID has to be the group ID for Telegram Drops" })
+          return
+        }
       }
 
       const payload = defaultAbiCoder.encode(

@@ -1,30 +1,35 @@
 import {
   Button,
+  Fade,
   FormControl,
   FormLabel,
   Grid,
-  HStack,
   NumberInput,
   NumberInputField,
 } from "@chakra-ui/react"
 import { parseEther } from "@ethersproject/units"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useAddRoleToDrop from "../hooks/useAddRoleToDrop"
 
 type Props = {
   roleId: string
   roleName: string
+  onClose: () => void
 }
 
-const AddRoleCard = ({ roleId, roleName }: Props) => {
+const AddRoleCard = ({ roleId, roleName, onClose }: Props) => {
   const [reward, setReward] = useState<number>()
-  const { onSubmit, isLoading } = useAddRoleToDrop(roleId)
+  const { onSubmit, isLoading, response } = useAddRoleToDrop(roleId)
+
+  useEffect(() => {
+    if (!!response) onClose()
+  }, [response, onClose])
 
   return (
-    <HStack>
-      <FormControl>
-        <Grid templateColumns="repeat(2, 1fr)" alignItems="center">
-          <FormLabel>{roleName}</FormLabel>
+    <FormControl>
+      <Grid templateColumns="repeat(2, 1fr)" alignItems="center">
+        <FormLabel>{roleName}</FormLabel>
+        <Grid templateColumns="1fr auto" templateRows="1fr" gap={2}>
           <NumberInput min={0} size="sm">
             <NumberInputField
               width="full"
@@ -34,22 +39,22 @@ const AddRoleCard = ({ roleId, roleName }: Props) => {
               onChange={({ target: { value } }) => setReward(+value)}
             />
           </NumberInput>
+          <Fade in={typeof reward === "number" && reward > 0} unmountOnExit>
+            <Button
+              isLoading={isLoading}
+              loadingText="Adding"
+              isDisabled={typeof reward !== "number" || reward === 0}
+              px={5}
+              size="sm"
+              colorScheme="yellow"
+              onClick={() => onSubmit({ newReward: parseEther(reward.toString()) })}
+            >
+              Add
+            </Button>
+          </Fade>
         </Grid>
-      </FormControl>
-      {typeof reward === "number" && reward > 0 && (
-        <Button
-          isLoading={isLoading}
-          loadingText="Adding"
-          isDisabled={typeof reward !== "number" || reward === 0}
-          px={5}
-          size="sm"
-          colorScheme="yellow"
-          onClick={() => onSubmit({ newReward: parseEther(reward.toString()) })}
-        >
-          Add
-        </Button>
-      )}
-    </HStack>
+      </Grid>
+    </FormControl>
   )
 }
 

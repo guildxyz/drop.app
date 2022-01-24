@@ -16,14 +16,17 @@ const fetchRolesData = async (
   platform: Platform,
   dropContractType: string
 ) => {
-  const activeRoles = await getActiveRoles(
-    chainId,
-    urlName,
-    serverId,
-    tokenAddress,
-    dropContractType,
-    provider
-  )
+  const activeRoles =
+    platform === "DISCORD"
+      ? await getActiveRoles(
+          chainId,
+          urlName,
+          serverId,
+          tokenAddress,
+          dropContractType,
+          provider
+        )
+      : [serverId]
   return dropContractType === "NFT"
     ? Promise.all(
         activeRoles.map((roleId) =>
@@ -60,14 +63,13 @@ const useRolesData = (
   const shouldFetch =
     serverId?.length > 0 &&
     tokenAddress?.length > 0 &&
-    platform === "DISCORD" &&
     urlName?.length > 0 &&
     dropContractType?.length > 0
 
   const { data } = useSWR(
     shouldFetch
       ? [
-          "roleData",
+          "rolesData",
           chainId,
           urlName,
           serverId,

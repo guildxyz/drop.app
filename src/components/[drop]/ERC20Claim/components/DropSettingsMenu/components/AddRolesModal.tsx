@@ -1,10 +1,8 @@
 import {
-  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   VStack,
@@ -38,16 +36,15 @@ const AddRolesModal = ({ isOpen, onClose }: Props) => {
           The rewards of the added roles can be edited later.
           <VStack spacing={2} maxH="xs" mt={10} p={1} overflow="auto">
             {rolesToAddEntries.map(([roleId, roleName]) => (
-              <AddRoleCard key={roleId} roleId={roleId} roleName={roleName} />
+              <AddRoleCard
+                key={roleId}
+                roleId={roleId}
+                roleName={roleName}
+                onClose={onClose}
+              />
             ))}
           </VStack>
         </ModalBody>
-
-        <ModalFooter>
-          <Button variant="ghost" onClick={onClose} mr={3}>
-            Cancel
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   )

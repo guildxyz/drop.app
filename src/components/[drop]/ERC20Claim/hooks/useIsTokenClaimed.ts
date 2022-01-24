@@ -19,7 +19,6 @@ const useIsTokenClaimed = (roleId: string) => {
   const { platform, urlName } = useDrop()
   const userId = useUserId(platform)
   const shouldFetch =
-    platform === "DISCORD" &&
     typeof chainId === "number" &&
     !!library &&
     userId?.length > 0 &&

@@ -9,6 +9,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react"
 import useRoleName from "components/[drop]/ClaimCard/hooks/useRoleName"
+import { useDrop } from "components/[drop]/DropProvider"
 import useEditRoleReward from "../hooks/useEditRoleReward"
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
 }
 
 const StopRoleModal = ({ isOpen, onClose, roleId }: Props) => {
+  const { platform } = useDrop()
   const roleName = useRoleName(roleId)
   const { onSubmit, isLoading } = useEditRoleReward(roleId, onClose)
 
@@ -25,10 +27,13 @@ const StopRoleModal = ({ isOpen, onClose, roleId }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Stop drop on role "{roleName}"</ModalHeader>
+        <ModalHeader>
+          {platform === "DISCORD" ? `Stop drop on role "${roleName}"` : "Stop drop"}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          This action will set the reward for the role "{roleName}" to 0. This can be
+          This action will set the reward for the{" "}
+          {platform === "DISCORD" ? `role "${roleName}"` : "drop"} to 0. This can be
           changed later, to reactivate this role in this drop.
         </ModalBody>
 

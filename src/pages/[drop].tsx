@@ -92,7 +92,8 @@ const DropPage = () => {
 
         {dropContractType === "ERC20" && (
           <HStack>
-            <DropBalance /> {isOwner && <DropSettingsMenu />}
+            <DropBalance />{" "}
+            {isOwner && platform === "DISCORD" && <DropSettingsMenu />}
           </HStack>
         )}
         {isAuthenticated === false && (

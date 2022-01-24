@@ -33,12 +33,12 @@ const useAddRoleToDrop = (roleId: string, roleNameFallback?: string) => {
         urlName,
         roleId,
         newReward,
-        "", // TODO channelId
+        platform === "TELEGRAM" ? serverId : "", // TODO channelId
         library
       )
       await tx.wait()
       await mutate([
-        "roleData",
+        "rolesData",
         chainId,
         urlName,
         serverId,
@@ -66,8 +66,10 @@ const useAddRoleToDrop = (roleId: string, roleNameFallback?: string) => {
     () =>
       toast({
         status: "success",
-        title: "Added",
-        description: `Role "${roleName}" added to the drop`,
+        title: roleName ? "Added" : "Updated",
+        description: roleName
+          ? `Role "${roleName}" added to the drop`
+          : "Reward successfully updated",
       }),
     [toast, roleName]
   )

@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react"
 import { parseEther } from "@ethersproject/units"
 import useRoleName from "components/[drop]/ClaimCard/hooks/useRoleName"
+import { useDrop } from "components/[drop]/DropProvider"
 import { useMemo, useState } from "react"
 import useEditRoleReward from "../hooks/useEditRoleReward"
 
@@ -24,6 +25,7 @@ type Props = {
 }
 
 const EditRoleRewardModal = ({ isOpen, onClose, roleId }: Props) => {
+  const { platform } = useDrop()
   const roleName = useRoleName(roleId)
   const { onSubmit, isLoading } = useEditRoleReward(roleId, onClose)
   const [reward, setReward] = useState<number>()
@@ -36,11 +38,16 @@ const EditRoleRewardModal = ({ isOpen, onClose, roleId }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Edit reward for role "{roleName}"</ModalHeader>
+        <ModalHeader>
+          {platform === "DISCORD"
+            ? `Edit reward for role "${roleName}"`
+            : "Edit reward of group members"}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          This action will set the reward for the role "{roleName}". This can be
-          changed later.
+          This action will set the reward for the{" "}
+          {platform === "DISCORD" ? `role "${roleName}"` : "the group members"}. This
+          can be changed later.
           <NumberInput mt={5}>
             <NumberInputField
               placeholder="20"
@@ -62,7 +69,7 @@ const EditRoleRewardModal = ({ isOpen, onClose, roleId }: Props) => {
               <Button
                 isDisabled={validReward}
                 isLoading={isLoading}
-                loadingText="Stopping"
+                loadingText="Updaring drop"
                 onClick={() =>
                   onSubmit({ newReward: parseEther(reward.toString()) })
                 }
