@@ -1,4 +1,4 @@
-import { Button, Img, Input, VStack } from "@chakra-ui/react"
+import { Button, HStack, Img, Input, Spinner, Text, VStack } from "@chakra-ui/react"
 import Layout from "components/common/Layout"
 import CategorySection from "components/index/CategorySection"
 import DropCard from "components/index/DropCard"
@@ -83,6 +83,8 @@ const Page = ({ drops }: Props): JSX.Element => {
     [yourDrops, allDrops, searchInput]
   )
 
+  const isDataLoading = serversOfUser === undefined || groupsOfUser === undefined
+
   return (
     <Layout title="Drop app" imageUrl="/logo.png">
       <VStack alignItems="left" spacing={10}>
@@ -97,7 +99,12 @@ const Page = ({ drops }: Props): JSX.Element => {
           title="Your drops"
           fallbackText={`No results for ${searchInput}`}
         >
-          {filteredYourDrops?.length ? (
+          {isDataLoading ? (
+            <HStack spacing={5} m={5}>
+              <Spinner />
+              <Text>Loading...</Text>
+            </HStack>
+          ) : filteredYourDrops?.length ? (
             filteredYourDrops
               .map((drop) => <DropCard key={drop.urlName} drop={drop} />)
               .concat(
